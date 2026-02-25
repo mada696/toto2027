@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة المدرسة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #141A32; min-height: 100vh; color: #E8EDEB; padding-bottom: 20px; padding-top: 50px; overflow-x: hidden; }
+        .glass-panel { background: rgba(20, 26, 50, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(214, 140, 41, 0.3); border-radius: 1.5rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
+        .input-light { background-color: #ffffff !important; color: #1e293b !important; border: 2px solid #cbd5e1; font-weight: 800; transition: all 0.3s ease;}
+        .input-light:focus { border-color: #D68C29; outline: none; box-shadow: 0 0 0 3px rgba(214, 140, 41, 0.3); }
+        .input-readonly { background-color: #f1f5f9 !important; color: #64748b !important; border: 1px solid #e2e8f0; cursor: not-allowed; font-weight: 900 !important; }
+        label { font-size: 0.85rem; font-weight: bold; color: #D68C29; margin-bottom: 0.4rem; display: block; }
+        .btn-gold { background: linear-gradient(135deg, #D68C29 0%, #B4731D 100%); color: white; border: none; box-shadow: 0 5px 15px rgba(214, 140, 41, 0.3); transition: all 0.3s;}
+        .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(214, 140, 41, 0.5); }
+        
+        .main-card { background: linear-gradient(145deg, rgba(30,41,59,0.9), rgba(15,23,42,0.9)); border: 2px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 25px 15px; text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.3);}
+        .main-card:hover { transform: translateY(-8px); border-color: #D68C29; box-shadow: 0 15px 30px rgba(214, 140, 41, 0.2); background: linear-gradient(145deg, rgba(30,41,59,1), rgba(20,26,50,1));}
+        .icon-wrapper { width: 60px; height: 60px; border-radius: 50%; background: rgba(214, 140, 41, 0.1); display: flex; align-items: center; justify-content: center; color: #F5C678; transition: all 0.3s; }
+        .main-card:hover .icon-wrapper { background: #D68C29; color: #141A32; transform: scale(1.1); }
+        
+        .stats-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+        .stats-table td, .stats-table th { padding: 12px 15px; background: rgba(255,255,255,0.03); }
+        .stats-table tr td:first-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; font-weight: bold; color: #F5C678; border-right: 3px solid #D68C29;}
+        .stats-table tr td:last-child { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+        
+        .home-btn { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); color: white; padding: 8px 20px; border-radius: 50px; font-weight: bold; border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s; margin-bottom: 20px; text-decoration: none;}
+        .home-btn:hover { background: #D68C29; border-color: #D68C29; color: #141A32; box-shadow: 0 5px 15px rgba(214, 140, 41, 0.4); transform: translateX(-5px);}
+        
+        .avatar-upload-wrapper { position: relative; width: 100px; height: 100px; margin: 0 auto; border-radius: 50%; overflow: hidden; border: 3px solid #D68C29; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3);}
+        .avatar-upload-wrapper img { width: 100%; height: 100%; object-fit: cover; background: #fff;}
+        .avatar-upload-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); color: white; font-size: 12px; font-weight: bold; padding: 6px 0; text-align: center; opacity: 0; transition: 0.3s;}
+        .avatar-upload-wrapper:hover .avatar-upload-overlay { opacity: 1; }
+        .agent-avatar-border { border-color: #3b82f6; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #8b5cf6; border-radius: 10px; }
+
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+
+<body x-data="madrasaApp()" x-init="initApp()">
+
+    <div x-show="alertModal.show" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" x-cloak x-transition>
+        <div class="bg-white w-full max-w-sm p-8 rounded-3xl shadow-2xl text-center transform transition-all" :class="alertModal.type === 'success' ? 'border-t-8 border-green-500' : 'border-t-8 border-red-500'">
+            <div class="text-6xl mb-4" x-text="alertModal.type === 'success' ? '✅' : '⚠️'"></div>
+            <h3 class="text-2xl font-black text-slate-800 mb-2" x-text="alertModal.title"></h3>
+            <p class="text-slate-600 font-bold mb-6 text-sm" x-text="alertModal.message"></p>
+            <button @click="closeAlert()" :class="`btn w-full text-white font-black text-lg h-12 rounded-xl border-none ${alertModal.type === 'success' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'}`">حسناً</button>
+        </div>
+    </div>
+
+    <div x-show="showOathModal" class="fixed inset-0 z-[100000] flex items-center justify-center bg-black/90 backdrop-blur-md p-4" x-cloak x-transition>
+        <div class="bg-[#141A32] w-full max-w-md p-8 rounded-3xl shadow-[0_0_40px_rgba(214,140,41,0.3)] border border-[#D68C29]/50 text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 via-yellow-500 to-red-500"></div>
+            <div class="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-red-500/50 text-4xl">⚖️</div>
+            <h3 class="text-2xl font-black text-white mb-4">إقرار قانوني</h3>
+            <div class="bg-black/40 p-5 rounded-xl border border-white/10 mb-6">
+                <p class="text-slate-300 font-bold leading-loose text-sm md:text-base">
+                    "أتعهد أنا <span class="text-[#F5C678] font-black mx-1" x-text="formData.full_name"></span> بأن جميع البيانات المُدخلة والمحفوظة في هذا السجل صحيحة ودقيقة ومطابقة للمستندات الرسمية، وعلى مسئوليتي الشخصية والقانونية بالكامل."
+                </p>
+            </div>
+            <div class="flex gap-3">
+                <button @click="confirmAndSave()" class="btn flex-1 bg-green-600 hover:bg-green-700 text-white font-black text-lg h-14 rounded-xl border-none shadow-lg">أوافق وأتعهد ✅</button>
+                <button @click="showOathModal = false" class="btn bg-slate-700 hover:bg-slate-600 text-white font-black text-lg h-14 rounded-xl border-none">تراجع ❌</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full p-4 flex justify-between items-center bg-[#141A32]/90 backdrop-blur sticky top-0 z-40 border-b border-[#D68C29]/30 shadow-lg">
+        <div><p class="text-xs text-slate-400">لوحة تحكم مدرسة:</p><h1 class="text-xl md:text-2xl font-black text-[#D68C29]" x-text="school.name || 'جاري التحميل...'"></h1></div>
+        <div class="text-left">
+            <span class="badge bg-slate-700 text-white border-none text-xs mb-1 px-3 py-2" x-text="currentUser?.role === 'manager' ? '👑 مدير المدرسة' : '👨‍🏫 وكيل'"></span>
+            <button @click="logout" class="block text-red-400 font-bold text-sm hover:text-red-300 w-full text-left mt-1">خروج 🚪</button>
+        </div>
+    </div>
+
+    <div class="p-4 max-w-3xl mx-auto min-h-[80vh] mt-4 relative">
+
+        <div x-show="currentView === 'menu'" x-transition.opacity x-cloak>
+            <div class="grid grid-cols-2 gap-4 mt-2">
+                <div x-show="currentUser?.role === 'manager'" @click="openManagerView()" class="main-card relative">
+                    <span x-show="!managerData.full_name" class="absolute top-3 right-3 flex h-4 w-4"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span class="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span></span>
+                    <div class="icon-wrapper"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg></div>
+                    <div><h2 class="text-lg font-black text-white">بيانات المدير</h2><p class="text-xs text-slate-400 mt-1">السجل الوظيفي</p></div>
+                </div>
+                
+                <div x-show="currentUser?.role === 'manager'" @click="currentView = 'agents'" class="main-card">
+                    <div class="icon-wrapper"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg></div>
+                    <div><h2 class="text-lg font-black text-white">طاقم الوكلاء</h2><p class="text-xs text-slate-400 mt-1">إضافة وإدارة</p></div>
+                </div>
+                
+                <div x-show="currentUser?.role === 'agent'" @click="openAgentProfile()" class="main-card relative">
+                    <span x-show="!currentUser?.full_name || currentUser?.full_name === 'بانتظار استكمال البيانات'" class="absolute top-3 right-3 flex h-4 w-4"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span class="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span></span>
+                    <div class="icon-wrapper"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></div>
+                    <div><h2 class="text-lg font-black text-white">بياناتي الوظيفية</h2><p class="text-xs text-slate-400 mt-1">تحديث سجلي</p></div>
+                </div>
+
+                <div @click="currentView = 'statistics'" class="main-card">
+                    <div class="icon-wrapper"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg></div>
+                    <div><h2 class="text-lg font-black text-white">الإحصاء الشامل</h2><p class="text-xs text-slate-400 mt-1">المواقف والأعداد</p></div>
+                </div>
+
+                <div @click="currentView = 'requests'" class="main-card col-span-2 md:col-span-1">
+                    <div class="icon-wrapper"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
+                    <div><h2 class="text-lg font-black text-white">طلبات التنسيق</h2><p class="text-xs text-slate-400 mt-1">رفع الملفات والإقرارات</p></div>
+                </div>
+                
+                <div @click="currentView = 'messages'" class="main-card col-span-2 md:col-span-1 bg-gradient-to-r from-purple-900/50 to-[#141A32] relative">
+                    <span x-show="schoolMessages.length > 0" class="absolute top-3 right-3 bg-red-500 text-white text-[12px] font-bold w-6 h-6 flex items-center justify-center rounded-full animate-pulse shadow-lg border border-white" x-text="schoolMessages.length"></span>
+                    
+                    <div class="icon-wrapper !bg-purple-500/20 !text-purple-400"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg></div>
+                    <div><h2 class="text-lg font-black text-purple-300">مراسلات وتعليمات</h2><p class="text-xs text-slate-400 mt-1">صندوق الوارد</p></div>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="currentView === 'messages'" x-transition x-cloak>
+            <button @click="currentView = 'menu'" class="home-btn">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                الرئيسية
+            </button>
+            <div class="glass-panel p-6 md:p-8 border-t-4 border-t-purple-500">
+                <h2 class="text-2xl font-black text-white text-center mb-6">✉️ صندوق المراسلات والتعليمات</h2>
+                <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+                    
+                    <template x-for="msg in schoolMessages" :key="msg.id">
+                        <div class="bg-black/30 p-5 rounded-2xl border border-purple-500/30 relative">
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/10 pb-3 mb-3 gap-2">
+                                <span :class="`badge border-none px-3 py-2 text-white font-bold ${msg.school_id ? 'bg-blue-600' : 'bg-purple-600'}`" x-text="msg.school_id ? 'رسالة خاصة بمدرستك 🏫' : '📢 تعميم لجميع المدارس'"></span>
+                                <span class="text-xs text-slate-400 font-bold" x-text="new Date(msg.created_at).toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })"></span>
+                            </div>
+                            <p class="text-white text-sm md:text-base whitespace-pre-wrap leading-relaxed mb-4" x-text="msg.message"></p>
+                            
+                            <template x-if="msg.file_url">
+                                <div class="border-t border-white/10 pt-3">
+                                    <a :href="msg.file_url" target="_blank" class="btn btn-sm bg-purple-600/20 text-purple-300 hover:bg-purple-600 hover:text-white border border-purple-500/50 rounded-lg">عرض المرفق 📎</a>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                    
+                    <div x-show="schoolMessages.length === 0" class="text-center py-12 opacity-50">
+                        <span class="text-6xl block mb-4 grayscale">📭</span>
+                        <h3 class="text-xl font-bold text-white">صندوق الوارد فارغ</h3>
+                        <p class="text-slate-400 text-sm mt-2">لا توجد تعليمات أو مراسلات جديدة</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="currentView === 'manager'" x-transition x-cloak>
+            <button @click="currentView = 'menu'; isEditingForm = false" class="home-btn">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                الرئيسية
+            </button>
+            <div class="glass-panel p-6 md:p-8 border-t-4 border-t-[#D68C29]">
+                <div x-show="!isEditingForm">
+                    <div class="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
+                        <h2 class="text-2xl font-black text-white">السجل الوظيفي للمدير</h2>
+                        <button x-show="!managerData.full_name" @click="isEditingForm = true" class="btn btn-sm btn-success text-white border-none shadow-[0_0_15px_rgba(16,185,129,0.4)] animate-pulse">تسجيل بياناتي 📝</button>
+                        <button x-show="managerData.full_name" @click="isEditingForm = true" class="btn btn-sm bg-[#D68C29]/20 text-[#D68C29] border border-[#D68C29]/50 hover:bg-[#D68C29] hover:text-white">تعديل ✏️</button>
+                    </div>
+                    <div class="bg-black/20 p-5 rounded-2xl border border-white/5 space-y-4">
+                        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 pb-4 border-b border-white/10 text-center sm:text-right">
+                            <img :src="managerData.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" class="w-24 h-24 rounded-full border-4 border-[#D68C29] object-cover bg-white shadow-xl">
+                            <div class="mt-2 sm:mt-0">
+                                <h3 class="text-xl font-black text-[#F5C678]" x-text="managerData.full_name || 'لم يتم التسجيل بعد'"></h3>
+                                <p class="text-slate-400 font-mono mt-1" x-text="managerData.mobile || '---'"></p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm md:text-base">
+                            <div class="bg-[#141A32] p-3 rounded-xl border border-white/5"><span class="text-slate-500 block mb-1">الرقم القومي</span><span class="text-yellow-400 font-mono font-bold text-lg tracking-widest" x-text="managerData.nid || '---'"></span></div>
+                            <div class="bg-[#141A32] p-3 rounded-xl border border-white/5"><span class="text-slate-500 block mb-1">تاريخ الميلاد</span><span class="text-white font-bold" x-text="managerData.dob || '---'"></span></div>
+                            <div class="bg-[#141A32] p-3 rounded-xl border border-white/5"><span class="text-slate-500 block mb-1">تاريخ التعيين</span><span class="text-white font-bold" x-text="managerData.hiring_date || '---'"></span></div>
+                            <div class="bg-[#141A32] p-3 rounded-xl border border-white/5"><span class="text-slate-500 block mb-1">استلام العمل الحالي</span><span class="text-white font-bold" x-text="managerData.job_assumption_date || '---'"></span></div>
+                            <div class="bg-[#141A32] p-3 rounded-xl border border-green-500/30"><span class="text-slate-500 block mb-1">تاريخ التجديد</span><span class="text-green-400 font-black" x-text="managerData.renewal_date || '---'"></span></div>
+                            <div class="bg-[#141A32] p-3 rounded-xl border border-red-500/30"><span class="text-slate-500 block mb-1">تاريخ التقاعد</span><span class="text-red-400 font-black" x-text="managerData.retirement_date || '---'"></span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div x-show="isEditingForm" x-cloak>
+                    <h2 class="text-2xl font-black text-[#F5C678] text-center mb-6">تسجيل وتحديث البيانات</h2>
+                    <div class="mb-6 relative">
+                        <div class="avatar-upload-wrapper">
+                            <img :src="formData.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'">
+                            <div class="avatar-upload-overlay">تغيير الصورة</div>
+                            <input type="file" accept="image/*" @change="uploadAvatar" class="absolute inset-0 opacity-0 cursor-pointer z-10" :disabled="loadingAvatar">
+                        </div>
+                        <div x-show="loadingAvatar" class="text-center mt-2 text-xs text-[#D68C29] animate-pulse font-bold">جاري الرفع...</div>
+                        <p x-show="!formData.avatar_url" class="text-center text-xs text-red-500 font-bold mt-2 bg-red-500/10 py-1 px-3 rounded-full w-fit mx-auto border border-red-500/30">⚠️ إرفاق الصورة الشخصية إلزامي</p>
+                    </div>
+
+                    <div class="bg-black/20 p-6 rounded-3xl border border-white/10 space-y-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div class="md:col-span-2">
+                                <label>1. الاسم رباعياً (إجباري)</label>
+                                <input type="text" x-model="formData.full_name" placeholder="الاسم الأول والثاني والثالث واللقب" class="input w-full input-light h-14 rounded-xl text-lg">
+                                <p class="text-[10px] text-yellow-500 mt-1 font-bold">* لن يقبل النظام أي اسم يقل عن 4 مقاطع.</p>
+                            </div>
+                            <div><label>2. رقم الموبايل</label><input type="tel" x-model="formData.mobile" readonly class="input w-full input-readonly h-14 rounded-xl text-center font-mono text-lg tracking-widest"></div>
+                            <div><label>3. الرقم القومي (14 رقم)</label><input type="tel" x-model="formData.nid" maxlength="14" @input="calculateDates" placeholder="ادخل 14 رقم..." class="input w-full input-light h-14 rounded-xl text-center font-mono text-lg tracking-widest"></div>
+                            <div class="bg-[#141A32] p-3 rounded-xl border border-white/5"><label class="!text-slate-400">4. تاريخ الميلاد (يُستخرج تلقائياً)</label><input type="date" x-model="formData.dob" readonly class="input w-full input-readonly h-12 rounded-lg text-center text-slate-500"></div>
+                            <div class="bg-red-500/5 p-3 rounded-xl border border-red-500/20"><label class="!text-red-400">5. تاريخ التقاعد (يُحسب تلقائياً)</label><input type="date" x-model="formData.retirement_date" readonly class="input w-full input-readonly h-12 rounded-lg text-center text-red-500 font-bold"></div>
+                            <div><label>6. تاريخ التعيين</label><input type="date" x-model="formData.hiring_date" class="input w-full input-light h-14 rounded-xl text-center"></div>
+                            <div><label>7. تاريخ استلام العمل بالوظيفة الحالية</label><input type="date" x-model="formData.job_assumption_date" @change="calculateDates" class="input w-full input-light h-14 rounded-xl text-center border-[#D68C29]"></div>
+                            <div class="md:col-span-2 bg-green-500/5 p-3 rounded-xl border border-green-500/20"><label class="!text-green-400">8. تاريخ التجديد القادم (بعد سنتين تلقائياً)</label><input type="date" x-model="formData.renewal_date" readonly class="input w-full input-readonly h-12 rounded-lg text-center text-green-600 font-bold"></div>
+                        </div>
+
+                        <div class="flex gap-3 mt-8 pt-6 border-t border-white/10">
+                            <button @click="validateAndShowOath" class="btn flex-1 btn-gold h-14 rounded-xl text-xl font-black">حفظ وإنهاء 💾</button>
+                            <button @click="isEditingForm = false" class="btn bg-slate-700 text-white h-14 rounded-xl border-none px-8">إلغاء</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="currentView === 'agent_profile'" x-transition x-cloak>
+            <button @click="currentView = 'menu'; isEditingForm = false" class="home-btn">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                الرئيسية
+            </button>
+            <div class="glass-panel p-6 md:p-8 border-t-4 border-t-blue-500">
+                <div x-show="!isEditingForm">
+                    <div class="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
+                        <h2 class="text-2xl font-black text-white">سجل الوكيل</h2>
+                        <button x-show="!currentUser.full_name || currentUser.full_name === 'بانتظار استكمال البيانات'" @click="isEditingForm = true" class="btn btn-sm btn-success text-white border-none shadow-md animate-pulse">تسجيل بياناتي 📝</button>
+                        <button x-show="currentUser.full_name && currentUser.full_name !== 'بانتظار استكمال البيانات'" @click="isEditingForm = true" class="btn btn-sm bg-blue-500/20 text-blue-400 border border-blue-500/50 hover:bg-blue-500 hover:text-white">تعديل ✏️</button>
+                    </div>
+                    <div class="bg-black/20 p-5 rounded-2xl border border-white/5 space-y-4">
+                        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 pb-4 border-b border-white/10 text-center sm:text-right">
+                            <img :src="currentUser.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" class="w-24 h-24 rounded-full border-4 border-blue-500 object-cover bg-white shadow-xl">
+                            <div class="mt-2 sm:mt-0">
+                                <h3 class="text-xl font-black text-blue-400" x-text="currentUser.full_name || 'بانتظار التسجيل'"></h3>
+                                <span class="badge bg-blue-600 text-white border-none mt-2 px-3 py-2" x-text="currentUser.agent_assignment || 'لم يحدد التكليف'"></span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm md:text-base">
+                            <div class="bg-[#141A32] p-3 rounded-xl border border-white/5"><span class="text-slate-500 block mb-1">الموبايل</span><span class="text-white font-mono" x-text="currentUser.mobile || '---'"></span></div>
+                            <div class="bg-[#141A32] p-3 rounded-xl border border-white/5"><span class="text-slate-500 block mb-1">الرقم القومي</span><span class="text-yellow-400 font-mono tracking-widest font-bold" x-text="currentUser.nid || '---'"></span></div>
+                            <div class="bg-[#141A32] p-3 rounded-xl border border-white/5"><span class="text-slate-500 block mb-1">تاريخ التعيين</span><span class="text-white font-bold" x-text="currentUser.hiring_date || '---'"></span></div>
+                            <div class="bg-[#141A32] p-3 rounded-xl border border-white/5"><span class="text-slate-500 block mb-1">استلام العمل الحالي</span><span class="text-white font-bold" x-text="currentUser.job_assumption_date || '---'"></span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div x-show="isEditingForm" x-cloak>
+                    <h2 class="text-2xl font-black text-blue-400 text-center mb-6">تسجيل بيانات الوكيل</h2>
+                    <div class="mb-6 relative">
+                        <div class="avatar-upload-wrapper agent-avatar-border">
+                            <img :src="formData.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'">
+                            <div class="avatar-upload-overlay">تغيير الصورة</div>
+                            <input type="file" accept="image/*" @change="uploadAvatar" class="absolute inset-0 opacity-0 cursor-pointer z-10" :disabled="loadingAvatar">
+                        </div>
+                        <div x-show="loadingAvatar" class="text-center mt-2 text-xs text-blue-400 animate-pulse font-bold">جاري الرفع...</div>
+                        <p x-show="!formData.avatar_url" class="text-center text-xs text-red-500 font-bold mt-2 bg-red-500/10 py-1 px-3 rounded-full w-fit mx-auto border border-red-500/30">⚠️ إرفاق الصورة الشخصية إلزامي</p>
+                    </div>
+
+                    <div class="bg-black/20 p-6 rounded-3xl border border-white/10 space-y-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div class="md:col-span-2">
+                                <label class="!text-blue-400">التكليف (طبيعة العمل)</label>
+                                <select x-model="formData.agent_assignment" class="select w-full input-light h-14 rounded-xl text-lg font-bold">
+                                    <option value="" disabled selected>اختر طبيعة العمل...</option>
+                                    <option value="شئون طلاب">شئون طلاب</option>
+                                    <option value="شئون عاملين">شئون عاملين</option>
+                                </select>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label>الاسم رباعياً (إجباري)</label>
+                                <input type="text" x-model="formData.full_name" placeholder="الاسم الأول والثاني والثالث واللقب" class="input w-full input-light h-14 rounded-xl text-lg">
+                            </div>
+                            <div class="md:col-span-2"><label>الرقم القومي (14 رقم)</label><input type="tel" x-model="formData.nid" maxlength="14" @input="calculateDates" class="input w-full input-light h-14 rounded-xl text-center font-mono text-lg tracking-widest"></div>
+                            <div><label>تاريخ التعيين</label><input type="date" x-model="formData.hiring_date" class="input w-full input-light h-14 rounded-xl text-center"></div>
+                            <div><label>استلام العمل الحالي</label><input type="date" x-model="formData.job_assumption_date" @change="calculateDates" class="input w-full input-light h-14 rounded-xl text-center"></div>
+                        </div>
+                        <div class="flex gap-3 mt-8 pt-6 border-t border-white/10">
+                            <button @click="validateAndShowOath" class="btn flex-1 bg-blue-600 hover:bg-blue-700 text-white h-14 rounded-xl text-xl font-black border-none">حفظ بياناتي 💾</button>
+                            <button @click="isEditingForm = false" class="btn bg-slate-700 text-white h-14 rounded-xl border-none px-8">إلغاء</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="currentView === 'agents'" x-transition x-cloak>
+            <button @click="currentView = 'menu'" class="home-btn"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg> الرئيسية</button>
+            <div class="glass-panel p-6 border-t-4 border-t-emerald-500">
+                <h2 class="text-2xl font-black text-white text-center mb-6">إدارة وكلاء المدرسة</h2>
+                <div class="bg-black/30 p-5 rounded-2xl border border-white/10 mb-8">
+                    <label class="mb-2 block text-[#D68C29] text-sm font-bold">إضافة وكيل جديد برقم الموبايل</label>
+                    <div class="flex flex-col md:flex-row gap-3">
+                        <input type="tel" x-model="newAgentMobile" maxlength="11" placeholder="01xxxxxxxxx" class="input w-full input-light rounded-xl h-14 text-center text-xl font-mono tracking-widest">
+                        <button @click="addNewAgent" class="btn btn-success text-white border-none rounded-xl h-14 px-8 shadow-lg font-black text-lg">إضافة ➕</button>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <template x-for="(agent, idx) in schoolAgents" :key="agent.mobile">
+                        <div class="bg-gradient-to-l from-slate-800 to-[#141A32] p-5 rounded-2xl border border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
+                            <div class="flex items-center gap-4 w-full md:w-auto">
+                                <div class="w-12 h-12 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center font-bold text-lg border border-emerald-500/30 overflow-hidden">
+                                    <template x-if="agent.avatar_url"><img :src="agent.avatar_url" class="w-full h-full object-cover"></template>
+                                    <template x-if="!agent.avatar_url"><span x-text="idx + 1"></span></template>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-black text-white leading-tight" x-text="agent.full_name || 'بانتظار التسجيل'"></h3>
+                                    <p class="text-emerald-400 font-mono text-sm mt-1" x-text="agent.mobile"></p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+                                <span class="badge bg-slate-700 border-none text-white px-3 py-2" x-text="agent.agent_assignment || 'بدون تكليف'"></span>
+                                <button @click="removeAgent(agent.mobile)" class="btn btn-sm btn-error btn-outline hover:bg-red-600 hover:text-white border-none" title="حذف الوكيل">🗑️</button>
+                            </div>
+                        </div>
+                    </template>
+                    <p x-show="schoolAgents.length === 0" class="text-center text-slate-500 py-8 font-bold text-lg">لا يوجد وكلاء مسجلين حالياً بالمدرسة.</p>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="currentView === 'statistics'" x-transition x-cloak>
+            <button @click="currentView = 'menu'" class="home-btn"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg> الرئيسية</button>
+            <div class="glass-panel p-6 border-t-4 border-t-cyan-500">
+                <h2 class="text-2xl font-black text-white text-center mb-8 flex justify-center items-center gap-3"><span class="text-3xl">📊</span> إحصاء المدرسة الشامل</h2>
+                <div class="space-y-6">
+                    <div class="bg-black/20 p-5 rounded-2xl border border-white/10">
+                        <h3 class="text-[#D68C29] font-black mb-4 border-b border-white/10 pb-2">المواقف الوظيفية للكادر</h3>
+                        <table class="w-full text-right text-white space-y-2 border-separate border-spacing-y-3">
+                            <tbody>
+                                <tr>
+                                    <td class="w-1/2 font-bold bg-white/5 p-3 rounded-r-xl border-r-4 border-r-[#D68C29]">موقف مدير المدرسة</td>
+                                    <td class="w-1/2 p-1 bg-white/5 rounded-l-xl">
+                                        <select x-model="school.manager_status" class="select w-full input-light bg-white text-black font-bold h-12" :disabled="currentUser?.role !== 'manager'">
+                                            <option value="" disabled selected>حدد الموقف...</option>
+                                            <option value="معين بقرار">معين بقرار</option>
+                                            <option value="مكلف">مكلف</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <template x-for="(agent, idx) in schoolAgents" :key="agent.mobile">
+                                    <tr>
+                                        <td class="w-1/2 font-bold bg-white/5 p-3 rounded-r-xl border-r-4 border-r-emerald-500" x-text="`موقف الوكيل ${idx + 1} (${agent.agent_assignment || 'بدون'})`"></td>
+                                        <td class="w-1/2 p-1 bg-white/5 rounded-l-xl">
+                                            <select x-model="agent.job_status" @change="updateAgentStatus(agent.mobile, agent.job_status)" class="select w-full input-light bg-white text-black font-bold h-12" :disabled="currentUser?.role !== 'manager'">
+                                                <option value="" disabled selected>حدد الموقف...</option>
+                                                <option value="معين بقرار">معين بقرار</option>
+                                                <option value="مكلف">مكلف</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="bg-black/20 p-5 rounded-2xl border border-white/10">
+                        <h3 class="text-[#D68C29] font-black mb-4 border-b border-white/10 pb-2">الأعداد والكثافات</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-[#141A32] p-4 rounded-xl border border-blue-500/30 text-center">
+                                <label class="text-blue-400 font-bold block mb-2">إجمالي البنين 👦</label>
+                                <input type="number" x-model="school.students_count" class="input w-full input-light h-14 text-center font-black text-xl" :disabled="currentUser?.role !== 'manager'">
+                            </div>
+                            <div class="bg-[#141A32] p-4 rounded-xl border border-pink-500/30 text-center">
+                                <label class="text-pink-400 font-bold block mb-2">إجمالي البنات 👧</label>
+                                <input type="number" x-model="school.female_students_count" class="input w-full input-light h-14 text-center font-black text-xl" :disabled="currentUser?.role !== 'manager'">
+                            </div>
+                            <div class="bg-[#141A32] p-4 rounded-xl border border-purple-500/30 text-center">
+                                <label class="text-purple-400 font-bold block mb-2">عدد الفصول 🚪</label>
+                                <input type="number" x-model="school.classrooms_count" class="input w-full input-light h-14 text-center font-black text-xl" :disabled="currentUser?.role !== 'manager'">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-show="currentUser?.role === 'manager'" class="pt-4">
+                        <button @click="exportStatsToAdmin" class="btn w-full h-16 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-black text-2xl rounded-2xl shadow-[0_10px_25px_rgba(8,145,178,0.4)] border-none">
+                            <span x-show="!sendingReport">إرسال لرئيس قسم التنسيق 📤</span>
+                            <span x-show="sendingReport" class="loading loading-spinner"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div x-show="currentView === 'requests'" x-transition x-cloak>
+            <button @click="currentView = 'menu'" class="home-btn"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg> الرئيسية</button>
+            <div class="glass-panel p-6 border-t-4 border-t-[#F5C678]">
+                <h2 class="text-2xl font-black text-white text-center mb-6">📤 رفع الإقرارات والتنسيق</h2>
+                <div class="bg-black/20 p-5 rounded-2xl border border-white/10 space-y-4">
+                    <div><label class="text-[#F5C678]">موضوع الطلب / الملاحظات</label><textarea x-model="requestForm.statement" placeholder="اكتب تفاصيل الإقرار أو الطلب هنا..." class="textarea w-full input-light h-32 rounded-xl text-lg mt-1"></textarea></div>
+                    <div><label class="text-[#F5C678]">المرفق (صورة أو PDF)</label><input type="file" @change="e => requestForm.file = e.target.files[0]" class="file-input file-input-bordered file-input-warning w-full bg-white text-black mt-1 h-14" /></div>
+                    <button @click="submitRequest" class="btn w-full btn-gold h-14 mt-4 font-black text-xl rounded-xl"><span x-show="!loading">إرسال للتنسيق 🚀</span><span x-show="loading" class="loading loading-spinner text-white"></span></button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function madrasaApp() {
+            const client = supabase.createClient('https://zjvnppqygcpccbtgebbq.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqdm5wcHF5Z2NwY2NidGdlYmJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MTE1MjgsImV4cCI6MjA4Njk4NzUyOH0.LnUKMQkfh4YWMvUxO11wAw5ZY_k52PGAeVMVOky_ts0');
+            return {
+                currentView: 'menu', isEditingForm: false, showOathModal: false, loading: false, sendingReport: false, loadingAvatar: false,
+                currentUser: null, managerData: {}, school: { manager_status: '', female_students_count: 0 }, schoolAgents: [], formData: {}, newAgentMobile: '', requestForm: { statement: '', file: null },
+                schoolMessages: [], // المتغير الخاص بالرسايل
+
+                alertModal: { show: false, type: 'success', title: '', message: '' },
+                showAlert(title, message, type = 'success') { this.alertModal = { show: true, type, title, message }; },
+                closeAlert() { this.alertModal.show = false; },
+
+                async initApp() {
+                    const uid = new URLSearchParams(window.location.search).get('uid');
+                    if (!uid) return window.location.href = 'login.html';
+                    
+                    let { data: user } = await client.from('users').select('*, schools(*)').eq('mobile', uid).single();
+                    if (!user) { localStorage.removeItem('login_mobile'); return window.location.href = 'login.html'; }
+
+                    this.currentUser = user; this.school = user.schools || {};
+                    if(this.school.female_students_count === undefined) this.school.female_students_count = 0; 
+                    
+                    let { data: mgr } = await client.from('users').select('*').eq('school_id', this.school.id).eq('role', 'manager').maybeSingle();
+                    this.managerData = mgr || {};
+                    
+                    this.fetchAgents();
+                    this.fetchSchoolMessages(); // جلب الرسايل أول ما يفتح عشان الإشعار يظهر
+                },
+
+                // الدالة الجديدة لجلب الرسايل الخاصة والعامة للمدرسة
+                async fetchSchoolMessages() {
+                    if (!this.school || !this.school.id) return;
+                    const { data } = await client.from('messages')
+                        .select('*')
+                        .or(`school_id.is.null,school_id.eq.${this.school.id}`)
+                        .order('created_at', { ascending: false });
+                    this.schoolMessages = data || [];
+                },
+
+                async fetchAgents() { let { data } = await client.from('users').select('*').eq('school_id', this.school.id).eq('role', 'agent').order('id'); this.schoolAgents = data || []; },
+                
+                openManagerView() { 
+                    this.currentView = 'manager'; 
+                    this.isEditingForm = false; 
+                    this.formData = { ...this.managerData }; 
+                    if(!this.formData.mobile) this.formData.mobile = this.currentUser.mobile; 
+                },
+                
+                openAgentProfile() {
+                    this.currentView = 'agent_profile';
+                    this.formData = { ...this.currentUser };
+                    if (!this.currentUser.full_name || this.currentUser.full_name === 'بانتظار استكمال البيانات') {
+                        this.formData.full_name = ''; this.isEditingForm = true;
+                    } else { this.isEditingForm = false; }
+                },
+                
+                calculateDates() { 
+                    let nid = this.formData.nid; 
+                    if (nid && nid.length === 14) { 
+                        let y = parseInt((nid[0] === '2' ? '19' : '20') + nid.substring(1, 3)), m = nid.substring(3, 5), d = nid.substring(5, 7); 
+                        this.formData.dob = `${y}-${m}-${d}`; this.formData.retirement_date = `${y + 60}-${m}-${d}`; 
+                    } 
+                    if (this.formData.job_assumption_date) { 
+                        let date = new Date(this.formData.job_assumption_date); date.setFullYear(date.getFullYear() + 2); 
+                        this.formData.renewal_date = date.toISOString().split('T')[0]; 
+                    } 
+                },
+
+                async uploadAvatar(e) {
+                    const file = e.target.files[0]; if(!file) return;
+                    this.loadingAvatar = true;
+                    try {
+                        const fileName = `${Date.now()}_avatar_${this.currentUser.mobile}.${file.name.split('.').pop()}`;
+                        const { error: uploadError } = await client.storage.from('avatars').upload(fileName, file);
+                        if(uploadError) throw uploadError;
+                        const { data } = client.storage.from('avatars').getPublicUrl(fileName);
+                        
+                        await client.from('users').update({ avatar_url: data.publicUrl }).eq('mobile', this.currentUser.mobile);
+                        
+                        this.currentUser.avatar_url = data.publicUrl;
+                        if(this.currentUser.role === 'manager') this.managerData.avatar_url = data.publicUrl; 
+                        else this.fetchAgents();
+                        this.formData.avatar_url = data.publicUrl; 
+                        
+                        this.showAlert('نجاح ✅', 'تم تحديث الصورة الشخصية بنجاح', 'success');
+                    } catch(err) { 
+                        console.error(err); 
+                        this.showAlert('خطأ بالرفع', 'حدث خطأ أثناء رفع الصورة، تأكد من الاتصال بالإنترنت.', 'error'); 
+                    }
+                    finally { this.loadingAvatar = false; }
+                },
+
+                validateAndShowOath() {
+                    if (!this.formData.avatar_url) {
+                        return this.showAlert('صورة مفقودة', 'عفواً، إرفاق الصورة الشخصية إلزامي لتوثيق السجل الوظيفي. يرجى رفع صورتك أولاً.', 'error');
+                    }
+                    const name = this.formData.full_name ? this.formData.full_name.trim() : '';
+                    const nameParts = name.split(/\s+/);
+                    if (nameParts.length < 4) return this.showAlert('بيانات غير صحيحة', 'يجب إدخال الاسم رباعياً على الأقل، تأكد من وجود مسافات بين الأسماء.', 'error');
+                    
+                    const nid = this.formData.nid ? this.formData.nid.trim() : '';
+                    if (nid.length !== 14 || isNaN(nid)) return this.showAlert('بيانات غير صحيحة', 'الرقم القومي يجب أن يتكون من 14 رقماً صحيحاً.', 'error');
+                    
+                    if(this.currentUser.role === 'agent' && !this.formData.agent_assignment) return this.showAlert('بيانات ناقصة', 'يرجى اختيار التكليف الخاص بك (شئون طلاب/عاملين).', 'error');
+
+                    this.showOathModal = true;
+                },
+
+                async confirmAndSave() {
+                    this.showOathModal = false;
+                    this.loading = true;
+                    
+                    const payload = { 
+                        full_name: this.formData.full_name, 
+                        nid: this.formData.nid, 
+                        dob: this.formData.dob || null, 
+                        hiring_date: this.formData.hiring_date || null, 
+                        job_assumption_date: this.formData.job_assumption_date || null, 
+                        retirement_date: this.formData.retirement_date || null, 
+                        renewal_date: this.formData.renewal_date || null,
+                        agent_assignment: this.formData.agent_assignment || null
+                    };
+
+                    const { error } = await client.from('users').update(payload).eq('mobile', this.currentUser.mobile);
+                    if (error) { this.loading = false; return this.showAlert('خطأ بالنظام', 'حدث خطأ أثناء حفظ البيانات.', 'error'); }
+                    
+                    this.currentUser = { ...this.currentUser, ...payload };
+                    if(this.currentUser.role === 'manager') { this.managerData = { ...this.currentUser }; } 
+                    else { await this.fetchAgents(); }
+                    
+                    this.loading = false; this.isEditingForm = false; 
+                    this.showAlert('تم التسجيل بنجاح ✅', 'تم حفظ بياناتك وإقرارك القانوني بالنظام.', 'success');
+                },
+
+                async addNewAgent() { 
+                    if (this.newAgentMobile.length !== 11) return this.showAlert('خطأ', 'أدخل رقم موبايل 11 رقماً.', 'error'); 
+                    this.loading = true; 
+                    const { error } = await client.from('users').insert([{ mobile: this.newAgentMobile, school_id: this.school.id, role: 'agent', pin: '0000', full_name: 'بانتظار استكمال البيانات' }]); 
+                    this.loading = false; 
+                    if (error) return this.showAlert('خطأ', 'الرقم مسجل مسبقاً في النظام.', 'error'); 
+                    this.newAgentMobile = ''; this.fetchAgents(); this.showAlert('نجاح', 'تم إضافة الوكيل.', 'success'); 
+                },
+                
+                async removeAgent(mobile) { 
+                    if (!confirm('هل أنت متأكد من حذف الوكيل؟')) return;
+                    await client.from('users').delete().eq('mobile', mobile); 
+                    this.fetchAgents(); this.showAlert('تم', 'تم الحذف.', 'success'); 
+                },
+                
+                async updateAgentStatus(mobile, status) {
+                    if (!status) return;
+                    await client.from('users').update({ job_status: status }).eq('mobile', mobile);
+                },
+
+                async submitRequest() {
+                    if (!this.requestForm.statement) return this.showAlert('تنبيه', 'يرجى كتابة موضوع الطلب', 'error');
+                    this.loading = true;
+                    let fileUrl = null;
+                    try {
+                        if (this.requestForm.file) {
+                            const file = this.requestForm.file;
+                            const fileName = `${Date.now()}_doc_${this.school.id}.${file.name.split('.').pop()}`;
+                            const { error: uploadError } = await client.storage.from('requests_files').upload(fileName, file);
+                            if(uploadError) throw uploadError;
+                            const { data } = client.storage.from('requests_files').getPublicUrl(fileName);
+                            fileUrl = data.publicUrl;
+                        }
+                        const { error } = await client.from('coordination_requests').insert([{ school_id: this.school.id, statement: this.requestForm.statement, file_url: fileUrl }]);
+                        if(error) throw error;
+                        this.showAlert('تم الإرسال', 'تم إرسال الطلب للتنسيق بنجاح! 🚀', 'success');
+                        this.requestForm.statement = ''; this.requestForm.file = null; 
+                        document.querySelector('input[type="file"]').value = '';
+                        setTimeout(() => { this.currentView = 'menu'; }, 2000);
+                    } catch (err) { this.showAlert('خطأ', 'حدث خطأ بالرفع', 'error'); }
+                    finally { this.loading = false; }
+                },
+
+                async exportStatsToAdmin() {
+                    if (!this.school.manager_status) { return this.showAlert('خطأ', 'يجب تحديد موقف مدير المدرسة أولاً.', 'error'); }
+                    this.sendingReport = true;
+                    try {
+                        await client.from('schools').update({ 
+                            classrooms_count: this.school.classrooms_count || 0, 
+                            students_count: this.school.students_count || 0,
+                            female_students_count: this.school.female_students_count || 0,
+                            manager_status: this.school.manager_status
+                        }).eq('id', this.school.id);
+
+                        let agentsText = '';
+                        if (this.schoolAgents.length > 0) {
+                            this.schoolAgents.forEach((agent, idx) => {
+                                let agentName = agent.full_name && agent.full_name !== 'بانتظار استكمال البيانات' ? agent.full_name : 'غير مسجل';
+                                let agentTask = agent.agent_assignment ? `(${agent.agent_assignment})` : '(بدون تكليف)';
+                                let agentStatus = agent.job_status || 'لم يحدد';
+                                agentsText += `👨‍🏫 الوكيل ${idx + 1} ${agentTask}: [${agentStatus}] - ${agentName}\n`;
+                            });
+                        } else { agentsText = '👨‍🏫 لا يوجد وكلاء مسجلين بالمدرسة.\n'; }
+
+                        let boys = parseInt(this.school.students_count) || 0;
+                        let girls = parseInt(this.school.female_students_count) || 0;
+                        let total = boys + girls;
+
+                        const reportText = `📊 إحصاء المدرسة الشامل
+-----------------------------------------
+🏫 مدرسة: ${this.school.name}
+-----------------------------------------
+👨‍💼 مدير المدرسة: [${this.school.manager_status}] - ${this.managerData.full_name || 'غير مسجل'}
+${agentsText}
+-----------------------------------------
+👥 الأعداد والكثافات:
+👦 عدد البنين: ${boys}
+👧 عدد البنات: ${girls}
+🎓 إجمالي الطلاب: ${total}
+🚪 عدد الفصول: ${this.school.classrooms_count || 0} فصل
+-----------------------------------------
+* تم الإرسال بواسطة: ${this.managerData.full_name || 'غير مسجل'}`;
+
+                        const { error } = await client.from('coordination_requests').insert([{ school_id: this.school.id, statement: reportText }]);
+                        if (error) throw error;
+                        this.showAlert('تم التصدير بنجاح ✅', 'تم إرسال الإحصاء والأعداد إلى رئيس قسم التنسيق.', 'success');
+                    } catch (err) { this.showAlert('خطأ', 'حدث خطأ أثناء تصدير الإحصاء.', 'error'); }
+                    this.sendingReport = false;
+                },
+
+                logout() { 
+                    localStorage.removeItem('login_mobile');
+                    localStorage.removeItem('login_pin');
+                    localStorage.removeItem('login_role');
+                    window.location.href = 'login.html'; 
+                }
+            }
+        }
+    </script>
+</body>
+</html>
