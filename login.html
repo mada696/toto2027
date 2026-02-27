@@ -1,25 +1,36 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>دخول النظام - إدارة سوهاج</title>
-    <script src="https://cdn.tailwindcss.com"></script><link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" /><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>دخول النظام - التنسيق</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #141A32; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #E8EDEB; position: relative; overflow: hidden; padding-top: 60px; padding-bottom: 5vh; }
+        body { font-family: 'Cairo', sans-serif; background-color: #141A32; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #E8EDEB; position: relative; overflow: hidden; padding-top: 60px; padding-bottom: 5vh; transition: background-color 0.4s, color 0.4s; }
         body::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(circle at 50% 50%, rgba(214, 140, 41, 0.05) 0%, rgba(11, 15, 30, 1) 100%); z-index: 0; }
-        .glass-box { background: rgba(20, 26, 50, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(214, 140, 41, 0.3); border-radius: 1.5rem; box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.5); z-index: 1; width: 90%; max-width: 380px; }
+        
+        .glass-box { background: rgba(20, 26, 50, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(214, 140, 41, 0.3); border-radius: 1.5rem; box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.5); z-index: 1; width: 90%; max-width: 380px; transition: all 0.4s; }
         .pin-box { width: 3.5rem; height: 4rem; background-color: #ffffff; color: #141A32; font-size: 1.8rem; font-weight: 900; text-align: center; border-radius: 0.75rem; border: 2px solid #cbd5e1; transition: all 0.2s; }
         .pin-box:focus { border-color: #D68C29; outline: none; box-shadow: 0 0 0 3px rgba(214, 140, 41, 0.3); transform: translateY(-2px); }
-        .input-light { background-color: #ffffff !important; color: #1e293b !important; border: 2px solid #cbd5e1; font-weight: 800; }
+        .input-light { background-color: #ffffff !important; color: #1e293b !important; border: 2px solid #cbd5e1; font-weight: 800; transition: all 0.4s; }
         .input-light:focus { border-color: #D68C29; outline: none; box-shadow: 0 0 0 3px rgba(214, 140, 41, 0.3); }
         .btn-gold { background: linear-gradient(135deg, #D68C29 0%, #B4731D 100%); border: none; color: white; transition: all 0.3s; }
         .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(214, 140, 41, 0.4); }
         
-        .role-container { background: rgba(11, 15, 30, 0.7); padding: 8px; border-radius: 1.2rem; border: 1px solid rgba(255,255,255,0.05); box-shadow: inset 0 4px 8px rgba(0,0,0,0.6); }
+        .role-container { background: rgba(11, 15, 30, 0.7); padding: 8px; border-radius: 1.2rem; border: 1px solid rgba(255,255,255,0.05); box-shadow: inset 0 4px 8px rgba(0,0,0,0.6); transition: all 0.4s; }
         .role-option { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); color: #8892B0; border: 1px solid rgba(255,255,255,0.05); background: rgba(255, 255, 255, 0.03); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .role-option.active { background: linear-gradient(135deg, #D68C29 0%, #B4731D 100%); color: white; box-shadow: 0 8px 20px rgba(214, 140, 41, 0.4), inset 0 2px 2px rgba(255,255,255,0.3); transform: translateY(-4px); border-color: transparent; }
         .role-option.inactive:hover { color: #fff; background: rgba(255,255,255,0.08); transform: translateY(-1px); }
 
-        .marquee-container { width: 100%; overflow: hidden; background: rgba(11, 15, 30, 0.95); border-bottom: 2px solid #D68C29; padding: 8px 0; position: fixed; top: 0; left: 0; z-index: 9999; display: block; direction: rtl; } .marquee-content { display: inline-block; white-space: nowrap; font-weight: 800; color: #F5C678; animation: scroll-marquee var(--marquee-speed) linear infinite var(--marquee-dir); font-size: var(--marquee-size); padding: 0 20px; } @keyframes scroll-marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100vw); } }
+        /* 🌟 إعدادات الشريط الأصلي 🌟 */
+        .marquee-container { width: 100%; overflow: hidden; background: rgba(11, 15, 30, 0.95); border-bottom: 2px solid #D68C29; padding: 8px 0; position: fixed; top: 0; left: 0; z-index: 9999; display: block; direction: rtl; transition: background 0.4s;} 
+        .marquee-content { display: inline-block; white-space: nowrap; font-weight: 800; color: #F5C678; animation: scroll-marquee var(--marquee-speed) linear infinite var(--marquee-dir); font-size: var(--marquee-size); padding: 0 20px; } 
+        @keyframes scroll-marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100vw); } }
+        .marquee-content:hover { animation-play-state: paused; cursor: pointer; }
         
         .animated-title-wrapper { position: relative; height: 40px; display: flex; justify-content: center; align-items: center; width: 100%; overflow: visible; margin-bottom: 5px;}
         .text-slide-1 { position: absolute; animation: fadeSwap1 8s infinite cubic-bezier(0.4, 0, 0.2, 1); text-shadow: 0 4px 15px rgba(245, 198, 120, 0.3); }
@@ -28,41 +39,110 @@
         @keyframes fadeSwap1 { 0%, 40% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } 48%, 92% { opacity: 0; transform: translateY(-15px) scale(0.95); filter: blur(4px); } 100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
         @keyframes fadeSwap2 { 0%, 40% { opacity: 0; transform: translateY(15px) scale(0.95); filter: blur(4px); } 48%, 92% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } 100% { opacity: 0; transform: translateY(-15px) scale(0.95); filter: blur(4px); } }
 
-        /* ---------- تصميم زر الواتساب الجديد (دائري في الأعلى) ---------- */
-        .whatsapp-floating-btn {
-            position: fixed;
-            top: 65px; /* أسفل شريط الإعلان مباشرة */
-            left: 20px; /* في الجانب الأيسر */
-            background-color: #25D366;
-            color: white;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
-            text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 500;
-            border: 2px solid rgba(255,255,255,0.2);
-        }
-        .whatsapp-floating-btn:hover {
-            transform: scale(1.1) rotate(-5deg);
-            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
-            background-color: #20BA56;
-        }
+        /* 🌟 ضبط أماكن الأزرار لمنع التداخل 🌟 */
+        .whatsapp-floating-btn { position: fixed; bottom: 30px; left: 20px; background-color: #25D366; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); text-decoration: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 500; border: 2px solid rgba(255,255,255,0.2); }
+        .whatsapp-floating-btn:hover { transform: scale(1.1) rotate(-5deg); box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6); background-color: #20BA56; }
         .whatsapp-icon { width: 28px; height: 28px; fill: currentColor; }
-        /* ----------------------------------------------------------- */
+
+        .live-badge-container { position: fixed; top: 65px; right: 20px; z-index: 500; background: rgba(20, 26, 50, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 50px; padding: 8px 16px; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); cursor: pointer; transition: all 0.3s ease; }
+        .live-badge-container:hover { transform: scale(1.05); border-color: rgba(239, 68, 68, 0.5); }
+        .pulse-dot { width: 12px; height: 12px; background-color: #ef4444; border-radius: 50%; animation: pulse-animation 2s infinite; }
+        @keyframes pulse-animation { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+
+        .theme-toggle-btn { position: fixed; top: 125px; right: 20px; z-index: 500; background: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); text-align: center; transition: all 0.3s ease; border: 2px solid #D68C29; color: #F5C678; font-size: 1.3rem;}
+        body.light-theme .theme-toggle-btn { background: #141A32; border-color: #cbd5e1; color: #b45309; }
+        .theme-toggle-btn:hover { transform: scale(1.1); }
+
+        .live-toast { position: fixed; bottom: 30px; right: 20px; z-index: 999999; background: linear-gradient(135deg, rgba(16, 185, 129, 0.95) 0%, rgba(5, 150, 105, 0.95) 100%); backdrop-filter: blur(10px); border: 1px solid #34D399; color: white; padding: 15px 25px; border-radius: 1rem; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4); display: flex; align-items: center; gap: 15px; transform: translateX(150%); opacity: 0; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        .live-toast.show { transform: translateX(0); opacity: 1; }
+        .toast-icon { font-size: 2rem; animation: bounce-icon 2s infinite; }
+        @keyframes bounce-icon { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } 60% { transform: translateY(-5px); } }
+
+        .welcome-toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-150%); opacity: 0; transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.6s ease; background: rgba(20, 26, 50, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(214, 140, 41, 0.5); border-radius: 1.2rem; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), inset 0 2px 5px rgba(255,255,255,0.1); z-index: 999999; width: 90%; max-width: 380px; padding: 15px; }
+        @keyframes shake-toast { 0% { transform: translateX(-50%) translateY(0) rotate(0deg); } 20% { transform: translateX(calc(-50% - 5px)) translateY(0) rotate(-2deg); } 40% { transform: translateX(calc(-50% + 5px)) translateY(0) rotate(2deg); } 60% { transform: translateX(calc(-50% - 5px)) translateY(0) rotate(-2deg); } 80% { transform: translateX(calc(-50% + 5px)) translateY(0) rotate(2deg); } 100% { transform: translateX(-50%) translateY(0) rotate(0deg); } }
+        .welcome-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; animation: shake-toast 0.4s ease-in-out 0.4s; }
+        
+        .pulse-text { animation: text-glow 2s infinite alternate; }
+        @keyframes text-glow { 0% { text-shadow: 0 0 5px rgba(245, 198, 120, 0.5); } 100% { text-shadow: 0 0 20px rgba(245, 198, 120, 1), 0 0 30px rgba(214, 140, 41, 0.8); } }
+
+        @keyframes pulse-thumb { 0% { box-shadow: 0 0 0 0 rgba(214, 140, 41, 0.6); } 70% { box-shadow: 0 0 0 15px rgba(214, 140, 41, 0); } 100% { box-shadow: 0 0 0 0 rgba(214, 140, 41, 0); } }
+        .thumb-pulse { animation: pulse-thumb 2s infinite; }
+
+        /* =========================================
+           🌟 إعدادات الألوان لكبار السن (الوضع النهاري) 🌟
+           ========================================= */
+        body.light-theme { background-color: #f1f5f9; color: #0f172a; }
+        body.light-theme::before { background-image: none; }
+        body.light-theme .glass-box { background: rgba(255, 255, 255, 0.95); border-color: #cbd5e1; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); }
+        body.light-theme .role-container { background: #f8fafc; border-color: #e2e8f0; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
+        body.light-theme .role-option { color: #64748b; border-color: transparent; }
+        body.light-theme .role-option.inactive:hover { background: #e2e8f0; color: #0f172a; }
+        body.light-theme .text-white\/80 { color: #475569 !important; font-weight: 900; }
+        body.light-theme .text-slate-300 { color: #334155 !important; font-weight: 900; }
+        body.light-theme .bg-black\/40 { background-color: #f8fafc !important; border-color: #cbd5e1 !important; }
+        body.light-theme .text-slate-400 { color: #475569 !important; }
+        body.light-theme .marquee-container { background: #ffffff; border-bottom: 2px solid #cbd5e1; }
+        body.light-theme .marquee-content { color: #b45309; text-shadow: none; }
+        body.light-theme .animated-title-wrapper h1.text-\[\#F5C678\] { color: #b45309; text-shadow: none; }
+        body.light-theme .animated-title-wrapper h1.text-\[\#D68C29\] { color: #0f172a; text-shadow: none; }
+        body.light-theme .live-badge-container { background: #ffffff; border-color: #cbd5e1; color: #0f172a; }
+        body.light-theme .live-badge-container span.text-white { color: #0f172a !important; }
+        body.light-theme .live-badge-container span.bg-red-500 { color: #ffffff !important; }
+        body.light-theme .welcome-toast { background: #ffffff; border-color: #cbd5e1; box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+        body.light-theme .welcome-toast p.text-slate-300 { color: #475569; }
+        body.light-theme .welcome-toast span.text-\[\#F5C678\] { color: #b45309; }
+        body.light-theme .welcome-toast .bg-black\/40 { background-color: #f8fafc; border-color: #cbd5e1; }
+        body.light-theme .welcome-toast span.text-white { color: #b45309; text-shadow: none; animation: none;}
+        body.light-theme .bg-\[\#141A32\] { background-color: #ffffff !important; border-color: #cbd5e1 !important; }
+        body.light-theme .bg-\[\#141A32\] .text-white { color: #0f172a !important; }
+        body.light-theme .bg-\[\#141A32\] label.text-white { color: #0f172a !important; font-weight: bold;}
 
         [x-cloak] { display: none !important; }
     </style>
 </head>
 <body x-data="loginApp()" x-init="initData()" :style="`--marquee-speed: ${marquee.speed}s; --marquee-dir: ${marquee.direction}; --marquee-size: ${marquee.size};`">
     
+    <div class="marquee-container shadow-lg" x-show="marquee.text !== ''" x-transition>
+        <button @click="showPinModal = true" class="absolute right-2 top-1/2 transform -translate-y-1/2 z-50 bg-[#141A32]/80 hover:bg-[#D68C29] border border-[#D68C29]/50 p-1.5 rounded-lg text-lg transition-all duration-300" title="إعدادات الإعلان">⚙️</button>
+        <div class="marquee-content" x-text="marquee.text"></div>
+    </div>
+
+    <audio id="liveSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+
+    <div class="live-badge-container" title="النظام متصل لحظياً بقاعدة البيانات">
+        <div class="pulse-dot"></div>
+        <span class="font-black text-white tracking-widest text-sm">LIVE</span>
+        <span x-show="liveCounter > 0" x-transition x-cloak class="bg-red-500 text-white text-xs font-black px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.8)]" x-text="liveCounter"></span>
+    </div>
+
+    <button @click="toggleTheme()" class="theme-toggle-btn" title="تغيير الإضاءة (نهار/ليل)">
+        <span x-show="!isLightMode">☀️</span>
+        <span x-show="isLightMode" x-cloak>🌙</span>
+    </button>
+
+    <div :class="`welcome-toast ${showWelcomeToast ? 'show' : ''}`">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-[#D68C29] to-[#B4731D] rounded-full flex items-center justify-center text-2xl shadow-lg shrink-0 animate-bounce">👋</div>
+            <div class="text-right flex-1">
+                <p class="text-sm font-bold text-slate-300 m-0 leading-tight">مرحباً بك، رقمك مسجل لأول مرة:</p>
+                <p class="text-[#F5C678] tracking-widest font-mono font-black text-lg mb-2" x-text="welcomeMobile"></p>
+                <div class="bg-black/40 border border-white/10 rounded-lg p-2 text-center">
+                    <span class="text-xs text-slate-400 block mb-1">كود المرور الافتراضي:</span>
+                    <span class="text-2xl font-black text-white tracking-[0.3em] pulse-text">0000</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div :class="`live-toast ${showLiveToast ? 'show' : ''}`">
+        <div class="toast-icon">🚀</div>
+        <div>
+            <p class="font-black text-lg leading-tight" x-text="liveToastTitle"></p>
+            <p class="text-sm font-bold text-emerald-100" x-text="liveToastMsg"></p>
+        </div>
+    </div>
+
     <div x-show="alertModal.show" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" x-cloak x-transition><div class="bg-white w-full max-w-sm p-8 rounded-3xl shadow-2xl text-center transform transition-all border-t-8" :class="alertModal.type === 'success' ? 'border-green-500' : 'border-red-500'"><div class="text-6xl mb-4" x-text="alertModal.type === 'success' ? '✅' : '⚠️'"></div><h3 class="text-2xl font-black text-slate-800 mb-2" x-text="alertModal.title"></h3><p class="text-slate-600 font-bold mb-6 text-sm" x-text="alertModal.message"></p><button @click="closeAlert()" :class="`btn w-full text-white font-black text-lg h-12 rounded-xl border-none ${alertModal.type === 'success' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'}`">حسناً</button></div></div>
-    
-    <div class="marquee-container shadow-lg" x-show="marquee.text !== ''"><button @click="showPinModal = true" class="absolute right-2 top-1/2 transform -translate-y-1/2 z-50 bg-[#141A32]/80 hover:bg-[#D68C29] border border-[#D68C29]/50 p-1.5 rounded-lg text-lg transition-all duration-300">⚙️</button><div class="marquee-content" x-text="marquee.text"></div></div>
     
     <a href="https://wa.me/201030302005" target="_blank" class="whatsapp-floating-btn" title="الدعم الفني">
         <svg class="whatsapp-icon" viewBox="0 0 24 24"><path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984a9.964 9.964 0 001.333 4.993L2 22l5.233-1.237a9.994 9.994 0 004.779 1.217h.004c5.505 0 9.988-4.478 9.989-9.984 0-2.669-1.037-5.176-2.926-7.066A9.924 9.924 0 0012.012 2zm0 16.852h-.003a8.318 8.318 0 01-4.244-1.157l-.304-.18-3.15.745.84-3.074-.197-.314A8.291 8.291 0 013.684 11.98c.002-4.582 3.738-8.313 8.33-8.314 2.222 0 4.312.865 5.88 2.436a8.315 8.315 0 012.436 5.886c-.001 4.583-3.738 8.315-8.318 8.316zm4.567-6.236c-.25-.125-1.482-.733-1.713-.816-.23-.084-.399-.125-.567.125-.168.25-.65.816-.798.983-.149.167-.298.188-.548.063-.25-.125-1.057-.39-2.015-1.196-.745-.626-1.25-1.4-1.398-1.65-.148-.25-.016-.385.11-.51.112-.11.25-.292.373-.438.125-.146.167-.25.25-.417.084-.167.042-.313-.021-.438-.063-.125-.567-1.366-.777-1.87-.204-.492-.412-.425-.567-.433l-.485-.008c-.168 0-.441.063-.672.313-.23.25-.882.861-.882 2.1 0 1.238.903 2.434 1.028 2.6.125.167 1.77 2.7 4.285 3.733.599.245 1.067.391 1.433.5.602.192 1.15.165 1.583.1.484-.074 1.482-.606 1.692-1.193.21-.587.21-1.088.148-1.193-.063-.104-.23-.166-.48-.291z"></path></svg>
@@ -71,13 +151,13 @@
     <div class="mb-4 text-center z-10 mt-2">
         <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center p-2 border-2 border-[#D68C29] mx-auto mb-4 shadow-lg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Coat_of_arms_of_Egypt_%28Official%29.svg/1200px-Coat_of_arms_of_Egypt_%28Official%29.svg.png" class="w-full h-full object-contain"></div>
         <div class="animated-title-wrapper w-full px-2">
-            <h1 class="text-2xl md:text-3xl font-black text-[#F5C678] text-slide-1 whitespace-nowrap">إدارة سوهاج التعليمية</h1>
+            <h1 class="text-2xl md:text-3xl font-black text-[#F5C678] text-slide-1 whitespace-nowrap">الاستاذ محمود العمدة</h1>
             <h1 class="text-xl md:text-2xl font-black text-[#D68C29] text-slide-2 whitespace-nowrap">تنسيق التعليم الإعدادي والثانوي</h1>
         </div>
     </div>
     
     <div class="glass-box p-6 md:p-8 text-center border-t-8 border-[#D68C29]" x-show="!showSetupModal">
-        <div class="flex gap-2 mb-6 role-container">
+        <div class="flex gap-2 mb-4 role-container">
             <label :class="`cursor-pointer flex-1 py-3 rounded-lg flex items-center justify-center role-option ${role === 'manager' ? 'active' : 'inactive'}`"><input type="radio" value="manager" x-model="role" class="hidden"><span class="font-black text-lg">مدير</span></label>
             <label :class="`cursor-pointer flex-1 py-3 rounded-lg flex items-center justify-center role-option ${role === 'agent' ? 'active' : 'inactive'}`"><input type="radio" value="agent" x-model="role" class="hidden"><span class="font-black text-lg">وكيل</span></label>
             <label :class="`cursor-pointer flex-1 py-3 rounded-lg flex items-center justify-center role-option ${role === 'admin' ? 'active' : 'inactive'}`"><input type="radio" value="admin" x-model="role" class="hidden"><span class="font-black text-lg">مسئول</span></label>
@@ -86,32 +166,77 @@
         <div class="space-y-4">
             <div class="text-right">
                 <label class="text-xs font-bold text-white/80 block mb-1">رقم الموبايل</label>
-                <input type="tel" x-model="mobile" @input="mobile = mobile.replace(/[^0-9]/g, '')" maxlength="11" dir="ltr" class="input w-full input-light h-12 text-center text-xl tracking-widest font-mono" placeholder="01xxxxxxxxx" autocomplete="off" data-lpignore="true">
+                <input type="tel" x-model="mobile" @input="checkMobileLength" maxlength="11" dir="ltr" class="input w-full input-light h-12 text-center text-xl tracking-widest font-mono" placeholder="01xxxxxxxxx" autocomplete="off" data-lpignore="true">
             </div>
             
-            <div class="text-right" x-show="role !== 'agent'" x-transition>
-                <label class="text-xs font-bold text-white/80 block mb-1">كود المرور</label>
-                <div class="flex justify-center gap-2 md:gap-3" dir="ltr" id="pin-container">
-                    <input type="tel" maxlength="1" class="pin-box" @input="autoTab" @keydown.backspace="autoBack" autocomplete="off" data-lpignore="true">
-                    <input type="tel" maxlength="1" class="pin-box" @input="autoTab" @keydown.backspace="autoBack" autocomplete="off" data-lpignore="true">
-                    <input type="tel" maxlength="1" class="pin-box" @input="autoTab" @keydown.backspace="autoBack" autocomplete="off" data-lpignore="true">
-                    <input type="tel" maxlength="1" class="pin-box" @input="handleLast" @keydown.backspace="autoBack" autocomplete="off" data-lpignore="true">
+            <div class="transition-all duration-500 ease-in-out overflow-hidden" :class="role !== 'agent' ? 'max-h-[120px] opacity-100' : 'max-h-0 opacity-0'">
+                <div class="text-right pb-1">
+                    <label class="text-xs font-bold text-white/80 block mb-1">كود المرور</label>
+                    <div class="flex justify-center gap-2 md:gap-3" dir="ltr" id="pin-container">
+                        <input type="tel" maxlength="1" class="pin-box" @input="autoTab" @keydown.backspace="autoBack" autocomplete="off" data-lpignore="true">
+                        <input type="tel" maxlength="1" class="pin-box" @input="autoTab" @keydown.backspace="autoBack" autocomplete="off" data-lpignore="true">
+                        <input type="tel" maxlength="1" class="pin-box" @input="autoTab" @keydown.backspace="autoBack" autocomplete="off" data-lpignore="true">
+                        <input type="tel" maxlength="1" class="pin-box" @input="handleLast" @keydown.backspace="autoBack" autocomplete="off" data-lpignore="true">
+                    </div>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2 pt-1 pb-1 justify-start">
+            <div class="flex items-center gap-2 pt-1 pb-2 justify-start">
                 <input type="checkbox" id="rememberMe" x-model="rememberMe" class="checkbox checkbox-sm border-[#D68C29] checked:border-[#D68C29] [--chkbg:#D68C29] [--chkfg:white] rounded" />
                 <label for="rememberMe" class="text-sm text-slate-300 font-bold cursor-pointer select-none">تذكر بيانات الدخول</label>
             </div>
             
-            <button @click="handleLogin" class="btn w-full h-14 btn-gold font-black text-xl rounded-xl shadow-lg mt-2">
-                <span x-show="!loading">دخول النظام 🔐</span>
-                <span x-show="loading" class="loading loading-spinner text-white"></span>
-            </button>
+            <div class="relative w-full h-14 bg-black/40 rounded-xl border border-white/10 shadow-inner flex items-center justify-center overflow-hidden touch-none" x-ref="swipeTrack">
+                <span class="text-slate-400 font-bold text-lg pointer-events-none transition-opacity duration-300" :class="(sliderX > 50 || loading) ? 'opacity-0' : 'opacity-100'">اسحب للدخول ⟵</span>
+                
+                <div class="absolute top-0 right-0 h-full bg-gradient-to-r from-transparent to-[#D68C29]/30 pointer-events-none" :style="`width: ${sliderX + 56}px; transition: ${isDragging ? 'none' : 'width 0.3s ease'};`"></div>
+                
+                <div class="absolute top-1 right-1 w-12 h-12 bg-gradient-to-bl from-[#D68C29] to-[#B4731D] rounded-lg flex items-center justify-center cursor-grab shadow-lg z-20"
+                     :class="(isDragging ? 'cursor-grabbing scale-105 ' : '') + (!loading && !isDragging && sliderX === 0 ? 'thumb-pulse' : '')"
+                     :style="`transform: translateX(-${sliderX}px); transition: ${isDragging ? 'none' : 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'};`"
+                     @mousedown="startDrag" @touchstart.passive="startDrag"
+                     @mousemove.window="onDrag" @touchmove.window="onDrag"
+                     @mouseup.window="endDrag" @touchend.window="endDrag">
+                    
+                    <svg x-show="!loading" class="w-6 h-6 text-white pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>
+                    <span x-show="loading" class="loading loading-spinner loading-sm text-white pointer-events-none" x-cloak></span>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div x-show="showSetupModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"><div class="bg-white w-full max-w-md p-8 rounded-3xl shadow-2xl border-t-8 border-t-blue-600"><h3 class="text-2xl font-black text-slate-800 text-center mb-2">تفعيل الحساب</h3><p class="text-slate-500 text-center font-bold mb-6 text-sm">يرجى تأكيد بيانات الدخول</p><div class="space-y-4"><template x-if="setupType === 'manager'"><div class="contents"><div><label class="block text-sm text-slate-700 font-bold mb-1">المرحلة</label><select x-model="setup.stage" class="select w-full input-light"><option value="إعدادي">إعدادي</option><option value="ثانوي">ثانوي</option></select></div><div><label class="block text-sm text-slate-700 font-bold mb-1">المدرسة</label><select x-model="setup.schoolId" class="select w-full input-light"><option value="">-- اختر مدرستك --</option><template x-for="s in filteredSchools" :key="s.id"><option :value="s.id" x-text="s.name"></option></template></select></div></div></template><div class="bg-red-50 p-4 rounded-xl border border-red-200 mt-4"><label class="block text-sm text-red-700 font-bold mb-1 text-center">كود مرور جديد (إجباري)</label><input type="password" x-model="setup.newPin" maxlength="4" class="input w-full input-light border-red-300 h-14 text-center tracking-widest text-2xl" placeholder="4 أرقام" autocomplete="new-password"></div><button @click="saveSetup" class="btn w-full h-14 bg-blue-600 hover:bg-blue-700 text-white font-black text-xl rounded-xl mt-4"><span x-show="!loading">تفعيل وخروج ✅</span><span x-show="loading" class="loading loading-spinner"></span></button><button @click="showSetupModal = false; loading = false;" class="btn w-full btn-ghost text-slate-500 mt-2">إلغاء</button></div></div></div>
+    <div x-show="showSetupModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="bg-white w-full max-w-md p-8 rounded-3xl shadow-2xl border-t-8 border-t-blue-600">
+            <h3 class="text-2xl font-black text-slate-800 text-center mb-2">تفعيل الحساب</h3>
+            <p class="text-slate-500 text-center font-bold mb-6 text-sm">يرجى تأكيد بيانات الدخول</p>
+            <div class="space-y-4">
+                <template x-if="setupType === 'manager'">
+                    <div class="contents">
+                        <div>
+                            <label class="block text-sm text-slate-700 font-bold mb-1">المرحلة</label>
+                            <select x-model="setup.stage" class="select w-full input-light"><option value="إعدادي">إعدادي</option><option value="ثانوي">ثانوي</option></select>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-slate-700 font-bold mb-1">المدرسة</label>
+                            <select x-model="setup.schoolId" class="select w-full input-light">
+                                <option value="">-- اختر مدرستك --</option>
+                                <template x-for="s in filteredSchools" :key="s.id"><option :value="s.id" x-text="s.name"></option></template>
+                            </select>
+                        </div>
+                    </div>
+                </template>
+                <div class="bg-red-50 p-4 rounded-xl border border-red-200 mt-4">
+                    <label class="block text-sm text-red-700 font-bold mb-1 text-center">كود مرور جديد (إجباري)</label>
+                    <input type="password" x-model="setup.newPin" maxlength="4" class="input w-full input-light border-red-300 h-14 text-center tracking-widest text-2xl" placeholder="4 أرقام" autocomplete="new-password">
+                </div>
+                <button @click="saveSetup" class="btn w-full h-14 bg-blue-600 hover:bg-blue-700 text-white font-black text-xl rounded-xl mt-4">
+                    <span x-show="!loading">تفعيل وخروج ✅</span>
+                    <span x-show="loading" class="loading loading-spinner"></span>
+                </button>
+                <button @click="showSetupModal = false; loading = false; resetSlider();" class="btn w-full btn-ghost text-slate-500 mt-2">إلغاء</button>
+            </div>
+        </div>
+    </div>
     
     <div x-show="showPinModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4" x-cloak><div class="bg-[#141A32] w-full max-w-sm p-6 rounded-3xl text-center border-t-8 border-[#D68C29]"><h3 class="text-xl font-black text-white mb-4">🔐 كود المسئول للتحكم</h3><input type="password" x-model="adminPinInput" maxlength="4" class="input w-full input-light text-center text-2xl font-black h-14 mb-4"><div class="flex gap-2"><button @click="verifyPin" class="btn flex-1 btn-gold font-black h-12 rounded-xl">تحقق</button><button @click="showPinModal = false; adminPinInput = ''" class="btn bg-slate-700 text-white border-none h-12 rounded-xl">إلغاء</button></div></div></div>
     
@@ -121,46 +246,103 @@
         function loginApp() {
             const client = supabase.createClient('https://zjvnppqygcpccbtgebbq.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqdm5wcHF5Z2NwY2NidGdlYmJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MTE1MjgsImV4cCI6MjA4Njk4NzUyOH0.LnUKMQkfh4YWMvUxO11wAw5ZY_k52PGAeVMVOky_ts0');
             return {
-                role: 'manager', mobile: '', loading: false, showSetupModal: false, setupType: '', schoolsList: [], setup: { stage: 'إعدادي', schoolId: '', newPin: '' }, marquee: { text: '', speed: '15', direction: 'normal', size: '1.2rem' }, showPinModal: false, showSettingsModal: false, adminPinInput: '', rememberMe: false,
+                role: 'manager', mobile: '', loading: false, showSetupModal: false, setupType: '', schoolsList: [], setup: { stage: 'إعدادي', schoolId: '', newPin: '' }, 
+                marquee: { text: '', speed: '15', direction: 'normal', size: '1.2rem' }, 
+                showPinModal: false, showSettingsModal: false, adminPinInput: '', rememberMe: false,
                 
+                liveCounter: 0, showLiveToast: false, liveToastTitle: '', liveToastMsg: '',
+                sliderX: 0, isDragging: false, startX: 0, maxTrack: 0,
+
+                showWelcomeToast: false, welcomeMobile: '', lastCheckedMobile: '',
+                isLightMode: localStorage.getItem('theme') === 'light',
+
                 alertModal: { show: false, type: 'success', title: '', message: '', action: null }, showAlert(title, message, type = 'success', action = null) { this.alertModal = { show: true, type, title, message, action }; }, closeAlert() { this.alertModal.show = false; if (this.alertModal.action) this.alertModal.action(); },
                 
                 async initData() { 
+                    if (this.isLightMode) document.body.classList.add('light-theme');
                     this.fetchMarqueeSettings(); 
                     let { data } = await client.from('schools').select('id, name, type').order('name'); 
                     if(data) this.schoolsList = data; 
                     this.loadSavedCredentials();
+                    this.setupRealtimeListener();
                 },
                 
-                loadSavedCredentials() {
-                    const savedMobile = localStorage.getItem('login_mobile');
-                    const savedPin = localStorage.getItem('login_pin');
-                    const savedRole = localStorage.getItem('login_role');
-                    if (savedMobile) {
-                        this.mobile = savedMobile;
-                        if (savedRole) this.role = savedRole;
-                        this.rememberMe = true;
-                        if (this.role !== 'agent' && savedPin) {
-                            setTimeout(() => {
-                                const pinBoxes = document.querySelectorAll('.pin-box');
-                                for (let i = 0; i < savedPin.length; i++) {
-                                    if(pinBoxes[i]) pinBoxes[i].value = savedPin[i];
-                                }
-                            }, 100); 
+                toggleTheme() {
+                    this.isLightMode = !this.isLightMode;
+                    localStorage.setItem('theme', this.isLightMode ? 'light' : 'dark');
+                    if (this.isLightMode) { document.body.classList.add('light-theme'); } else { document.body.classList.remove('light-theme'); }
+                },
+
+                async checkMobileLength() {
+                    this.mobile = this.mobile.replace(/[^0-9]/g, '');
+                    if (this.mobile.length === 11 && this.role === 'manager' && this.mobile !== this.lastCheckedMobile) {
+                        this.lastCheckedMobile = this.mobile; 
+                        let { data: user } = await client.from('users').select('pin').eq('mobile', this.mobile).maybeSingle();
+                        if (!user || user.pin === '0000' || !user.pin) {
+                            this.welcomeMobile = this.mobile;
+                            this.showWelcomeToast = true;
+                            if (navigator.vibrate) { navigator.vibrate([150, 50, 150]); }
+                            try { let sound = document.getElementById('liveSound'); sound.volume = 0.5; sound.currentTime = 0; sound.play(); } catch(e) {}
+                            setTimeout(() => { this.showWelcomeToast = false; }, 6000);
                         }
                     }
                 },
 
-                handleRememberMe(finalPin) {
-                    if (this.rememberMe) {
-                        localStorage.setItem('login_mobile', this.mobile);
-                        localStorage.setItem('login_pin', finalPin || '0000');
-                        localStorage.setItem('login_role', this.role);
+                startDrag(e) {
+                    if (this.loading) return;
+                    this.isDragging = true;
+                    this.startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                    const trackWidth = this.$refs.swipeTrack.offsetWidth;
+                    this.maxTrack = trackWidth - 56; 
+                },
+                onDrag(e) {
+                    if (!this.isDragging) return;
+                    let currentX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                    let diff = this.startX - currentX; 
+                    if (diff < 0) diff = 0;
+                    if (diff > this.maxTrack) diff = this.maxTrack;
+                    this.sliderX = diff;
+                },
+                endDrag() {
+                    if (!this.isDragging) return;
+                    this.isDragging = false;
+                    if (this.sliderX >= this.maxTrack * 0.9) {
+                        this.sliderX = this.maxTrack;
+                        this.handleLogin(); 
                     } else {
-                        localStorage.removeItem('login_mobile');
-                        localStorage.removeItem('login_pin');
-                        localStorage.removeItem('login_role');
+                        this.sliderX = 0; 
                     }
+                },
+                resetSlider() { setTimeout(() => { this.sliderX = 0; }, 400); },
+                
+                setupRealtimeListener() {
+                    client.channel('login-live-channel')
+                    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'users' }, payload => {
+                        if (payload.new.role === 'manager' && payload.new.pin !== '0000') { this.triggerLiveEvent('تسجيل مدير جديد', 'مدرسة قامت بتفعيل حسابها الآن!'); }
+                    })
+                    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'users' }, payload => {
+                        if (payload.new.role === 'manager' && payload.new.pin !== '0000') { this.triggerLiveEvent('تسجيل مدير جديد', 'مدرسة قامت بتفعيل حسابها الآن!'); }
+                    })
+                    .subscribe();
+                },
+
+                triggerLiveEvent(title, msg) {
+                    this.liveCounter++; this.liveToastTitle = title; this.liveToastMsg = msg; this.showLiveToast = true;
+                    try { let sound = document.getElementById('liveSound'); sound.volume = 0.7; sound.currentTime = 0; sound.play(); } catch(e) {}
+                    setTimeout(() => { this.showLiveToast = false; }, 5000);
+                },
+
+                loadSavedCredentials() {
+                    const savedMobile = localStorage.getItem('login_mobile'); const savedPin = localStorage.getItem('login_pin'); const savedRole = localStorage.getItem('login_role');
+                    if (savedMobile) {
+                        this.mobile = savedMobile; if (savedRole) this.role = savedRole; this.rememberMe = true;
+                        if (this.role !== 'agent' && savedPin) { setTimeout(() => { const pinBoxes = document.querySelectorAll('.pin-box'); for (let i = 0; i < savedPin.length; i++) { if(pinBoxes[i]) pinBoxes[i].value = savedPin[i]; } }, 100); }
+                    }
+                },
+
+                handleRememberMe(finalPin) {
+                    if (this.rememberMe) { localStorage.setItem('login_mobile', this.mobile); localStorage.setItem('login_pin', finalPin || '0000'); localStorage.setItem('login_role', this.role);
+                    } else { localStorage.removeItem('login_mobile'); localStorage.removeItem('login_pin'); localStorage.removeItem('login_role'); }
                 },
 
                 async fetchMarqueeSettings() { let { data } = await client.from('settings').select('*').eq('id', 1).maybeSingle(); if (data && data.marquee_text) { this.marquee.text = data.marquee_text; this.marquee.speed = data.marquee_speed || '15'; this.marquee.direction = data.marquee_direction || 'normal'; this.marquee.size = data.marquee_size || '1.2rem'; } },
@@ -168,93 +350,51 @@
                 async saveMarqueeSettings() { await client.from('settings').upsert({ id: 1, marquee_text: this.marquee.text, marquee_speed: this.marquee.speed, marquee_direction: this.marquee.direction, marquee_size: this.marquee.size }); this.showAlert('تم الحفظ', 'تم التحديث بنجاح', 'success'); this.showSettingsModal = false; },
                 get filteredSchools() { return this.schoolsList.filter(s => s.type === this.setup.stage); },
                 autoTab(e) { e.target.value = e.target.value.replace(/[^0-9]/g, ''); if (e.target.value && e.target.nextElementSibling) e.target.nextElementSibling.focus(); }, 
-                
-                handleLast(e) { 
-                    this.autoTab(e); 
-                    const fullPin = this.getPin();
-                    if (fullPin.length === 4 && this.mobile.length === 11 && this.role !== 'agent') { 
-                        e.target.blur(); 
-                        this.handleLogin(); 
-                    } 
-                }, 
-                
+                handleLast(e) { this.autoTab(e); const fullPin = this.getPin(); if (fullPin.length === 4 && this.mobile.length === 11 && this.role !== 'agent') { e.target.blur(); } }, 
                 autoBack(e) { if (!e.target.value && e.target.previousElementSibling) e.target.previousElementSibling.focus(); }, getPin() { return Array.from(document.querySelectorAll('.pin-box')).map(i => i.value).join(''); },
                 
                 async handleLogin() {
-                    if (!this.mobile) return this.showAlert('تنبيه', 'برجاء إدخال رقم الموبايل', 'error');
-                    if (this.mobile.length !== 11) return this.showAlert('تنبيه', 'عذراً، رقم الموبايل يجب أن يتكون من 11 رقماً', 'error');
+                    if (!this.mobile) { this.resetSlider(); return this.showAlert('تنبيه', 'برجاء إدخال رقم الموبايل', 'error'); }
+                    if (this.mobile.length !== 11) { this.resetSlider(); return this.showAlert('تنبيه', 'عذراً، رقم الموبايل يجب أن يتكون من 11 رقماً', 'error'); }
                     
                     this.loading = true;
-
                     if (this.role === 'agent') {
                         let { data: user, error } = await client.from('users').select('*').eq('mobile', this.mobile).eq('role', 'agent').maybeSingle();
                         this.loading = false;
-                        
-                        if (error || !user) {
-                            localStorage.removeItem('login_mobile');
-                            localStorage.removeItem('login_role');
-                            return this.showAlert('الرقم غير مسجل', 'عذراً، هذا الرقم غير مسجل كوكيل بالنظام. يرجى مراجعة مدير المدرسة لإضافة رقمك أولاً.', 'error');
-                        }
-                        
-                        this.handleRememberMe('');
-                        window.location.href = `madrasa.html?uid=${this.mobile}`;
-                        return;
+                        if (error || !user) { localStorage.removeItem('login_mobile'); localStorage.removeItem('login_role'); this.resetSlider(); return this.showAlert('الرقم غير مسجل', 'عذراً، هذا الرقم غير مسجل كوكيل بالنظام.', 'error'); }
+                        this.handleRememberMe(''); window.location.href = `madrasa.html?uid=${this.mobile}`; return;
                     }
 
                     const finalPin = this.getPin(); 
-                    if (finalPin.length !== 4) { this.loading = false; return this.showAlert('تنبيه', 'برجاء إكمال كود المرور (4 أرقام)', 'error'); }
+                    if (finalPin.length !== 4) { this.loading = false; this.resetSlider(); return this.showAlert('تنبيه', 'برجاء إكمال كود المرور (4 أرقام)', 'error'); }
                     
                     if (this.role === 'admin') { 
-                        if (finalPin === '5555') {
-                            this.handleRememberMe(finalPin); 
-                            window.location.href = 'admin_dashboard.html'; 
-                        } else {
-                            this.showAlert('خطأ', 'كود المسئول خطأ', 'error'); 
-                        }
+                        if (finalPin === '5555') { this.handleRememberMe(finalPin); window.location.href = 'admin_dashboard.html'; } else { this.resetSlider(); this.showAlert('خطأ', 'كود المسئول خطأ', 'error'); }
                         this.loading = false; return; 
                     }
                     
                     let { data: user, error: mgrError } = await client.from('users').select('*').eq('mobile', this.mobile).maybeSingle();
 
                     if (finalPin === '0000' && this.role === 'manager') { 
-                        if (user && user.pin && user.pin !== '0000') { 
-                            this.loading = false; 
-                            return this.showAlert('تنبيه', 'الحساب مفعل، أدخل كودك الشخصي ولا تستخدم 0000', 'error'); 
-                        } else { 
-                            this.loading = false; 
-                            this.setupType = 'manager'; 
-                            this.showSetupModal = true; 
-                            return; 
-                        } 
+                        if (user && user.pin && user.pin !== '0000') { this.loading = false; this.resetSlider(); return this.showAlert('تنبيه', 'الحساب مفعل، أدخل كودك الشخصي ولا تستخدم 0000', 'error'); } 
+                        else { this.loading = false; this.resetSlider(); this.setupType = 'manager'; this.showSetupModal = true; return; } 
                     }
                     
-                    if (mgrError || !user) {
-                        localStorage.removeItem('login_mobile');
-                        localStorage.removeItem('login_pin');
-                        this.loading = false; 
-                        return this.showAlert('خطأ', 'الرقم غير مسجل بالنظام', 'error'); 
-                    }
+                    if (mgrError || !user) { localStorage.removeItem('login_mobile'); localStorage.removeItem('login_pin'); this.loading = false; this.resetSlider(); return this.showAlert('خطأ', 'الرقم غير مسجل بالنظام', 'error'); }
 
                     let isPinCorrect = (user.pin === finalPin);
                     if (!isPinCorrect && this.role === 'manager' && user.school_id) { 
                         let { data: school } = await client.from('schools').select('manager_pin').eq('id', user.school_id).maybeSingle(); 
-                        if (school && school.manager_pin === finalPin) { 
-                            isPinCorrect = true; 
-                            await client.from('users').update({ pin: finalPin }).eq('mobile', this.mobile); 
-                        } 
+                        if (school && school.manager_pin === finalPin) { isPinCorrect = true; await client.from('users').update({ pin: finalPin }).eq('mobile', this.mobile); } 
                     }
                     
-                    if (!isPinCorrect || user.role !== this.role) { 
-                        this.showAlert('خطأ', 'بيانات الدخول غير صحيحة', 'error'); 
-                        this.loading = false; return; 
-                    }
+                    if (!isPinCorrect || user.role !== this.role) { this.showAlert('خطأ', 'بيانات الدخول غير صحيحة', 'error'); this.loading = false; this.resetSlider(); return; }
                     
-                    this.handleRememberMe(finalPin);
-                    window.location.href = `madrasa.html?uid=${this.mobile}`;
+                    this.handleRememberMe(finalPin); window.location.href = `madrasa.html?uid=${this.mobile}`;
                 },
                 
                 async saveSetup() {
-                    if (!this.setup.newPin || this.setup.newPin === '0000') return this.showAlert('تنبيه', 'اكتب كود جديد غير 0000', 'error');
+                    if (!this.setup.newPin || this.setup.newPin.length !== 4 || this.setup.newPin === '0000') { return this.showAlert('تنبيه', 'برجاء كتابة كود مكون من 4 أرقام (لا تستخدم 0000)', 'error'); }
                     this.loading = true; let dbError = null;
                     if (this.setupType === 'manager') {
                         if (!this.setup.schoolId) { this.loading = false; return this.showAlert('تنبيه', 'اختر المدرسة', 'error'); }
