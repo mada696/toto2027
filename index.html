@@ -6,21 +6,30 @@
     <title>إدارة سوهاج التعليمية</title>
     
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#141A32">
+    <meta name="theme-color" content="#080B14">
     <link rel="apple-touch-icon" href="icon-192.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
+        /* 🌟 الثيم الأساسي (Dark Gold) المعزز 🌟 */
         body { 
-            background: linear-gradient(135deg, #141A32 0%, #0B0F1E 100%);
+            background-color: #080B14; 
             font-family: 'Cairo', sans-serif; 
-            height: 100vh; 
+            min-height: 100vh; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             overflow: hidden; color: #E8EDEB; position: relative;
+            transition: background-color 0.5s, color 0.5s;
+        }
+        
+        body::before { 
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background-image: radial-gradient(circle at 50% 50%, rgba(214, 140, 41, 0.15) 0%, rgba(8, 11, 20, 1) 80%); 
+            z-index: 0; 
         }
 
-        /* تأثير النجوم في الخلفية العامة */
+        /* تأثير النجوم في الخلفية العامة (الثابتة) */
         body::after {
             content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             background-image: 
@@ -29,17 +38,22 @@
             background-size: 80px 80px, 120px 120px;
             animation: splashStars 15s linear infinite; opacity: 0.6; pointer-events: none; z-index: 0;
         }
-
         @keyframes splashStars { 0% { transform: translateY(0) translateX(0); } 100% { transform: translateY(-50px) translateX(-20px); } }
+
+        /* 🌟 النجوم الديناميكية الحية 🌟 */
+        .stars-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: hidden; }
+        .star-dynamic { position: absolute; background: #F5C678; border-radius: 50%; box-shadow: 0 0 10px #D68C29, 0 0 20px #F5C678; animation: twinkle var(--twinkle-dur) ease-in-out infinite alternate var(--twinkle-del), float var(--float-dur) linear infinite var(--float-del); }
+        @keyframes twinkle { 0% { opacity: 0.1; transform: scale(0.5); } 100% { opacity: 1; transform: scale(1.5); box-shadow: 0 0 15px #F5C678, 0 0 30px #ffffff; } }
+        @keyframes float { 0% { transform: translate(0, 0); } 33% { transform: translate(15px, -15px); } 66% { transform: translate(-10px, 10px); } 100% { transform: translate(0, 0); } }
 
         /* الصندوق الزجاجي الكبير */
         .glass-box { 
-            background: rgba(20, 26, 50, 0.8); backdrop-filter: blur(15px); 
-            border: 1px solid rgba(214, 140, 41, 0.3); border-radius: 25px; 
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5); z-index: 10; position: relative;
+            background: rgba(15, 20, 35, 0.6); backdrop-filter: blur(16px); 
+            border: 1px solid rgba(245, 198, 120, 0.3); border-radius: 25px; 
+            box-shadow: 0 30px 60px -10px rgba(0,0,0,0.8), inset 0 2px 10px rgba(245, 198, 120, 0.1); 
+            z-index: 10; position: relative;
             animation: fadeIn 0.8s ease-out;
         }
-
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
         .gold-text-gradient { 
@@ -58,68 +72,56 @@
         }
 
         /* تعديل الاسم بخط الرقعة */
-        .ruqaa-text {
-            font-family: 'Aref Ruqaa', serif;
-            font-size: 1.5rem; 
-            font-weight: 700;
-            line-height: 1.3;
-        }
+        .ruqaa-text { font-family: 'Aref Ruqaa', serif; font-size: 1.5rem; font-weight: 700; line-height: 1.3; }
 
-        /* تأثير النجوم المتلألئة حول الاسم */
-        .sparkle-container { position: relative; display: inline-block; margin-top: 5px; }
+        /* 🌟 زر السحب الأنيق (Swipe Button) 🌟 */
+        .swipe-track { position: relative; width: 100%; height: 65px; background: rgba(0, 0, 0, 0.5); border-radius: 50px; border: 1px solid rgba(245, 198, 120, 0.2); box-shadow: inset 0 5px 15px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; overflow: hidden; touch-action: none; margin-top: 25px; }
+        .swipe-text { font-size: 1.1rem; font-weight: 900; color: #8892B0; letter-spacing: 1px; pointer-events: none; transition: opacity 0.3s; z-index: 2; }
+        .swipe-progress { position: absolute; top: 0; right: 0; height: 100%; background: linear-gradient(to left, rgba(214, 140, 41, 0.8), transparent); pointer-events: none; z-index: 1; border-radius: 50px;}
+        .swipe-thumb { position: absolute; top: 4px; right: 4px; width: 55px; height: 55px; background: linear-gradient(135deg, #F5C678 0%, #B4731D 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: grab; box-shadow: 0 4px 15px rgba(214, 140, 41, 0.6); z-index: 10; border: 2px solid #fff; }
+        .swipe-thumb.grabbing { cursor: grabbing; transform: scale(1.05); }
+        .swipe-thumb svg { width: 24px; height: 24px; color: #141A32; pointer-events: none; }
         
-        .star {
-            position: absolute; color: #F5C678;
-            opacity: 0; animation: twinkle 2s infinite ease-in-out; pointer-events: none;
-            text-shadow: 0 0 15px #F5C678, 0 0 5px #D68C29;
-        }
+        @keyframes pulse-thumb { 0% { box-shadow: 0 0 0 0 rgba(245, 198, 120, 0.6); } 70% { box-shadow: 0 0 0 15px rgba(245, 198, 120, 0); } 100% { box-shadow: 0 0 0 0 rgba(245, 198, 120, 0); } }
+        .thumb-pulse { animation: pulse-thumb 2s infinite; }
 
-        @keyframes twinkle {
-            0% { opacity: 0.2; transform: scale(0.6) rotate(0deg); }
-            50% { opacity: 1; transform: scale(1.3) rotate(15deg); }
-            100% { opacity: 0.2; transform: scale(0.6) rotate(0deg); }
-        }
-
-        .s1 { top: -10px; left: 5%; font-size: 1.2rem; animation-delay: 0.5s; }
-        .s2 { bottom: -6px; right: 6%; font-size: 1.4rem; animation-delay: 1.2s; }
-        .s3 { top: 38%; left: -20px; font-size: 1.1rem; animation-delay: 0.8s; }
-        .s4 { top: 12%; right: -15px; font-size: 1.3rem; animation-delay: 1.5s; }
-        .s5 { bottom: 12%; left: 22%; font-size: 0.9rem; animation-delay: 0.2s; }
-
-        /* زر الدخول الذهبي */
-        .btn-gold { 
-            background: linear-gradient(135deg, #D68C29 0%, #B4731D 100%); color: white; border: none; 
-            box-shadow: 0 10px 20px rgba(180, 115, 29, 0.3); transition: all 0.3s ease;
-        }
-        .btn-gold:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(214, 140, 41, 0.5); color: #141A32; }
+        /* 🌟 زر الإضاءة 🌟 */
+        .theme-toggle-btn { position: fixed; top: 30px; right: 30px; z-index: 500; background: rgba(20, 26, 50, 0.8); backdrop-filter: blur(10px); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.4); border: 2px solid #D68C29; color: #F5C678; font-size: 1.5rem; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;}
+        .theme-toggle-btn:hover { transform: scale(1.1) rotate(15deg); background: #D68C29; color: #141A32; }
 
         /* ---------- زر التثبيت الدائم (مخفي افتراضياً) ---------- */
-        .install-btn-fixed {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background: linear-gradient(135deg, #2563eb 0%, #0891b2 100%);
-            color: white;
-            font-weight: 900;
-            padding: 10px 20px;
-            border-radius: 15px;
-            display: none; /* مخفي بشكل افتراضي لمنع أي إزعاج */
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            z-index: 99999;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .install-btn-fixed:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.6);
-        }
+        .install-btn-fixed { position: fixed; top: 30px; left: 30px; background: linear-gradient(135deg, #2563eb 0%, #0891b2 100%); color: white; font-weight: 900; padding: 10px 20px; border-radius: 15px; display: none; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); border: 1px solid rgba(255, 255, 255, 0.2); z-index: 99999; cursor: pointer; transition: all 0.3s ease; }
+        .install-btn-fixed:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 8px 25px rgba(37, 99, 235, 0.6); }
 
+        /* 🌟 الوضع النهاري (Light Mode) 🌟 */
+        body.light-theme { background-color: #f1f5f9; color: #0f172a; }
+        body.light-theme::before { background-image: radial-gradient(circle at 50% 50%, rgba(214, 140, 41, 0.1) 0%, rgba(241, 245, 249, 1) 80%); }
+        body.light-theme::after { opacity: 0.2; }
+        body.light-theme .glass-box { background: rgba(255, 255, 255, 0.85); border-color: #cbd5e1; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1); }
+        body.light-theme .theme-toggle-btn { background: #ffffff; border-color: #cbd5e1; color: #b45309; }
+        body.light-theme .theme-toggle-btn:hover { background: #f8fafc; transform: scale(1.1) rotate(15deg); }
+        body.light-theme .star-dynamic { background: #b45309; box-shadow: 0 0 10px #D68C29; opacity: 0.5; }
+        body.light-theme .text-slate-400 { color: #475569 !important; }
+        body.light-theme .text-white { color: #0f172a !important; }
+        body.light-theme .name-box { background: rgba(255, 255, 255, 0.5); border-color: #cbd5e1; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        body.light-theme .swipe-track { background: #e2e8f0; border-color: #cbd5e1; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
+        body.light-theme .swipe-text { color: #475569; }
+
+        [x-cloak] { display: none !important; }
     </style>
 </head>
-<body>
+<body x-data="landingApp()" x-init="initApp()">
+
+    <div class="stars-container">
+        <template x-for="star in stars" :key="star.id">
+            <div class="star-dynamic" :style="`left: ${star.left}; top: ${star.top}; width: ${star.size}; height: ${star.size}; --twinkle-dur: ${star.twinkleDur}; --twinkle-del: ${star.twinkleDel}; --float-dur: ${star.floatDur}; --float-del: ${star.floatDel};`"></div>
+        </template>
+    </div>
+
+    <button @click="toggleTheme()" class="theme-toggle-btn" title="تغيير الإضاءة (نهار/ليل)">
+        <span x-show="!isLightMode">☀️</span>
+        <span x-show="isLightMode" x-cloak>🌙</span>
+    </button>
 
     <button id="forceInstallBtn" class="install-btn-fixed">
         <span class="text-xl">📱</span>
@@ -127,28 +129,37 @@
     </button>
 
     <div class="glass-box p-8 md:p-10 text-center w-[90%] max-w-md border-t-8 border-[#D68C29]">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Coat_of_arms_of_Egypt_%28Official%29.svg/1200px-Coat_of_arms_of_Egypt_%28Official%29.svg.png" class="w-24 mx-auto mb-4 drop-shadow-2xl">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Coat_of_arms_of_Egypt_%28Official%29.svg/1200px-Coat_of_arms_of_Egypt_%28Official%29.svg.png" class="w-24 mx-auto mb-4 drop-shadow-2xl relative z-20">
         
-        <h3 class="text-slate-400 text-xs font-bold tracking-[0.2em] mb-1 uppercase">جمهورية مصر العربية</h3>
-        <h2 class="text-white text-[13px] font-bold mb-2">مديرية التربية والتعليم بسوهاج</h2>
+        <div class="relative z-20 space-y-1">
+            <h3 class="text-slate-400 text-xs font-bold tracking-[0.2em] uppercase">جمهورية مصر العربية</h3>
+            <h2 class="text-white text-[13px] font-bold mb-2">مديرية التربية والتعليم بسوهاج</h2>
+            <h1 class="text-xl gold-text-gradient mb-6 border-b border-[#D68C29]/30 pb-3 inline-block">إدارة سوهاج التعليمية</h1>
+        </div>
         
-        <h1 class="text-xl gold-text-gradient mb-8 border-b border-[#D68C29]/30 pb-3 inline-block">إدارة سوهاج التعليمية</h1>
-        
-        <div class="space-y-4 mb-8">
+        <div class="space-y-4 mb-6 relative z-20">
             <p class="text-slate-400 text-[11px] font-bold uppercase tracking-widest">رئيس قسم تنسيق الإعدادي والثانوي</p>
-            
-            <div class="sparkle-container">
-                <div class="star s1">✨</div><div class="star s2">✨</div><div class="star s3">✨</div><div class="star s4">✨</div><div class="star s5">✨</div>
-                
-                <div class="name-box">
-                    <h2 class="ruqaa-text gold-text-gradient py-1 relative z-10 drop-shadow-md">أ/ محمود العمدة</h2>
-                </div>
+            <div class="name-box">
+                <h2 class="ruqaa-text gold-text-gradient py-1 drop-shadow-md">أ/ محمود العمدة</h2>
             </div>
         </div>
 
-        <a href="login.html" class="flex items-center justify-center w-full h-14 mt-6 text-2xl btn-gold font-black rounded-2xl shadow-xl">
-            دخول النظام 🔐
-        </a>
+        <div class="swipe-track relative z-20" x-ref="swipeTrack">
+            <span class="swipe-text" :class="(sliderX > 50 || loading) ? 'opacity-0' : 'opacity-100'">اسحب لدخول النظام ⟵</span>
+            <div class="swipe-progress" :style="`width: ${sliderX + 60}px; transition: ${isDragging ? 'none' : 'width 0.4s ease'};`"></div>
+            <div class="swipe-thumb"
+                 :class="(isDragging ? 'grabbing ' : '') + (!loading && !isDragging && sliderX === 0 ? 'thumb-pulse' : '')"
+                 :style="`transform: translateX(-${sliderX}px); transition: ${isDragging ? 'none' : 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'};`"
+                 @mousedown="startDrag" @touchstart.passive="startDrag"
+                 @mousemove.window="onDrag" @touchmove.window="onDrag"
+                 @mouseup.window="endDrag" @touchend.window="endDrag">
+                
+                <svg x-show="!loading" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>
+                <span x-show="loading" class="loading loading-spinner text-[#141A32]" x-cloak></span>
+            </div>
+        </div>
+        
+        <p x-show="loading" x-transition.opacity class="text-[#F5C678] font-bold text-sm mt-3 animate-pulse" :class="isLightMode ? '!text-[#b45309]' : ''" x-cloak>⏳ جاري تهيئة النظام...</p>
     </div>
 
     <footer class="mt-6 text-slate-500 text-[10px] font-bold relative z-10">
@@ -156,7 +167,78 @@
     </footer>
 
     <script>
-        // تسجيل الـ Service Worker
+        function landingApp() {
+            return {
+                isLightMode: localStorage.getItem('theme') === 'light',
+                loading: false,
+                sliderX: 0, isDragging: false, startX: 0, maxTrack: 0,
+                stars: [],
+
+                initApp() {
+                    if (this.isLightMode) document.body.classList.add('light-theme');
+                    this.generateStars();
+                },
+
+                toggleTheme() {
+                    this.isLightMode = !this.isLightMode;
+                    localStorage.setItem('theme', this.isLightMode ? 'light' : 'dark');
+                    if (this.isLightMode) document.body.classList.add('light-theme');
+                    else document.body.classList.remove('light-theme');
+                },
+
+                generateStars() {
+                    const starsCount = window.innerWidth > 768 ? 40 : 20; 
+                    for(let i = 0; i < starsCount; i++) {
+                        this.stars.push({
+                            id: i,
+                            left: Math.random() * 100 + '%',
+                            top: Math.random() * 100 + '%',
+                            size: (Math.random() * 3 + 1) + 'px',
+                            twinkleDel: Math.random() * 5 + 's',
+                            twinkleDur: (Math.random() * 3 + 1.5) + 's',
+                            floatDel: Math.random() * 5 + 's',
+                            floatDur: (Math.random() * 10 + 10) + 's',
+                        });
+                    }
+                },
+
+                // 🌟 دوال زر السحب (Swipe Logic) 🌟
+                startDrag(e) {
+                    if (this.loading) return; 
+                    this.isDragging = true;
+                    this.startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                    const trackWidth = this.$refs.swipeTrack.offsetWidth;
+                    this.maxTrack = trackWidth - 65; 
+                },
+                onDrag(e) {
+                    if (!this.isDragging || this.loading) return;
+                    let currentX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                    let diff = this.startX - currentX; 
+                    if (diff < 0) diff = 0;
+                    if (diff > this.maxTrack) diff = this.maxTrack;
+                    this.sliderX = diff;
+                },
+                endDrag() {
+                    if (!this.isDragging || this.loading) return;
+                    this.isDragging = false;
+                    
+                    if (this.sliderX >= this.maxTrack * 0.85) {
+                        this.sliderX = this.maxTrack; 
+                        this.loading = true; 
+                        if (navigator.vibrate) { navigator.vibrate(50); } // هزة خفيفة للموبايل
+                        
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 800);
+                        
+                    } else {
+                        this.sliderX = 0; 
+                    }
+                }
+            }
+        }
+
+        // PWA Script
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js').then(reg => {
@@ -164,35 +246,21 @@
                 }).catch(err => console.log('Service Worker Error', err));
             });
         }
-
         let deferredPrompt;
         const forceInstallBtn = document.getElementById('forceInstallBtn');
-
-        // المتصفح بيبعت الحدث ده لو كل شروط الـ PWA متوفرة (سيرفر + صور + Manifest)
         window.addEventListener('beforeinstallprompt', (e) => {
-            // نمنع ظهور رسالة التثبيت التلقائية
             e.preventDefault();
-            // نحفظ الحدث
             deferredPrompt = e;
-            // نظهر زرارنا إحنا فقط لو التثبيت متاح
             forceInstallBtn.style.display = 'flex';
         });
-
-        // لما المستخدم يدوس على زر التثبيت
         forceInstallBtn.addEventListener('click', async () => {
             if (deferredPrompt) {
-                // نطلع شاشة التثبيت الرسمية بتاعة الموبايل
                 deferredPrompt.prompt();
                 const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    console.log('تم قبول التثبيت');
-                    forceInstallBtn.style.display = 'none'; 
-                }
+                if (outcome === 'accepted') { forceInstallBtn.style.display = 'none'; }
                 deferredPrompt = null;
             }
         });
-
-        // لو التطبيق متثبت أصلاً، نخفي الزرار للأبد
         window.addEventListener('appinstalled', () => {
             forceInstallBtn.style.display = 'none';
         });
