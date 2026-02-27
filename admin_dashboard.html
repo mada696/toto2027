@@ -1,14 +1,22 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>لوحة القيادة المركزية - التنسيق</title>
-    <script src="https://cdn.tailwindcss.com"></script><link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>لوحة القيادة المركزية - التنسيق</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #0B0F1E; min-height: 100vh; color: #E8EDEB; overflow-x: hidden; padding-bottom: 20px; transition: background-color 0.3s, color 0.3s;}
+        html, body { max-width: 100vw; overflow-x: hidden; }
+        body { font-family: 'Cairo', sans-serif; background-color: #0B0F1E; min-height: 100vh; color: #E8EDEB; padding-bottom: 20px; transition: background-color 0.3s, color 0.3s;}
         [x-cloak] { display: none !important; }
+        
         .glass-panel { background: rgba(20, 26, 50, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(214, 140, 41, 0.3); border-radius: 1.5rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
         .btn-gold { background: linear-gradient(135deg, #D68C29 0%, #B4731D 100%); color: white; border: none; transition: all 0.3s ease; }
         .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(214, 140, 41, 0.4); color: #141A32; }
@@ -24,10 +32,7 @@
         .input-light { background-color: #ffffff !important; color: #1e293b !important; border: 2px solid #cbd5e1; font-weight: 800; }
         .input-light:focus { border-color: #D68C29; outline: none; box-shadow: 0 0 0 3px rgba(214, 140, 41, 0.3); }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; } .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; } .custom-scrollbar::-webkit-scrollbar-thumb { background: #D68C29; border-radius: 10px; }
-        #report-container { background-color: #141A32; padding: 20px; border-radius: 20px; }
-        .school-card { background: linear-gradient(145deg, rgba(30,41,59,1), rgba(15,23,42,1)); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-bottom: 20px; }
-        .avatar-img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #D68C29; background-color: white; }
-
+        
         body.light-theme { background-color: #f1f5f9; color: #0f172a; }
         .light-theme .glass-panel, .light-theme .bg-\[\#141A32\], .light-theme .bg-\[\#0B0F1E\], .light-theme .bg-\[\#141A32\]\/50, .light-theme .bg-\[\#141A32\]\/95, .light-theme .bg-gradient-to-b, .light-theme .bg-gradient-to-l { background: #ffffff !important; border-color: #cbd5e1 !important; box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important; }
         .light-theme .text-white { color: #0f172a !important; } .light-theme .text-slate-400, .light-theme .text-slate-300 { color: #475569 !important; font-weight: 700;}
@@ -37,7 +42,7 @@
         .light-theme .active-school { background: #f0fdf4 !important; border: 2px solid #16a34a !important; box-shadow: none !important;} .light-theme .inactive-school { background: #ffffff !important; border: 1px solid #cbd5e1 !important; opacity: 1 !important;}
         .light-theme .tab-inactive { color: #64748b !important; } .light-theme .tab-inactive:hover { background: #f1f5f9 !important; color: #0f172a !important; }
         .light-theme .text-\[\#F5C678\] { color: #b45309 !important; font-weight: 900 !important;} .light-theme .pin-display { color: #b45309 !important; text-shadow: none !important; font-weight: 900;}
-        .light-theme .text-emerald-400 { color: #059669 !important; } .light-theme .text-yellow-400, .light-theme .text-yellow-300 { color: #b45309 !important; } .light-theme .text-blue-300, .light-theme .text-blue-400 { color: #2563eb !important; } .light-theme .text-cyan-400 { color: #0891b2 !important; } .light-theme .text-red-400 { color: #dc2626 !important; }
+        .light-theme .text-emerald-400 { color: #059669 !important; } .light-theme .text-yellow-400, .light-theme .text-yellow-300, .light-theme .text-yellow-200 { color: #b45309 !important; } .light-theme .text-blue-300, .light-theme .text-blue-400 { color: #2563eb !important; } .light-theme .text-cyan-400 { color: #0891b2 !important; } .light-theme .text-red-400 { color: #dc2626 !important; }
         .light-theme .bg-slate-700\/50, .light-theme .bg-slate-700, .light-theme .bg-slate-800 { background-color: #e2e8f0 !important; color: #1e293b !important; }
 
         .live-toast-container { position: fixed; bottom: 30px; right: 20px; z-index: 999999; transform: translateX(150%); transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -47,6 +52,8 @@
         
         .log-item { border-right: 2px solid rgba(255,255,255,0.1); position: relative; padding-right: 20px; margin-bottom: 20px; } .light-theme .log-item { border-right: 2px solid rgba(0,0,0,0.1); }
         .log-icon { position: absolute; right: -17px; top: 0; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+
+        #report-container { display: none !important; }
     </style>
 </head>
 <body x-data="adminApp()" x-init="initApp()">
@@ -56,157 +63,180 @@
     </div>
     <audio id="liveSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
-    <div x-show="alertModal.show" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" x-cloak x-transition><div class="bg-white w-full max-w-sm p-8 rounded-3xl shadow-2xl text-center border-t-8" :class="alertModal.type === 'success' ? 'border-green-500' : 'border-red-500'"><div class="text-6xl mb-4" x-text="alertModal.type === 'success' ? '✅' : '⚠️'"></div><h3 class="text-2xl font-black text-slate-800 mb-2" x-text="alertModal.title"></h3><p class="text-slate-600 font-bold mb-6 text-sm" x-text="alertModal.message"></p><button @click="closeAlert()" :class="`btn w-full text-white font-black text-lg h-12 rounded-xl border-none ${alertModal.type === 'success' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'}`">حسناً</button></div></div>
-    <div x-show="confirmModal.show" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" x-cloak x-transition><div class="bg-[#141A32] w-full max-w-sm p-8 rounded-3xl shadow-2xl text-center border-t-8 border-yellow-500"><div class="text-6xl mb-4">🤔</div><h3 class="text-2xl font-black text-white mb-2" x-text="confirmModal.title"></h3><p class="text-slate-400 font-bold mb-6 text-sm" x-text="confirmModal.message"></p><div class="flex gap-3 mt-6"><button @click="executeConfirm()" class="btn flex-1 bg-yellow-600 hover:bg-yellow-700 text-white font-black text-lg h-12 rounded-xl border-none">نعم، متأكد</button><button @click="closeConfirm()" class="btn flex-1 bg-slate-700 hover:bg-slate-600 text-white font-black text-lg h-12 rounded-xl border-none">إلغاء</button></div></div></div>
-
-    <div class="w-full p-4 flex flex-wrap justify-between items-center bg-[#141A32]/95 backdrop-blur sticky top-0 z-50 border-b border-[#D68C29]/50 shadow-lg gap-2">
-        <div class="flex items-center gap-3"><div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-[#D68C29] to-[#B4731D] rounded-full flex items-center justify-center text-xl md:text-2xl shadow-[0_0_15px_rgba(214,140,41,0.5)]">👑</div><div><div class="flex items-center gap-2"><h1 class="text-lg md:text-xl font-black text-[#F5C678]">لوحة القيادة المركزية</h1><div class="flex items-center gap-1.5 bg-red-500/20 border border-red-500 rounded-full px-2 py-0.5" title="الاستقبال اللحظي مفعل"><div class="w-2 h-2 bg-red-500 rounded-full pulse-live"></div><span class="text-red-400 font-bold text-[10px] tracking-wider">LIVE</span><span x-show="liveCounter > 0" class="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full" x-text="liveCounter" x-cloak></span></div></div></div></div>
-        <div class="flex items-center gap-2">
-            <button @click="toggleTheme()" class="btn btn-sm btn-circle btn-ghost text-xl" :title="isLightMode ? 'الوضع الليلي' : 'الوضع النهاري'"><span x-show="!isLightMode">☀️</span><span x-show="isLightMode" x-cloak>🌙</span></button>
-            <button @click="clearBrowserCache" class="btn btn-sm btn-warning text-black font-bold shadow-[0_0_10px_rgba(250,204,21,0.3)]">تحديث 🔄</button><button @click="logout" class="btn btn-sm btn-error text-white font-bold">خروج 🚪</button>
+    <div x-show="showAddSchoolModal" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" x-cloak x-transition>
+        <div class="bg-[#141A32] w-full max-w-sm p-6 rounded-3xl border-t-8 border-green-500 shadow-2xl text-center">
+            <h3 class="text-xl font-black text-white mb-4">إضافة مدرسة جديدة</h3>
+            <div class="space-y-4">
+                <input type="text" x-model="newSchool.name" placeholder="اكتب اسم المدرسة..." class="input w-full input-light h-12 text-center font-bold">
+                <select x-model="newSchool.type" class="select w-full input-light h-12 font-bold text-center">
+                    <option value="إعدادي">إعدادي</option>
+                    <option value="ثانوي">ثانوي</option>
+                    <option value="خاصة">خاصة</option>
+                </select>
+                <div class="flex gap-2 mt-4">
+                    <button @click="addNewSchool()" class="btn flex-1 btn-success text-white border-none font-bold">إضافة ➕</button>
+                    <button @click="showAddSchoolModal = false" class="btn flex-1 bg-slate-700 text-white border-none font-bold">إلغاء</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="container mx-auto p-4 md:p-6 min-h-[85vh]">
-        <div class="flex flex-wrap gap-2 mb-8 bg-[#141A32] p-2 rounded-2xl border border-white/10 shadow-lg">
-            <button @click="activeTab = 'schools'; schoolView = 'grid'" :class="`flex-1 py-3 px-2 md:px-4 rounded-xl transition-all text-sm md:text-base ${activeTab === 'schools' ? 'tab-active' : 'tab-inactive'}`">🏫 المدارس</button>
-            <button @click="activeTab = 'requests'; fetchRequests()" :class="`flex-1 py-3 px-2 md:px-4 rounded-xl transition-all relative text-sm md:text-base ${activeTab === 'requests' ? 'tab-active' : 'tab-inactive'}`">📥 الطلبات <span x-show="requests.length > 0" class="absolute top-2 right-2 bg-red-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full animate-pulse border border-white" x-text="requests.length"></span></button>
-            <button @click="activeTab = 'messages'; fetchMessages()" :class="`flex-1 py-3 px-2 md:px-4 rounded-xl transition-all text-sm md:text-base ${activeTab === 'messages' ? 'tab-active' : 'tab-inactive'}`">✉️ المراسلات</button>
-            <button @click="activeTab = 'logs'" :class="`flex-1 py-3 px-2 md:px-4 rounded-xl transition-all text-sm md:text-base ${activeTab === 'logs' ? 'tab-active' : 'tab-inactive'}`">⏱️ سجل النشاط</button>
-            <button @click="activeTab = 'settings'; fetchMarqueeSettings()" :class="`flex-1 py-3 px-2 md:px-4 rounded-xl transition-all text-sm md:text-base hidden md:block ${activeTab === 'settings' ? 'tab-active' : 'tab-inactive'}`">⚙️ الإعدادات</button>
+    <div x-show="alertModal.show" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" x-cloak x-transition><div class="bg-white w-full max-w-sm p-8 rounded-3xl shadow-2xl text-center border-t-8" :class="alertModal.type === 'success' ? 'border-green-500' : 'border-red-500'"><div class="text-6xl mb-4" x-text="alertModal.type === 'success' ? '✅' : '⚠️'"></div><h3 class="text-2xl font-black text-slate-800 mb-2" x-text="alertModal.title"></h3><p class="text-slate-600 font-bold mb-6 text-sm" x-text="alertModal.message"></p><button @click="closeAlert()" :class="`btn w-full text-white font-black text-lg h-12 rounded-xl border-none ${alertModal.type === 'success' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'}`">حسناً</button></div></div>
+    
+    <div x-show="confirmModal.show" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" x-cloak x-transition>
+        <div class="bg-[#141A32] w-full max-w-sm p-8 rounded-3xl shadow-2xl text-center border-t-8 border-yellow-500">
+            <div class="text-6xl mb-4">🤔</div>
+            <h3 class="text-xl md:text-2xl font-black text-white mb-2" x-text="confirmModal.title"></h3>
+            <p class="text-slate-400 font-bold mb-6 text-xs md:text-sm" x-text="confirmModal.message"></p>
+            <div class="flex gap-3 mt-6">
+                <button @click.prevent="executeConfirm()" class="btn flex-1 bg-yellow-600 hover:bg-yellow-700 text-white font-black text-base h-12 rounded-xl border-none">متأكد</button>
+                <button @click.prevent="closeConfirm()" class="btn flex-1 bg-slate-700 hover:bg-slate-600 text-white font-black text-base h-12 rounded-xl border-none">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full p-3 md:p-4 flex flex-col md:flex-row justify-between items-center bg-[#141A32]/95 backdrop-blur sticky top-0 z-50 border-b border-[#D68C29]/50 shadow-lg gap-3">
+        <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+            <div class="w-12 h-12 bg-gradient-to-br from-[#D68C29] to-[#B4731D] rounded-full flex items-center justify-center text-2xl shadow-[0_0_15px_rgba(214,140,41,0.5)]">👑</div>
+            <div class="text-center sm:text-right">
+                <h1 class="text-lg md:text-xl font-black text-[#F5C678] mb-1">لوحة القيادة المركزية</h1>
+                <div class="flex items-center justify-center sm:justify-start gap-1.5 bg-red-500/20 border border-red-500 rounded-full px-2 py-0.5 inline-flex" title="الاستقبال اللحظي مفعل">
+                    <div class="w-2 h-2 bg-red-500 rounded-full pulse-live"></div>
+                    <span class="text-red-400 font-bold text-[10px] tracking-wider">LIVE</span>
+                    <span x-show="liveCounter > 0" class="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full" x-text="liveCounter" x-cloak></span>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto mt-2 md:mt-0">
+            <button @click="toggleTheme()" class="btn btn-sm btn-circle btn-ghost text-xl" :title="isLightMode ? 'الوضع الليلي' : 'الوضع النهاري'"><span x-show="!isLightMode">☀️</span><span x-show="isLightMode" x-cloak>🌙</span></button>
+            <button @click="clearBrowserCache" class="btn btn-sm btn-warning text-black font-bold shadow-[0_0_10px_rgba(250,204,21,0.3)]">تحديث 🔄</button>
+            <button @click="logout" class="btn btn-sm btn-error text-white font-bold">خروج 🚪</button>
+        </div>
+    </div>
+
+    <div class="container mx-auto p-3 md:p-6 min-h-[85vh]">
+        <div class="flex flex-wrap gap-2 mb-6 md:mb-8 bg-[#141A32] p-2 rounded-2xl border border-white/10 shadow-lg justify-center">
+            <button @click="activeTab = 'schools'; schoolView = 'grid'" :class="`w-[48%] md:flex-1 py-2 md:py-3 px-2 rounded-xl transition-all text-sm md:text-base ${activeTab === 'schools' ? 'tab-active' : 'tab-inactive'}`">🏫 المدارس</button>
+            <button @click="activeTab = 'requests'; fetchRequests()" :class="`w-[48%] md:flex-1 py-2 md:py-3 px-2 rounded-xl transition-all relative text-sm md:text-base ${activeTab === 'requests' ? 'tab-active' : 'tab-inactive'}`">📥 الطلبات <span x-show="requests.length > 0" class="absolute top-1 right-1 bg-red-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full animate-pulse border border-white" x-text="requests.length"></span></button>
+            <button @click="activeTab = 'messages'; fetchMessages()" :class="`w-[48%] md:flex-1 py-2 md:py-3 px-2 rounded-xl transition-all text-sm md:text-base ${activeTab === 'messages' ? 'tab-active' : 'tab-inactive'}`">✉️ المراسلات</button>
+            <button @click="activeTab = 'logs'" :class="`w-[48%] md:flex-1 py-2 md:py-3 px-2 rounded-xl transition-all text-sm md:text-base ${activeTab === 'logs' ? 'tab-active' : 'tab-inactive'}`">⏱️ السجل</button>
+            <button @click="activeTab = 'settings'; fetchMarqueeSettings()" :class="`w-full md:flex-1 py-2 md:py-3 px-2 rounded-xl transition-all text-sm md:text-base ${activeTab === 'settings' ? 'tab-active' : 'tab-inactive'}`">⚙️ الإعدادات</button>
         </div>
 
         <div x-show="activeTab === 'schools'" x-transition x-cloak>
             <div x-show="schoolView === 'grid'" x-transition>
-                <div class="flex flex-col lg:flex-row justify-between items-center mb-8 gap-4 bg-[#141A32]/50 p-4 rounded-2xl border border-white/5">
-                    <div class="flex flex-wrap justify-center gap-2">
-                        <div class="badge badge-lg bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500 py-3" x-text="`مكتملة: ${schools.filter(s => s.type === selectedStage && s.has_manager && !s.is_pending).length}`"></div>
-                        <div class="badge badge-lg bg-yellow-500/20 text-yellow-400 font-bold border border-yellow-500 py-3" x-text="`ناقصة: ${schools.filter(s => s.type === selectedStage && s.is_pending).length}`"></div>
-                        <div class="badge badge-lg bg-slate-700/50 text-slate-300 font-bold border border-slate-600 py-3" x-text="`غير مفعلة: ${schools.filter(s => s.type === selectedStage && !s.has_manager).length}`"></div>
+                
+                <div class="flex flex-col lg:flex-row justify-between items-center mb-6 gap-4 bg-[#141A32]/50 p-4 rounded-2xl border border-white/5">
+                    
+                    <div class="flex flex-wrap justify-center gap-2 w-full lg:w-auto">
+                        <div class="badge bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500 py-3 px-2 md:px-4 text-[10px] md:text-sm w-[48%] md:w-auto" x-text="`مكتملة: ${schools.filter(s => s.type === selectedStage && s.has_manager && !s.is_pending).length}`"></div>
+                        <div class="badge bg-yellow-500/20 text-yellow-400 font-bold border border-yellow-500 py-3 px-2 md:px-4 text-[10px] md:text-sm w-[48%] md:w-auto" x-text="`ناقصة: ${schools.filter(s => s.type === selectedStage && s.is_pending).length}`"></div>
+                        <div class="badge bg-slate-700/50 text-slate-300 font-bold border border-slate-600 py-3 px-2 md:px-4 text-[10px] md:text-sm w-full md:w-auto mt-1 lg:mt-0" x-text="`غير مفعلة: ${schools.filter(s => s.type === selectedStage && !s.has_manager).length}`"></div>
                     </div>
-                    <div class="flex flex-wrap md:flex-nowrap gap-2 w-full lg:w-auto">
-                        <select x-model="statusFilter" class="select input-light w-full md:w-auto border-none shadow-[0_0_10px_rgba(214,140,41,0.2)]"><option value="all">كل الحالات 📋</option><option value="active">مفعلة ومكتملة ✅</option><option value="pending">بيانات ناقصة 📝</option><option value="inactive">غير مفعلة ⚠️</option></select>
-                        <input type="text" x-model="searchQuery" placeholder="بحث باسم المدرسة 🔍..." class="input input-light w-full md:w-auto">
-                        <button @click="showAddSchoolModal = true" class="btn btn-success text-white border-none shadow-[0_0_15px_rgba(16,185,129,0.3)] w-full md:w-auto text-xs md:text-sm">إضافة ➕</button>
-                        <button @click="exportToCSV()" class="btn bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white border border-blue-600/50 shadow-[0_0_15px_rgba(37,99,235,0.2)] w-full md:w-auto text-xs md:text-sm">إكسيل 📊</button>
-                        <button @click="exportToPDF()" class="btn bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white border border-red-600/50 shadow-[0_0_15px_rgba(220,38,38,0.2)] w-full md:w-auto text-xs md:text-sm relative overflow-hidden"><span x-show="!imageLoading">PDF 📄</span><span x-show="imageLoading" class="loading loading-spinner text-red-600"></span></button>
+                    
+                    <div class="flex flex-col md:flex-row gap-3 w-full lg:w-auto">
+                        <input type="text" x-model="searchQuery" placeholder="بحث باسم المدرسة 🔍..." class="input input-light w-full md:w-64 h-12">
+                        <div class="flex gap-2 w-full md:w-auto">
+                            <select x-model="statusFilter" class="select input-light flex-1 md:w-auto h-12 border-none">
+                                <option value="all">كل الحالات</option>
+                                <option value="active">مفعلة</option>
+                                <option value="pending">ناقصة</option>
+                                <option value="inactive">غير مفعلة</option>
+                            </select>
+                            <button @click="showAddSchoolModal = true" class="btn btn-success text-white border-none flex-1 md:w-auto h-12 shadow-md">
+                                إضافة ➕
+                            </button>
+                        </div>
                     </div>
+
                 </div>
 
-                <div class="grid grid-cols-3 gap-3 md:gap-6 mb-10">
-                    <div @click="selectedStage = 'إعدادي'; statusFilter = 'all'; searchQuery = ''" :class="`stage-card p-3 md:p-6 rounded-2xl md:rounded-3xl text-center flex flex-col justify-center items-center ${selectedStage === 'إعدادي' ? 'active' : ''}`"><div class="text-3xl md:text-4xl mb-1 md:mb-2">📚</div><h2 class="text-sm md:text-2xl font-black text-white">إعدادي</h2><p class="text-[#D68C29] text-xs md:text-base font-bold mt-1" x-text="`${schools.filter(s => s.type === 'إعدادي').length} مدرسة`"></p></div>
-                    <div @click="selectedStage = 'ثانوي'; statusFilter = 'all'; searchQuery = ''" :class="`stage-card p-3 md:p-6 rounded-2xl md:rounded-3xl text-center flex flex-col justify-center items-center ${selectedStage === 'ثانوي' ? 'active' : ''}`"><div class="text-3xl md:text-4xl mb-1 md:mb-2">🎓</div><h2 class="text-sm md:text-2xl font-black text-white">ثانوي</h2><p class="text-[#D68C29] text-xs md:text-base font-bold mt-1" x-text="`${schools.filter(s => s.type === 'ثانوي').length} مدرسة`"></p></div>
-                    <div @click="selectedStage = 'خاصة'; statusFilter = 'all'; searchQuery = ''" :class="`stage-card p-3 md:p-6 rounded-2xl md:rounded-3xl text-center flex flex-col justify-center items-center ${selectedStage === 'خاصة' ? 'active' : ''}`"><div class="text-3xl md:text-4xl mb-1 md:mb-2">🏢</div><h2 class="text-sm md:text-2xl font-black text-white">خاصة</h2><p class="text-[#D68C29] text-xs md:text-base font-bold mt-1" x-text="`${schools.filter(s => s.type === 'خاصة').length} مدرسة`"></p></div>
+                <div class="grid grid-cols-3 gap-2 md:gap-6 mb-8">
+                    <div @click="selectedStage = 'إعدادي'; statusFilter = 'all'; searchQuery = ''" :class="`stage-card p-3 md:p-6 rounded-xl md:rounded-3xl text-center ${selectedStage === 'إعدادي' ? 'active' : ''}`"><div class="text-2xl md:text-4xl mb-1">📚</div><h2 class="text-xs md:text-2xl font-black text-white">إعدادي</h2><p class="text-[#D68C29] text-[10px] md:text-base font-bold mt-1" x-text="`${schools.filter(s => s.type === 'إعدادي').length} مدرسة`"></p></div>
+                    <div @click="selectedStage = 'ثانوي'; statusFilter = 'all'; searchQuery = ''" :class="`stage-card p-3 md:p-6 rounded-xl md:rounded-3xl text-center ${selectedStage === 'ثانوي' ? 'active' : ''}`"><div class="text-2xl md:text-4xl mb-1">🎓</div><h2 class="text-xs md:text-2xl font-black text-white">ثانوي</h2><p class="text-[#D68C29] text-[10px] md:text-base font-bold mt-1" x-text="`${schools.filter(s => s.type === 'ثانوي').length} مدرسة`"></p></div>
+                    <div @click="selectedStage = 'خاصة'; statusFilter = 'all'; searchQuery = ''" :class="`stage-card p-3 md:p-6 rounded-xl md:rounded-3xl text-center ${selectedStage === 'خاصة' ? 'active' : ''}`"><div class="text-2xl md:text-4xl mb-1">🏢</div><h2 class="text-xs md:text-2xl font-black text-white">خاصة</h2><p class="text-[#D68C29] text-[10px] md:text-base font-bold mt-1" x-text="`${schools.filter(s => s.type === 'خاصة').length} مدرسة`"></p></div>
                 </div>
 
-                <div x-show="loading" class="text-center py-10 w-full col-span-full"><span class="loading loading-bars loading-lg text-[#D68C29]"></span><p class="mt-4 text-slate-400 font-bold">جاري جلب البيانات، لحظات...</p></div>
+                <div x-show="loading" class="text-center py-10 w-full"><span class="loading loading-bars loading-lg text-[#D68C29]"></span><p class="mt-4 text-slate-400 font-bold">جاري التحميل...</p></div>
 
-                <div x-show="!loading" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <div x-show="!loading" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
                     <template x-for="school in filteredSchools" :key="school.id">
-                        <div @click="openSchoolDetails(school)" :class="`p-4 rounded-xl cursor-pointer h-36 flex flex-col justify-between transition-all ${school.is_pending ? 'border-2 border-yellow-500 bg-yellow-500/10' : (school.has_manager ? 'active-school' : 'inactive-school')}`">
+                        <div @click="openSchoolDetails(school)" :class="`p-3 md:p-4 rounded-xl cursor-pointer min-h-[120px] flex flex-col justify-between transition-all ${school.is_pending ? 'border-2 border-yellow-500 bg-yellow-500/10' : (school.has_manager ? 'active-school' : 'inactive-school')}`">
                             <div>
-                                <template x-if="!school.has_manager"><span class="text-[10px] font-bold px-2 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/50">غير مفعلة ⚠️</span></template>
-                                <template x-if="school.is_pending"><span class="text-[10px] font-bold px-2 py-0.5 rounded bg-yellow-500 text-black animate-pulse">بيانات ناقصة 📝</span></template>
-                                <template x-if="school.has_manager && !school.is_pending"><span class="text-[10px] font-bold px-2 py-0.5 rounded bg-green-500 text-white">مفعلة ✅</span></template>
-                                <h3 class="font-bold text-sm text-white mt-2 leading-tight flex items-start gap-1.5"><span class="text-lg">🏫</span><span x-text="school.name"></span></h3>
+                                <template x-if="!school.has_manager"><span class="text-[9px] md:text-[10px] font-bold px-2 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/50">غير مفعلة ⚠️</span></template>
+                                <template x-if="school.is_pending"><span class="text-[9px] md:text-[10px] font-bold px-2 py-0.5 rounded bg-yellow-500 text-black animate-pulse">بيانات ناقصة 📝</span></template>
+                                <template x-if="school.has_manager && !school.is_pending"><span class="text-[9px] md:text-[10px] font-bold px-2 py-0.5 rounded bg-green-500 text-white">مفعلة ✅</span></template>
+                                <h3 class="font-bold text-xs md:text-sm text-white mt-2 leading-tight" x-text="'🏫 ' + school.name"></h3>
                             </div>
-                            <p class="text-[10px] text-slate-400 border-t border-white/10 pt-2 font-bold" x-text="school.is_pending ? school.pending_reason : (school.has_manager ? '👤 ' + school.manager_name : 'بانتظار تغيير الكود')"></p>
+                            <p class="text-[9px] md:text-[10px] text-slate-400 border-t border-white/10 pt-2 font-bold mt-2 truncate" x-text="school.is_pending ? school.pending_reason : (school.has_manager ? '👤 ' + school.manager_name : 'بانتظار تغيير الكود')"></p>
                         </div>
                     </template>
-                    <p x-show="filteredSchools.length === 0" class="col-span-full text-center text-slate-500 py-10 font-bold text-lg">لا توجد مدارس تطابق الفلتر.</p>
+                    <p x-show="filteredSchools.length === 0" class="col-span-full text-center text-slate-500 py-10 font-bold text-sm">لا توجد مدارس مطابقة.</p>
                 </div>
             </div>
 
             <div x-show="schoolView === 'details'" x-cloak class="animate-in slide-in-from-right duration-300">
-                <div class="bg-[#141A32] rounded-3xl border border-[#D68C29]/30 shadow-2xl overflow-hidden mt-6">
-                    <div class="p-6 bg-gradient-to-b from-[#0B0F1E] to-[#141A32] border-b border-white/10 flex flex-col md:flex-row gap-6 justify-between items-start md:items-center">
-                        <div class="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
-                            <button @click="schoolView = 'grid'" class="btn bg-[#D68C29]/10 hover:bg-[#D68C29] text-[#D68C29] hover:text-[#141A32] border border-[#D68C29]/50 shadow-[0_0_15px_rgba(214,140,41,0.2)] transition-all font-black text-lg rounded-xl h-14 px-6 flex items-center gap-3"><span class="text-2xl">🔙</span><span>العودة</span></button>
+                <div class="bg-[#141A32] rounded-3xl border border-[#D68C29]/30 shadow-2xl overflow-hidden mt-2 md:mt-6">
+                    <div class="p-4 md:p-6 bg-gradient-to-b from-[#0B0F1E] to-[#141A32] border-b border-white/10 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+                        <div class="flex flex-col items-start gap-3 w-full md:w-auto">
+                            <button @click="schoolView = 'grid'" class="btn btn-sm md:btn-md bg-[#D68C29]/10 text-[#D68C29] border border-[#D68C29]/50 rounded-xl flex items-center gap-2 w-full md:w-auto"><span class="text-xl">🔙</span> العودة</button>
                             <div>
-                                <h2 class="text-2xl md:text-3xl font-black text-white flex items-center gap-2"><span class="text-2xl">🏫</span> <span x-text="selectedSchool.name"></span></h2>
-                                <div class="flex items-center gap-2 mt-3">
-                                    <span class="text-xs text-slate-400 font-bold">المرحلة:</span>
-                                    <select x-model="selectedSchool.type" @change="updateSchoolType(selectedSchool.id, selectedSchool.type)" class="select select-sm bg-[#D68C29] text-white border-none font-bold outline-none focus:ring-0"><option value="إعدادي">إعدادي</option><option value="ثانوي">ثانوي</option><option value="خاصة">خاصة</option></select>
-                                </div>
+                                <h2 class="text-lg md:text-2xl font-black text-white" x-text="'🏫 ' + selectedSchool.name"></h2>
+                                <select x-model="selectedSchool.type" @change="updateSchoolType(selectedSchool.id, selectedSchool.type)" class="select select-xs bg-[#D68C29] text-white border-none font-bold mt-2 w-full md:w-auto"><option value="إعدادي">إعدادي</option><option value="ثانوي">ثانوي</option><option value="خاصة">خاصة</option></select>
                             </div>
                         </div>
-                        <div class="bg-[#0B0F1E] p-4 rounded-2xl border border-white/10 text-center w-full md:w-auto">
-                            <p class="text-xs text-slate-400 font-bold mb-1">كود الدخول</p>
-                            <p class="text-3xl font-black pin-display" x-text="selectedSchool.manager_pin"></p>
-                            <div class="flex gap-2 mt-3"><button @click="resetPin(selectedSchool.id)" class="btn btn-sm flex-1 btn-warning btn-outline rounded-lg">تصفير (0000)</button><button @click="deleteSchool(selectedSchool.id)" class="btn btn-sm flex-1 btn-error rounded-lg text-white">حذف 🗑️</button></div>
+                        <div class="bg-[#0B0F1E] p-3 rounded-xl border border-white/10 text-center w-full md:w-auto">
+                            <p class="text-[10px] text-slate-400 font-bold mb-1">كود الدخول</p>
+                            <p class="text-2xl font-black pin-display" x-text="selectedSchool.manager_pin"></p>
+                            <div class="flex gap-2 mt-2"><button @click="resetPin(selectedSchool.id)" class="btn btn-xs flex-1 btn-warning rounded">تصفير</button><button @click="deleteSchool(selectedSchool.id)" class="btn btn-xs flex-1 btn-error rounded text-white">حذف</button></div>
                         </div>
                     </div>
 
-                    <div class="p-6">
-                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                            <div class="bg-[#0B0F1E] p-4 rounded-2xl border border-white/5 flex items-center gap-4 hover:border-[#D68C29]/50 transition-all">
-                                <div class="w-12 h-12 shrink-0 rounded-full bg-amber-500/20 text-amber-500 flex items-center justify-center text-2xl">👑</div>
-                                <div>
-                                    <p class="text-[10px] text-slate-400 font-bold mb-1">المدير</p>
-                                    <p class="font-black text-sm" :class="!schoolManager ? 'text-red-400' : (schoolManager.full_name && schoolManager.full_name.includes('بانتظار') ? 'text-yellow-400' : 'text-emerald-400')" x-text="!schoolManager ? 'غير مسجل' : (schoolManager.full_name && schoolManager.full_name.includes('بانتظار') ? 'بيانات ناقصة' : 'مفعل ومكتمل')"></p>
-                                </div>
-                            </div>
-                            <div class="bg-[#0B0F1E] p-4 rounded-2xl border border-white/5 flex items-center gap-4 hover:border-blue-500/50 transition-all">
-                                <div class="w-12 h-12 shrink-0 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-2xl">👨‍🏫</div>
-                                <div>
-                                    <p class="text-[10px] text-slate-400 font-bold mb-1">الوكلاء</p>
-                                    <p class="font-black text-white text-xl"><span x-text="schoolAgents.length"></span> <span class="text-xs font-normal text-slate-500">وكيل</span></p>
-                                </div>
-                            </div>
-                            <div class="bg-[#0B0F1E] p-4 rounded-2xl border border-white/5 flex items-center gap-4 hover:border-green-500/50 transition-all">
-                                <div class="w-12 h-12 shrink-0 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center text-2xl">📥</div>
-                                <div>
-                                    <p class="text-[10px] text-slate-400 font-bold mb-1">الطلبات المرسلة</p>
-                                    <p class="font-black text-white text-xl"><span x-text="selectedSchoolRequestsCount"></span> <span class="text-xs font-normal text-slate-500">طلب</span></p>
-                                </div>
-                            </div>
-                            <div class="bg-[#0B0F1E] p-4 rounded-2xl border border-white/5 flex items-center gap-4 hover:border-purple-500/50 transition-all">
-                                <div class="w-12 h-12 shrink-0 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-2xl">✉️</div>
-                                <div>
-                                    <p class="text-[10px] text-slate-400 font-bold mb-1">النشرات المستلمة</p>
-                                    <p class="font-black text-white text-xl"><span x-text="selectedSchoolMessagesCount"></span> <span class="text-xs font-normal text-slate-500">رسالة</span></p>
-                                </div>
-                            </div>
+                    <div class="p-4 md:p-6">
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+                            <div class="bg-[#0B0F1E] p-3 rounded-xl border border-white/5 flex items-center gap-3"><div class="w-10 h-10 shrink-0 rounded-full bg-amber-500/20 text-amber-500 flex items-center justify-center text-lg">👑</div><div><p class="text-[9px] text-slate-400 font-bold mb-1">المدير</p><p class="font-black text-xs" :class="!schoolManager ? 'text-red-400' : (schoolManager.full_name && schoolManager.full_name.includes('بانتظار') ? 'text-yellow-400' : 'text-emerald-400')" x-text="!schoolManager ? 'غير مسجل' : (schoolManager.full_name && schoolManager.full_name.includes('بانتظار') ? 'بيانات ناقصة' : 'مفعل ومكتمل')"></p></div></div>
+                            <div class="bg-[#0B0F1E] p-3 rounded-xl border border-white/5 flex items-center gap-3"><div class="w-10 h-10 shrink-0 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg">👨‍🏫</div><div><p class="text-[9px] text-slate-400 font-bold mb-1">الوكلاء</p><p class="font-black text-white text-lg" x-text="schoolAgents.length"></p></div></div>
+                            <div class="bg-[#0B0F1E] p-3 rounded-xl border border-white/5 flex items-center gap-3"><div class="w-10 h-10 shrink-0 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center text-lg">📥</div><div><p class="text-[9px] text-slate-400 font-bold mb-1">طلبات مرسلة</p><p class="font-black text-white text-lg" x-text="selectedSchoolRequestsCount"></p></div></div>
+                            <div class="bg-[#0B0F1E] p-3 rounded-xl border border-white/5 flex items-center gap-3"><div class="w-10 h-10 shrink-0 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-lg">✉️</div><div><p class="text-[9px] text-slate-400 font-bold mb-1">نشرات مستلمة</p><p class="font-black text-white text-lg" x-text="selectedSchoolMessagesCount"></p></div></div>
                         </div>
 
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div class="bg-[#0B0F1E] p-6 rounded-2xl border border-white/5">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+                            <div class="bg-[#0B0F1E] p-4 md:p-6 rounded-2xl border border-white/5">
                                 <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-4">
-                                    <h3 class="font-bold text-[#D68C29] text-xl flex items-center gap-2">👨‍💼 مدير المدرسة</h3>
+                                    <h3 class="font-bold text-[#D68C29] text-base md:text-xl">👨‍💼 مدير المدرسة</h3>
                                     <template x-if="schoolManager"><button @click="resetManager(schoolManager.mobile, selectedSchool.id)" class="btn btn-xs btn-error text-white hover:bg-red-600 border-none shadow-md">إزالة 🗑️</button></template>
                                 </div>
                                 <template x-if="schoolManager">
                                     <div>
-                                        <div class="flex items-center gap-4 mb-6"><img :src="schoolManager.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" class="w-20 h-20 rounded-full border-2 border-[#D68C29] object-cover bg-white"><div><h4 class="text-xl font-black text-white" x-text="schoolManager.full_name || 'بانتظار استكمال البيانات'"></h4><p class="text-[#D68C29] font-mono mt-1" x-text="schoolManager.mobile"></p></div></div>
-                                        <div class="space-y-3 bg-black/30 p-4 rounded-xl border border-white/5 text-sm">
-                                            <div class="flex justify-between border-b border-white/5 pb-2"><span class="text-slate-500">القومي:</span><span class="font-mono text-yellow-300" x-text="schoolManager.nid || '---'"></span></div>
-                                            <div class="flex justify-between border-b border-white/5 pb-2"><span class="text-slate-500">ميلاد:</span><span class="text-white" x-text="schoolManager.dob || '---'"></span></div>
-                                            <div class="flex justify-between border-b border-white/5 pb-2"><span class="text-slate-500">تعيين:</span><span class="text-white" x-text="schoolManager.hiring_date || '---'"></span></div>
-                                            <div class="flex justify-between border-b border-white/5 pb-2"><span class="text-slate-500">استلام عمل:</span><span class="text-white" x-text="schoolManager.job_assumption_date || '---'"></span></div>
+                                        <div class="flex items-center gap-3 mb-4"><img :src="schoolManager.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" class="w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-[#D68C29] object-cover bg-white"><div><h4 class="text-sm md:text-lg font-black text-white" x-text="schoolManager.full_name || 'بانتظار استكمال البيانات'"></h4><p class="text-[#D68C29] font-mono text-xs mt-1" x-text="schoolManager.mobile"></p></div></div>
+                                        <div class="space-y-2 bg-black/30 p-3 rounded-xl border border-white/5 text-xs md:text-sm">
+                                            <div class="flex justify-between border-b border-white/5 pb-1"><span class="text-slate-500">القومي:</span><span class="font-mono text-yellow-300" x-text="schoolManager.nid || '---'"></span></div>
+                                            <div class="flex justify-between border-b border-white/5 pb-1"><span class="text-slate-500">استلام عمل:</span><span class="text-white" x-text="schoolManager.job_assumption_date || '---'"></span></div>
+                                            <div class="flex justify-between border-b border-white/5 pb-1"><span class="text-slate-500">الموقف:</span><span class="text-blue-400 font-bold" x-text="selectedSchool.manager_status || '---'"></span></div>
                                             <div class="flex justify-between pt-1"><span class="text-slate-500">تجديد:</span><span class="text-green-400 font-bold" x-text="schoolManager.renewal_date || '---'"></span></div>
                                         </div>
                                     </div>
                                 </template>
-                                <template x-if="!schoolManager"><div class="text-center py-10 opacity-50"><span class="text-4xl block mb-2">⚠️</span><p>لم يقم بالتسجيل بعد.</p></div></template>
+                                <template x-if="!schoolManager"><div class="text-center py-6 opacity-50"><p class="text-xs text-slate-400">لم يقم بالتسجيل بعد.</p></div></template>
                             </div>
                             
-                            <div class="bg-[#0B0F1E] p-6 rounded-2xl border border-white/5">
-                                <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-4"><h3 class="font-bold text-emerald-400 text-xl">👨‍🏫 طاقم الوكلاء</h3><div class="badge badge-success" x-text="schoolAgents.length"></div></div>
-                                <div class="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                            <div class="bg-[#0B0F1E] p-4 md:p-6 rounded-2xl border border-white/5">
+                                <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-4"><h3 class="font-bold text-emerald-400 text-base md:text-xl">👨‍🏫 طاقم الوكلاء</h3><div class="badge badge-sm badge-success" x-text="schoolAgents.length"></div></div>
+                                <div class="space-y-3 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
                                     <template x-for="(agent, idx) in schoolAgents" :key="idx">
-                                        <div class="bg-black/30 p-4 rounded-xl border border-white/5 relative group">
-                                            <div class="flex justify-between items-start border-b border-white/5 pb-3 mb-3">
-                                                <div class="flex items-center gap-3"><img :src="agent.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" class="w-12 h-12 rounded-full border border-emerald-500 object-cover bg-white"><div><h4 class="text-md font-bold text-white leading-tight" x-text="agent.full_name || 'بانتظار التسجيل'"></h4><p class="text-xs text-emerald-400 font-mono" x-text="agent.mobile"></p></div></div>
-                                                <button @click="deleteAgent(agent.mobile)" class="btn btn-xs btn-error btn-outline hover:bg-red-500 border-none" title="حذف">🗑️</button>
+                                        <div class="bg-black/30 p-3 rounded-xl border border-white/5 relative group">
+                                            <div class="flex justify-between items-start border-b border-white/5 pb-2 mb-2">
+                                                <div class="flex items-center gap-2"><img :src="agent.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" class="w-8 h-8 rounded-full border border-emerald-500 object-cover bg-white"><div><h4 class="text-xs font-bold text-white" x-text="agent.full_name || 'بانتظار التسجيل'"></h4><p class="text-[9px] text-emerald-400 font-mono" x-text="agent.mobile"></p></div></div>
+                                                <button @click="deleteAgent(agent.mobile)" class="btn btn-xs btn-ghost text-red-500 px-1">🗑️</button>
                                             </div>
-                                            <div class="grid grid-cols-2 gap-y-2 gap-x-2 text-[0.7rem]">
-                                                <div class="flex justify-between col-span-2 border-b border-white/5 pb-1"><span class="text-slate-500">التكليف:</span><span class="text-blue-300 font-bold" x-text="agent.agent_assignment || 'لم يحدد'"></span></div>
+                                            <div class="grid grid-cols-2 gap-y-1 gap-x-2 text-[10px] md:text-xs">
+                                                <div class="flex justify-between col-span-2"><span class="text-slate-500">التكليف:</span><span class="text-blue-300 font-bold" x-text="agent.agent_assignment || 'لم يحدد'"></span></div>
                                                 <div class="flex justify-between"><span class="text-slate-500">القومي:</span><span class="font-mono text-yellow-200" x-text="agent.nid || '---'"></span></div>
-                                                <div class="flex justify-between"><span class="text-slate-500">تجديد:</span><span class="text-green-400" x-text="agent.renewal_date || '---'"></span></div>
+                                                <div class="flex justify-between"><span class="text-slate-500">الموقف:</span><span class="text-green-400" x-text="agent.job_status || '---'"></span></div>
                                             </div>
                                         </div>
                                     </template>
-                                    <p x-show="schoolAgents.length === 0" class="text-center py-8 text-slate-500">لا يوجد وكلاء.</p>
+                                    <p x-show="schoolAgents.length === 0" class="text-center py-4 text-xs text-slate-500">لا يوجد وكلاء مسجلين.</p>
                                 </div>
                             </div>
                         </div>
@@ -216,77 +246,151 @@
         </div>
 
         <div x-show="activeTab === 'requests'" x-transition x-cloak>
-            <div class="glass-panel p-6 border-t-4 border-t-green-500"><h2 class="text-2xl font-black text-white mb-6">الطلبات والإقرارات الواردة</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><template x-for="req in requests" :key="req.id"><div class="bg-[#141A32] rounded-2xl border border-white/10 relative overflow-hidden shadow-lg flex flex-col"><div class="bg-gradient-to-l from-slate-800 to-[#141A32] p-4 flex justify-between items-center border-b border-white/10"><div><h3 class="text-lg font-black text-[#F5C678]" x-text="req.schools?.name"></h3><p class="text-xs text-slate-400 mt-1" x-text="req.schools?.type"></p></div><span class="text-[10px] font-bold text-white bg-slate-700 px-3 py-1.5 rounded-lg" x-text="formatDate(req.created_at)"></span></div><div class="p-5 flex-1 flex flex-col bg-black/20"><p class="text-sm text-white bg-[#0B0F1E] p-4 rounded-xl mb-4 whitespace-pre-wrap leading-loose font-medium border border-white/5 flex-1" x-text="req.statement"></p><div class="flex justify-between items-center mt-auto pt-4 border-t border-white/10"><template x-if="req.file_url"><a :href="req.file_url" target="_blank" class="btn btn-sm bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white border border-blue-600/50 rounded-lg">عرض المرفق 📎</a></template><span x-show="!req.file_url" class="text-xs text-slate-500 bg-slate-800 px-3 py-1 rounded-md">بدون مرفقات</span><button @click="deleteRequest(req.id)" class="btn btn-sm btn-ghost text-red-500 hover:bg-red-500/20 rounded-lg">حذف 🗑️</button></div></div></div></template><p x-show="requests.length === 0" class="col-span-full text-center py-16 text-slate-500 font-bold text-lg">لا توجد طلبات.</p></div></div>
+            <div class="glass-panel p-4 md:p-6 border-t-4 border-t-green-500">
+                <h2 class="text-lg md:text-2xl font-black text-white mb-4">الطلبات والإحصائيات الواردة</h2>
+                <div class="grid grid-cols-1 gap-4">
+                    <template x-for="req in requests" :key="req.id">
+                        <div class="bg-[#141A32] rounded-xl border border-white/10 flex flex-col shadow-md">
+                            <div class="bg-gradient-to-l from-slate-800 to-[#141A32] p-3 flex justify-between items-center border-b border-white/10">
+                                <div><h3 class="text-sm md:text-base font-black text-[#F5C678]" x-text="req.schools?.name"></h3><p class="text-[10px] text-slate-400" x-text="req.schools?.type"></p></div>
+                                <span class="text-[10px] text-white bg-slate-700 px-2 py-1 rounded" x-text="formatDate(req.created_at)"></span>
+                            </div>
+                            
+                            <div class="p-4 flex-1 flex flex-col bg-black/20">
+                                <div class="text-xs md:text-sm text-white bg-[#0B0F1E] p-4 rounded-lg mb-3 leading-relaxed whitespace-pre-wrap text-right border border-white/5 font-medium font-mono" x-text="req.statement"></div>
+                                
+                                <div class="flex justify-between items-center mt-auto border-t border-white/10 pt-3">
+                                    <template x-if="req.file_url"><a :href="req.file_url" target="_blank" class="text-[11px] md:text-xs text-blue-400 font-bold bg-blue-500/10 px-3 py-1.5 rounded hover:bg-blue-500/30">تحميل المرفق 📎</a></template>
+                                    <span x-show="!req.file_url" class="text-[10px] text-slate-500">بدون مرفقات</span>
+                                    <button @click="deleteRequest(req.id)" class="text-[11px] md:text-xs text-red-500 font-bold bg-red-500/10 px-3 py-1.5 rounded hover:bg-red-500/30">حذف الطلب 🗑️</button>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <p x-show="requests.length === 0" class="text-center py-10 text-xs text-slate-500">لا توجد طلبات.</p>
+                </div>
+            </div>
         </div>
 
         <div x-show="activeTab === 'messages'" x-transition x-cloak>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="glass-panel p-6 lg:col-span-1 border-t-4 border-t-purple-500 h-fit">
-                    <h2 class="text-xl font-black text-white mb-6 flex items-center gap-2"><span>✉️</span> إرسال تعليمات/نشرة</h2>
-                    <div class="space-y-4">
-                        <div><label class="text-[#D68C29] text-sm font-bold block mb-1">اختر المدرسة (أو للجميع)</label><select x-model="newMessage.school_id" class="select w-full input-light h-12 rounded-xl"><option value="">📢 للجميع</option><template x-for="school in schools" :key="school.id"><option :value="school.id" x-text="school.name"></option></template></select></div>
-                        <div><label class="text-[#D68C29] text-sm font-bold block mb-1">نص الرسالة</label><textarea x-model="newMessage.content" class="textarea w-full input-light h-24 rounded-xl"></textarea></div>
-                        <div><label class="text-[#D68C29] text-sm font-bold block mb-1">مرفق (اختياري)</label><input type="file" id="msgFileInput" @change="newMessage.file = $event.target.files[0]" class="file-input file-input-bordered w-full input-light rounded-xl" accept="image/*,.pdf,.doc,.docx" /></div>
-                        <button @click="sendMessage()" class="btn w-full bg-purple-600 hover:bg-purple-700 text-white font-black h-12 rounded-xl border-none mt-2"><span x-show="!loading">إرسال 🚀</span><span x-show="loading" class="loading loading-spinner"></span></button>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div class="glass-panel p-4 md:p-6 lg:col-span-1 border-t-4 border-t-purple-500 h-fit">
+                    <h2 class="text-base font-black text-white mb-4">إرسال نشرة</h2>
+                    <div class="space-y-3">
+                        <select x-model="newMessage.school_id" class="select select-sm w-full input-light"><option value="">📢 للجميع</option><template x-for="school in schools" :key="school.id"><option :value="school.id" x-text="school.name"></option></template></select>
+                        <textarea x-model="newMessage.content" class="textarea textarea-sm w-full input-light h-20" placeholder="اكتب النشرة أو التوجيه هنا..."></textarea>
+                        <input type="file" id="msgFileInput" @change="newMessage.file = $event.target.files[0]" class="file-input file-input-sm file-input-bordered w-full input-light" accept="image/*,.pdf,.doc,.docx" />
+                        <button @click="sendMessage()" class="btn btn-sm w-full bg-purple-600 hover:bg-purple-700 text-white border-none h-10"><span x-show="!loading">إرسال 🚀</span><span x-show="loading" class="loading loading-spinner loading-xs"></span></button>
                     </div>
                 </div>
-                <div class="glass-panel p-6 lg:col-span-2 border-t-4 border-t-blue-500"><h2 class="text-xl font-black text-white mb-6">سجل المراسلات</h2><div class="space-y-4 max-h-[500px] overflow-y-auto custom-scrollbar pr-2"><template x-for="msg in messagesList" :key="msg.id"><div class="bg-black/30 p-5 rounded-xl border border-white/5 relative"><div class="flex justify-between items-center border-b border-white/10 pb-3 mb-3"><span class="badge bg-purple-500/20 text-purple-400 font-bold border-none" x-text="msg.schools ? msg.schools.name : '📢 إعلان لجميع المدارس'"></span><span class="text-xs text-slate-400 font-bold" x-text="formatDate(msg.created_at)"></span></div><p class="text-white text-sm whitespace-pre-wrap mb-4" x-text="msg.message"></p><div class="flex justify-between items-center mt-4"><template x-if="msg.file_url"><a :href="msg.file_url" target="_blank" class="btn btn-sm bg-blue-600/20 text-blue-400 border-none rounded-lg">المرفق 📎</a></template><span x-show="!msg.file_url" class="text-xs text-slate-500">بدون مرفقات</span><button @click="deleteMessage(msg.id)" class="btn btn-xs btn-error btn-outline border-none hover:text-white">🗑️ حذف</button></div></div></template><p x-show="messagesList.length === 0" class="text-center text-slate-500 py-10 font-bold">لا توجد رسائل.</p></div></div>
+                <div class="glass-panel p-4 md:p-6 lg:col-span-2 border-t-4 border-t-blue-500"><h2 class="text-base font-black text-white mb-4">سجل المراسلات</h2><div class="space-y-3 max-h-[400px] overflow-y-auto custom-scrollbar pr-2"><template x-for="msg in messagesList" :key="msg.id"><div class="bg-black/30 p-4 rounded-xl border border-white/5"><div class="flex justify-between border-b border-white/10 pb-2 mb-2"><span class="text-[10px] text-purple-400 font-bold bg-purple-500/20 px-2 py-1 rounded" x-text="msg.schools ? msg.schools.name : 'تعميم للكل'"></span><span class="text-[10px] text-slate-400" x-text="formatDate(msg.created_at)"></span></div><p class="text-white text-xs whitespace-pre-wrap leading-relaxed" x-text="msg.message"></p><div class="mt-3 pt-2 border-t border-white/5 flex justify-between items-center"><template x-if="msg.file_url"><a :href="msg.file_url" target="_blank" class="text-[10px] text-blue-400 font-bold">المرفق 📎</a></template><span x-show="!msg.file_url" class="text-[10px] text-slate-500">بدون مرفق</span><button @click="deleteMessage(msg.id)" class="text-[10px] text-red-500 font-bold">حذف 🗑️</button></div></div></template><p x-show="messagesList.length === 0" class="text-center text-slate-500 py-10 text-sm">لا توجد رسائل سابقة.</p></div></div>
             </div>
         </div>
 
         <div x-show="activeTab === 'logs'" x-transition x-cloak>
-            <div class="glass-panel p-6 border-t-4 border-t-indigo-500 max-w-4xl mx-auto"><div class="flex justify-between items-center mb-8 border-b border-white/10 pb-4"><h2 class="text-2xl font-black text-white flex items-center gap-2"><span>⏱️</span> سجل نشاط النظام</h2><button @click="clearLogs()" class="btn btn-sm btn-error btn-outline rounded-lg" x-show="activityLogs.length > 0">تفريغ 🗑️</button></div><div class="space-y-2 max-h-[60vh] overflow-y-auto custom-scrollbar pr-6"><template x-for="log in activityLogs" :key="log.id"><div class="log-item"><div :class="`log-icon bg-[#141A32] border-2 border-white/10 ${log.color}`" x-text="log.icon"></div><div class="bg-black/30 p-4 rounded-xl border border-white/5"><div class="flex justify-between items-start mb-1"><h4 :class="`font-black text-lg ${log.color}`" x-text="log.title"></h4><span class="text-[10px] text-slate-400 bg-[#0B0F1E] px-2 py-1 rounded-md" x-text="log.date"></span></div><p class="text-sm text-slate-300 font-bold" x-text="log.desc"></p></div></div></template><div x-show="activityLogs.length === 0" class="text-center py-16 opacity-50"><span class="text-5xl block mb-4 grayscale">📭</span><p class="text-lg font-bold text-white">السجل فارغ.</p></div></div></div>
+            <div class="glass-panel p-4 md:p-6 border-t-4 border-t-indigo-500 max-w-2xl mx-auto">
+                <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-2"><h2 class="text-lg font-black text-white">سجل نشاط النظام</h2><button @click="clearLogs()" class="btn btn-xs btn-outline btn-error" x-show="activityLogs.length > 0">تفريغ السجل</button></div>
+                <div class="space-y-2 max-h-[50vh] overflow-y-auto custom-scrollbar pr-4">
+                    <template x-for="log in activityLogs" :key="log.id">
+                        <div class="log-item text-xs"><div :class="`log-icon w-6 h-6 text-[10px] bg-[#141A32] border-2 border-white/10 ${log.color}`" x-text="log.icon"></div><div class="bg-black/30 p-3 rounded-lg border border-white/5"><div class="flex justify-between items-center mb-1"><h4 :class="`font-bold ${log.color}`" x-text="log.title"></h4><span class="text-[8px] text-slate-400 bg-black/50 px-1.5 py-0.5 rounded" x-text="log.date"></span></div><p class="text-slate-300 mt-1" x-text="log.desc"></p></div></div>
+                    </template>
+                    <div x-show="activityLogs.length === 0" class="text-center py-10 text-xs text-slate-500">السجل فارغ تماماً.</div>
+                </div>
+            </div>
         </div>
 
         <div x-show="activeTab === 'settings'" x-transition x-cloak>
-            <div class="max-w-3xl mx-auto space-y-6"><div class="glass-panel p-6 border-t-4 border-t-[#F5C678]"><h2 class="text-2xl font-black text-white mb-6">الإعدادات</h2><div class="space-y-5 bg-white/10 p-6 rounded-2xl"><textarea x-model="marquee.text" class="textarea w-full input-light h-24"></textarea></div></div><button @click="saveMarqueeSettings" class="btn w-full btn-gold h-14 rounded-xl text-xl font-black">حفظ 💾</button></div>
+            <div class="max-w-xl mx-auto"><div class="glass-panel p-4 md:p-6 border-t-4 border-t-[#F5C678]"><h2 class="text-lg font-black text-white mb-4">إعدادات شريط الإعلانات</h2><textarea x-model="marquee.text" class="textarea w-full input-light h-20 text-sm" placeholder="اكتب النص الذي سيظهر في الشريط المتحرك للمدارس..."></textarea><button @click="saveMarqueeSettings" class="btn w-full btn-gold mt-4 font-bold">حفظ الإعدادات 💾</button></div></div>
         </div>
     </div>
 
-    <div id="report-container" class="absolute top-[-9999px] left-[-9999px] w-[1000px] opacity-0 pointer-events-none">
-        <div class="text-center mb-8 border-b border-white/10 pb-6"><h2 class="text-3xl font-black text-white mb-2">تقرير المدارس</h2><p class="text-[#D68C29]" x-text="`التاريخ: ${new Date().toLocaleDateString('ar-EG')}`"></p></div>
-        <div class="space-y-6"><template x-for="school in schoolsWithUsers" :key="'img_'+school.id"><div class="school-card relative"><div class="flex justify-between items-center mb-4"><h3 class="text-2xl font-black text-cyan-400" x-text="school.name"></h3></div><div class="grid grid-cols-3 gap-4 mb-5"><div class="bg-black/30 p-2 text-center text-white" x-text="school.teachers_count||0"></div></div></div></template></div>
-    </div>
+    <div id="report-container"></div>
 
     <script>
         function adminApp() {
             const client = supabase.createClient('https://zjvnppqygcpccbtgebbq.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqdm5wcHF5Z2NwY2NidGdlYmJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MTE1MjgsImV4cCI6MjA4Njk4NzUyOH0.LnUKMQkfh4YWMvUxO11wAw5ZY_k52PGAeVMVOky_ts0');
+            
             return {
                 activeTab: 'schools', schoolView: 'grid', selectedStage: 'إعدادي', searchQuery: '', statusFilter: 'all', isLightMode: localStorage.getItem('theme') === 'light',
                 loading: false, imageLoading: false, schools: [], schoolsWithUsers: [], selectedSchool: {}, schoolManager: null, schoolAgents: [],
                 requests: [], marquee: { text: '', speed: '15', direction: 'normal', size: '1.2rem', webhook_url: '' }, messagesList: [], newMessage: { school_id: '', content: '', file: null },
-                liveCounter: 0, showLiveToast: false, liveToastTitle: 'تسجيل جديد 🔥', liveToastMsg: 'تم تفعيل حساب مدرسة الآن!', activityLogs: JSON.parse(localStorage.getItem('admin_logs')) || [],
-                
-                // 🌟 متغيرات الكارت الإحصائي للمدرسة المحددة 🌟
+                liveCounter: 0, showLiveToast: false, liveToastTitle: '', liveToastMsg: '', 
                 selectedSchoolRequestsCount: 0, selectedSchoolMessagesCount: 0,
-
                 showAddSchoolModal: false, newSchool: { name: '', type: 'إعدادي' }, alertModal: { show: false, type: 'success', title: '', message: '' },
+                
+                // حماية السجل
+                activityLogs: [],
+
+                // نظام الحذف الآمن للموبايل
+                confirmModal: { show: false, title: '', message: '', actionType: '', actionPayload: null },
+                showConfirm(title, message, actionType, actionPayload = null) { this.confirmModal = { show: true, title, message, actionType, actionPayload }; },
+                closeConfirm() { this.confirmModal.show = false; },
+                async executeConfirm() { 
+                    const { actionType, actionPayload } = this.confirmModal;
+                    this.closeConfirm();
+                    
+                    if (actionType === 'deleteSchool') {
+                        await client.from('users').delete().eq('school_id', actionPayload);
+                        await client.from('coordination_requests').delete().eq('school_id', actionPayload);
+                        await client.from('messages').delete().eq('school_id', actionPayload);
+                        await client.from('schools').delete().eq('id', actionPayload);
+                        this.schoolView = 'grid'; this.schools = this.schools.filter(s => s.id !== actionPayload);
+                        this.showAlert('تم الحذف', 'تم مسح المدرسة نهائياً.', 'success');
+                    }
+                    else if (actionType === 'resetPin') {
+                        await client.from('schools').update({ manager_pin: '0000' }).eq('id', actionPayload);
+                        this.selectedSchool.manager_pin = '0000'; this.fetchSchoolsData();
+                        this.showAlert('تم التصفير', 'تم إعادة الكود بنجاح.', 'success');
+                    }
+                    else if (actionType === 'resetManager') {
+                        await client.from('users').delete().eq('mobile', actionPayload.mobile);
+                        await client.from('schools').update({ manager_pin: '0000' }).eq('id', actionPayload.schoolId);
+                        this.schoolManager = null; this.selectedSchool.manager_pin = '0000'; this.fetchSchoolsData();
+                        this.showAlert('تمت الإزالة', 'تم مسح بيانات المدير بنجاح.', 'success');
+                    }
+                    else if (actionType === 'deleteAgent') {
+                        await client.from('users').delete().eq('mobile', actionPayload);
+                        this.schoolAgents = this.schoolAgents.filter(a => a.mobile !== actionPayload); this.fetchSchoolsData();
+                        this.showAlert('تم الحذف', 'تم مسح الوكيل نهائياً.', 'success');
+                    }
+                    else if (actionType === 'deleteRequest') {
+                        await client.from('coordination_requests').delete().eq('id', actionPayload);
+                        this.requests = this.requests.filter(r => r.id !== actionPayload);
+                        this.showAlert('تم الحذف', 'تم مسح الطلب بنجاح.', 'success');
+                    }
+                    else if (actionType === 'deleteMessage') {
+                        await client.from('messages').delete().eq('id', actionPayload);
+                        this.messagesList = this.messagesList.filter(m => m.id !== actionPayload);
+                        this.showAlert('تم الحذف', 'تم مسح الرسالة بنجاح.', 'success');
+                    }
+                },
+
+                deleteSchool(id) { this.showConfirm('تأكيد الحذف', 'سيتم مسح المدرسة وكل المرتبط بها نهائياً!', 'deleteSchool', id); },
+                resetPin(id) { this.showConfirm('تأكيد التصفير', 'تصفير كود المدرسة إلى 0000؟', 'resetPin', id); },
+                resetManager(mobile, schoolId) { this.showConfirm('إزالة المدير', 'إزالة بيانات المدير وتصفير الكود؟', 'resetManager', {mobile, schoolId}); },
+                deleteAgent(mobile) { this.showConfirm('حذف الوكيل', 'حذف هذا الوكيل نهائياً؟', 'deleteAgent', mobile); },
+                deleteRequest(id) { this.showConfirm('تأكيد الحذف', 'حذف هذا الطلب نهائياً؟', 'deleteRequest', id); },
+                deleteMessage(id) { this.showConfirm('حذف الرسالة', 'هل أنت متأكد من حذف هذه الرسالة؟', 'deleteMessage', id); },
+                clearLogs() { this.activityLogs = []; this.showAlert('تم', 'تم تفريغ السجل', 'success'); },
+
                 showAlert(title, message, type = 'success') { this.alertModal = { show: true, type, title, message }; }, closeAlert() { this.alertModal.show = false; },
-                confirmModal: { show: false, title: '', message: '', action: null }, showConfirm(title, message, action) { this.confirmModal = { show: true, title: message, message: '', action }; }, closeConfirm() { this.confirmModal.show = false; }, async executeConfirm() { if (this.confirmModal.action) { await this.confirmModal.action(); } this.closeConfirm(); },
 
                 async initApp() { 
                     if (this.isLightMode) document.body.classList.add('light-theme');
                     this.fetchSchoolsData(); this.fetchRequests(); this.fetchMessages(); this.fetchMarqueeSettings(); this.setupRealtimeListener();
                 },
-
-                addLog(title, desc, type = 'info') {
-                    const icons = { success: '✅', danger: '🗑️', warning: '🔄', info: '📢' }; const colors = { success: 'text-emerald-400', danger: 'text-red-400', warning: 'text-yellow-400', info: 'text-blue-400' };
-                    this.activityLogs.unshift({ id: Date.now(), date: new Date().toLocaleString('ar-EG', { dateStyle: 'short', timeStyle: 'short' }), title: title, desc: desc, icon: icons[type] || '📌', color: colors[type] || 'text-white' });
-                    if(this.activityLogs.length > 50) this.activityLogs.pop(); localStorage.setItem('admin_logs', JSON.stringify(this.activityLogs));
-                },
-                clearLogs() { this.showConfirm('مسح السجل', 'مسح سجل النشاطات بالكامل؟', () => { this.activityLogs = []; localStorage.removeItem('admin_logs'); this.showAlert('تم', 'تم التفريغ', 'success'); }); },
                 
                 setupRealtimeListener() {
                     client.channel('admin-live-channel')
                     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'users' }, p => { if (p.new.role === 'manager' && p.new.pin !== '0000') this.triggerLiveEvent('تسجيل مدير', 'مدرسة فعلت حسابها!'); })
                     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'users' }, p => { if (p.new.role === 'manager' && p.new.pin !== '0000') this.triggerLiveEvent('تسجيل مدير', 'مدرسة فعلت حسابها!'); })
-                    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'coordination_requests' }, p => { this.triggerLiveEvent('طلب جديد 📥', 'تم إرسال طلب من مدرسة'); })
+                    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'coordination_requests' }, p => { this.triggerLiveEvent('طلب جديد', 'تم إرسال طلب'); })
                     .subscribe();
                 },
                 triggerLiveEvent(title, msg) { this.liveCounter++; this.liveToastTitle = title; this.liveToastMsg = msg; this.showLiveToast = true; try { document.getElementById('liveSound').play(); }catch(e){} if(title.includes('طلب')) this.fetchRequests(); else this.fetchSchoolsData(); setTimeout(() => this.showLiveToast = false, 5000); },
                 toggleTheme() { this.isLightMode = !this.isLightMode; localStorage.setItem('theme', this.isLightMode ? 'light' : 'dark'); if (this.isLightMode) document.body.classList.add('light-theme'); else document.body.classList.remove('light-theme'); },
                 formatDate(dateString) { return dateString ? new Date(dateString).toLocaleDateString('ar-EG', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''; },
-                clearBrowserCache() { /* ... */ },
+                clearBrowserCache() { window.location.reload(); },
 
                 async fetchSchoolsData() {
                     this.loading = true;
@@ -301,38 +405,46 @@
                             const isPendingData = isActivated && (isManagerPending || hasNoAgents || isAnyAgentPending);
                             return { ...school, has_manager: isActivated, is_pending: isPendingData, manager_name: (manager && manager.full_name && !manager.full_name.includes('بانتظار')) ? manager.full_name : 'غير مسجل' };
                         });
-                        this.schoolsWithUsers = safeSchools.map(school => { return { ...school, manager: safeUsers.find(u => u.role === 'manager' && u.school_id === school.id) || null, agents: safeUsers.filter(u => u.role === 'agent' && u.school_id === school.id) || [] }; });
-                    } catch (error) { this.showAlert('خطأ', 'مشكلة بالاتصال', 'error'); } finally { this.loading = false; }
+                    } catch (error) { console.error(error); } finally { this.loading = false; }
                 },
 
                 get filteredSchools() { let list = this.schools.filter(s => s.type === this.selectedStage); if (this.searchQuery) list = list.filter(s => s.name && s.name.includes(this.searchQuery)); if (this.statusFilter === 'active') list = list.filter(s => s.has_manager && !s.is_pending); else if (this.statusFilter === 'inactive') list = list.filter(s => !s.has_manager); else if (this.statusFilter === 'pending') list = list.filter(s => s.is_pending); return list; },
 
-                // 🌟 الدالة المسئولة عن فتح بيانات المدرسة وحساب الإحصائيات 🌟
                 async openSchoolDetails(school) {
                     this.selectedSchool = school; this.schoolView = 'details';
-                    let { data: mgr } = await client.from('users').select('*').eq('school_id', school.id).eq('role', 'manager').maybeSingle();
-                    this.schoolManager = mgr;
-                    let { data: agts } = await client.from('users').select('*').eq('school_id', school.id).eq('role', 'agent');
-                    this.schoolAgents = agts || [];
-                    
-                    // حساب الطلبات والنشرات للمدرسة المحددة
-                    this.selectedSchoolRequestsCount = this.requests.filter(r => r.school_id === school.id).length;
-                    this.selectedSchoolMessagesCount = this.messagesList.filter(m => m.school_id === school.id || m.school_id === null).length;
+                    try {
+                        let { data: mgr } = await client.from('users').select('*').eq('school_id', school.id).eq('role', 'manager').maybeSingle();
+                        this.schoolManager = mgr;
+                        let { data: agts } = await client.from('users').select('*').eq('school_id', school.id).eq('role', 'agent');
+                        this.schoolAgents = agts || [];
+                        this.selectedSchoolRequestsCount = this.requests.filter(r => r.school_id === school.id).length || 0;
+                        this.selectedSchoolMessagesCount = this.messagesList.filter(m => m.school_id === school.id || m.school_id === null).length || 0;
+                    } catch(e) { console.error(e); }
                 },
 
-                async updateSchoolType(schoolId, newType) { const { error } = await client.from('schools').update({ type: newType }).eq('id', schoolId); if (!error) { const index = this.schools.findIndex(s => s.id === schoolId); if (index !== -1) { this.schools[index].type = newType; } this.addLog('تعديل', `تعديل مرحلة مدرسة`, 'info'); this.showAlert('تم التحديث', 'تم تغيير المرحلة.', 'success'); } },
-                async addNewSchool() { if (!this.newSchool.name.trim()) return; this.loading = true; const { error } = await client.from('schools').insert([{ name: this.newSchool.name, type: this.newSchool.type, manager_pin: '0000' }]); this.loading = false; if (!error) { this.addLog('إضافة مدرسة', `مدرسة ${this.newSchool.name}`, 'success'); this.showAddSchoolModal = false; this.newSchool.name = ''; this.fetchSchoolsData(); } },
-                deleteSchool(schoolId) { this.showConfirm('تأكيد', 'حذف المدرسة نهائيا؟', async () => { await client.from('schools').delete().eq('id', schoolId); this.schoolView = 'grid'; this.fetchSchoolsData(); }); },
-                resetPin(schoolId) { this.showConfirm('تأكيد', 'تصفير لـ 0000؟', async () => { await client.from('schools').update({ manager_pin: '0000' }).eq('id', schoolId); this.selectedSchool.manager_pin = '0000'; this.fetchSchoolsData(); }); },
-                resetManager(mobile, schoolId) { this.showConfirm('إزالة', 'إزالة المدير؟', async () => { await client.from('users').delete().eq('mobile', mobile); await client.from('schools').update({ manager_pin: '0000' }).eq('id', schoolId); this.schoolManager = null; this.selectedSchool.manager_pin = '0000'; this.fetchSchoolsData(); }); },
-                deleteAgent(mobile) { this.showConfirm('حذف', 'حذف الوكيل؟', async () => { await client.from('users').delete().eq('mobile', mobile); this.schoolAgents = this.schoolAgents.filter(a => a.mobile !== mobile); this.fetchSchoolsData(); }); },
-                async fetchRequests() { const { data } = await client.from('coordination_requests').select(`*, schools (name, type)`).order('created_at', { ascending: false }); this.requests = data || []; },
-                deleteRequest(id) { this.showConfirm('حذف', 'حذف الطلب؟', async () => { await client.from('coordination_requests').delete().eq('id', id); this.requests = this.requests.filter(r => r.id !== id); }); },
-                async fetchMarqueeSettings() { let { data } = await client.from('settings').select('*').eq('id', 1).maybeSingle(); if (data) this.marquee = data; },
+                async updateSchoolType(schoolId, newType) { const { error } = await client.from('schools').update({ type: newType }).eq('id', schoolId); if (!error) { const index = this.schools.findIndex(s => s.id === schoolId); if (index !== -1) { this.schools[index].type = newType; } this.showAlert('نجاح', 'تم تغيير المرحلة.', 'success'); } },
+                async addNewSchool() { if (!this.newSchool.name.trim()) return; this.loading = true; const { error } = await client.from('schools').insert([{ name: this.newSchool.name, type: this.newSchool.type, manager_pin: '0000' }]); this.loading = false; if (!error) { this.showAddSchoolModal = false; this.newSchool.name = ''; this.fetchSchoolsData(); } },
+                
+                async fetchRequests() { try { const { data } = await client.from('coordination_requests').select(`*, schools (name, type)`).order('created_at', { ascending: false }); this.requests = data || []; } catch(e){} },
+                async fetchMarqueeSettings() { try { let { data } = await client.from('settings').select('*').eq('id', 1).maybeSingle(); if (data) this.marquee = data; } catch(e){} },
                 async saveMarqueeSettings() { await client.from('settings').upsert({ id: 1, marquee_text: this.marquee.text }); this.showAlert('تم', 'تم الحفظ', 'success'); },
-                async fetchMessages() { const { data } = await client.from('messages').select(`*, schools (name)`).order('created_at', { ascending: false }); this.messagesList = data || []; },
-                async sendMessage() { /* ... */ },
-                deleteMessage(id) { this.showConfirm('حذف', 'حذف الرسالة؟', async () => { await client.from('messages').delete().eq('id', id); this.messagesList = this.messagesList.filter(m => m.id !== id); }); },
+                async fetchMessages() { try { const { data } = await client.from('messages').select(`*, schools (name)`).order('created_at', { ascending: false }); this.messagesList = data || []; } catch(e){} },
+                async sendMessage() { 
+                    if (!this.newMessage.content) return this.showAlert('تنبيه', 'يرجى كتابة الرسالة', 'error');
+                    this.loading = true; let fileUrl = null;
+                    try {
+                        if (this.newMessage.file) {
+                            const file = this.newMessage.file; const fileName = `admin_doc_${Date.now()}.${file.name.split('.').pop()}`;
+                            await client.storage.from('requests_files').upload(fileName, file);
+                            fileUrl = client.storage.from('requests_files').getPublicUrl(fileName).data.publicUrl;
+                        }
+                        await client.from('messages').insert([{ school_id: this.newMessage.school_id || null, message: this.newMessage.content, file_url: fileUrl }]);
+                        this.showAlert('تم الإرسال', 'تم إرسال النشرة بنجاح', 'success');
+                        this.newMessage.content = ''; this.newMessage.file = null; document.getElementById('msgFileInput').value = '';
+                        this.fetchMessages();
+                    } catch (err) { this.showAlert('خطأ', 'فشل في الإرسال', 'error'); } finally { this.loading = false; }
+                },
+                
                 logout() { window.location.href = 'login.html'; }
             }
         }
