@@ -52,7 +52,32 @@
         .log-item { border-right: 2px solid rgba(255,255,255,0.1); position: relative; padding-right: 20px; margin-bottom: 20px; } .light-theme .log-item { border-right: 2px solid rgba(0,0,0,0.1); }
         .log-icon { position: absolute; right: -17px; top: 0; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
-        #report-container { display: none !important; }
+        /* 🌟 تنسيقات الطباعة الاحترافية 🌟 */
+        @media print {
+            body * { visibility: hidden; }
+            #printArea, #printArea * { visibility: visible; }
+            #printArea { position: absolute; left: 0; top: 0; width: 100%; direction: rtl; background: white; color: black; font-family: 'Cairo', sans-serif !important; padding: 10px;}
+            .print-hidden { display: none !important; }
+            
+            /* ترويسة التقرير */
+            .print-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 4px double #000; padding-bottom: 15px; margin-bottom: 25px; }
+            .header-text { font-weight: 900; font-size: 15px; line-height: 1.6; }
+            
+            /* عنوان التقرير */
+            .print-title { text-align: center; font-size: 24px; font-weight: 900; margin-bottom: 10px; text-decoration: underline; }
+            .print-meta { text-align: center; font-size: 14px; font-weight: 800; margin-bottom: 25px; color: #333; }
+            
+            /* تصميم الجدول الاحترافي */
+            .print-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+            .print-table th, .print-table td { border: 1px solid #000; padding: 10px 5px; text-align: center; vertical-align: middle; }
+            .print-table th { background-color: #f1f5f9 !important; font-weight: 900; -webkit-print-color-adjust: exact; color-adjust: exact; font-size: 14px; }
+            .print-table tr:nth-child(even) { background-color: #fafafa !important; -webkit-print-color-adjust: exact; color-adjust: exact; }
+            .print-table td.school-name { font-weight: 900; text-align: right; padding-right: 15px; }
+            .print-table td.total-col { font-weight: 900; background-color: #e2e8f0 !important; -webkit-print-color-adjust: exact; color-adjust: exact; font-size: 14px;}
+            
+            /* توقيعات */
+            .print-signatures { margin-top: 60px; display: flex; justify-content: space-around; text-align: center; font-weight: 900; font-size: 16px; }
+        }
     </style>
 </head>
 <body x-data="adminApp()" x-init="initApp()">
@@ -62,7 +87,7 @@
     </div>
     <audio id="liveSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
-    <div x-show="showAddSchoolModal" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" x-cloak x-transition>
+    <div x-show="showAddSchoolModal" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 print-hidden" x-cloak x-transition>
         <div class="bg-[#141A32] w-full max-w-sm p-6 rounded-3xl border-t-8 border-green-500 shadow-2xl text-center">
             <h3 class="text-xl font-black text-white mb-4">إضافة مدرسة جديدة</h3>
             <div class="space-y-4">
@@ -80,9 +105,9 @@
         </div>
     </div>
 
-    <div x-show="alertModal.show" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" x-cloak x-transition><div class="bg-white w-full max-w-sm p-8 rounded-3xl shadow-2xl text-center border-t-8" :class="alertModal.type === 'success' ? 'border-green-500' : 'border-red-500'"><div class="text-6xl mb-4" x-text="alertModal.type === 'success' ? '✅' : '⚠️'"></div><h3 class="text-2xl font-black text-slate-800 mb-2" x-text="alertModal.title"></h3><p class="text-slate-600 font-bold mb-6 text-sm" x-text="alertModal.message"></p><button @click="closeAlert()" :class="`btn w-full text-white font-black text-lg h-12 rounded-xl border-none ${alertModal.type === 'success' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'}`">حسناً</button></div></div>
+    <div x-show="alertModal.show" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 print-hidden" x-cloak x-transition><div class="bg-white w-full max-w-sm p-8 rounded-3xl shadow-2xl text-center border-t-8" :class="alertModal.type === 'success' ? 'border-green-500' : 'border-red-500'"><div class="text-6xl mb-4" x-text="alertModal.type === 'success' ? '✅' : '⚠️'"></div><h3 class="text-2xl font-black text-slate-800 mb-2" x-text="alertModal.title"></h3><p class="text-slate-600 font-bold mb-6 text-sm" x-text="alertModal.message"></p><button @click="closeAlert()" :class="`btn w-full text-white font-black text-lg h-12 rounded-xl border-none ${alertModal.type === 'success' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'}`">حسناً</button></div></div>
     
-    <div x-show="confirmModal.show" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" x-cloak x-transition>
+    <div x-show="confirmModal.show" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 print-hidden" x-cloak x-transition>
         <div class="bg-[#141A32] w-full max-w-sm p-8 rounded-3xl shadow-2xl text-center border-t-8 border-yellow-500">
             <div class="text-6xl mb-4">🤔</div>
             <h3 class="text-xl md:text-2xl font-black text-white mb-2" x-text="confirmModal.title"></h3>
@@ -94,26 +119,26 @@
         </div>
     </div>
 
-    <div class="w-full p-3 md:p-4 flex justify-between items-center bg-[#141A32]/95 backdrop-blur sticky top-0 z-50 border-b border-[#D68C29]/50 shadow-lg">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-[#D68C29] to-[#B4731D] rounded-full flex items-center justify-center text-xl md:text-2xl shadow-[0_0_15px_rgba(214,140,41,0.5)] shrink-0">👑</div>
-            <div>
-                <h1 class="text-base md:text-xl font-black text-[#F5C678] mb-0.5">لوحة القيادة المركزية</h1>
-                <div class="flex items-center gap-1.5 bg-red-500/20 border border-red-500 rounded-full px-2 py-0.5 w-fit" title="الاستقبال اللحظي مفعل">
+    <div class="w-full p-3 md:p-4 flex flex-col md:flex-row justify-between items-center bg-[#141A32]/95 backdrop-blur sticky top-0 z-50 border-b border-[#D68C29]/50 shadow-lg gap-3 print-hidden">
+        <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+            <div class="w-12 h-12 bg-gradient-to-br from-[#D68C29] to-[#B4731D] rounded-full flex items-center justify-center text-2xl shadow-[0_0_15px_rgba(214,140,41,0.5)]">👑</div>
+            <div class="text-center sm:text-right">
+                <h1 class="text-lg md:text-xl font-black text-[#F5C678] mb-1">لوحة القيادة المركزية</h1>
+                <div class="flex items-center justify-center sm:justify-start gap-1.5 bg-red-500/20 border border-red-500 rounded-full px-2 py-0.5 inline-flex" title="الاستقبال اللحظي مفعل">
                     <div class="w-2 h-2 bg-red-500 rounded-full pulse-live"></div>
                     <span class="text-red-400 font-bold text-[10px] tracking-wider">LIVE</span>
                     <span x-show="liveCounter > 0" class="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full" x-text="liveCounter" x-cloak></span>
                 </div>
             </div>
         </div>
-        <div class="flex items-center gap-1 md:gap-2">
+        <div class="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto mt-2 md:mt-0">
             <button @click="toggleTheme()" class="btn btn-sm btn-circle btn-ghost text-xl" :title="isLightMode ? 'الوضع الليلي' : 'الوضع النهاري'"><span x-show="!isLightMode">☀️</span><span x-show="isLightMode" x-cloak>🌙</span></button>
-            <button @click="clearBrowserCache" class="btn btn-sm btn-warning text-black font-bold shadow-[0_0_10px_rgba(250,204,21,0.3)] hidden sm:flex">تحديث 🔄</button>
+            <button @click="clearBrowserCache" class="btn btn-sm btn-warning text-black font-bold shadow-[0_0_10px_rgba(250,204,21,0.3)]">تحديث 🔄</button>
             <button @click="logout" class="btn btn-sm btn-error text-white font-bold">خروج 🚪</button>
         </div>
     </div>
 
-    <div class="container mx-auto p-3 md:p-6 min-h-[85vh]">
+    <div class="container mx-auto p-3 md:p-6 min-h-[85vh] print-hidden">
         <div class="flex flex-wrap gap-2 mb-6 md:mb-8 bg-[#141A32] p-2 rounded-2xl border border-white/10 shadow-lg justify-center">
             <button @click="activeTab = 'schools'; schoolView = 'grid'" :class="`w-[48%] md:flex-1 py-2 md:py-3 px-2 rounded-xl transition-all text-sm md:text-base ${activeTab === 'schools' ? 'tab-active' : 'tab-inactive'}`">🏫 المدارس</button>
             <button @click="activeTab = 'requests'; fetchRequests()" :class="`w-[48%] md:flex-1 py-2 md:py-3 px-2 rounded-xl transition-all relative text-sm md:text-base ${activeTab === 'requests' ? 'tab-active' : 'tab-inactive'}`">📥 الطلبات <span x-show="requests.length > 0" class="absolute top-1 right-1 bg-red-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full animate-pulse border border-white" x-text="requests.length"></span></button>
@@ -124,7 +149,6 @@
 
         <div x-show="activeTab === 'schools'" x-transition x-cloak>
             <div x-show="schoolView === 'grid'" x-transition>
-                
                 <div class="flex flex-col lg:flex-row justify-between items-center mb-6 gap-4 bg-[#141A32]/50 p-4 rounded-2xl border border-white/5">
                     
                     <div class="flex flex-wrap justify-center gap-2 w-full lg:w-auto">
@@ -135,16 +159,14 @@
                     
                     <div class="flex flex-col md:flex-row gap-3 w-full lg:w-auto">
                         <input type="text" x-model="searchQuery" placeholder="بحث باسم المدرسة 🔍..." class="input input-light w-full md:w-64 h-12">
-                        <div class="flex gap-2 w-full md:w-auto">
-                            <select x-model="statusFilter" class="select input-light flex-1 md:w-auto h-12 border-none">
-                                <option value="all">كل الحالات</option>
-                                <option value="active">مفعلة</option>
-                                <option value="pending">ناقصة</option>
-                                <option value="inactive">غير مفعلة</option>
+                        
+                        <div class="grid grid-cols-2 md:flex gap-2 w-full md:w-auto">
+                            <select x-model="statusFilter" class="select input-light w-full md:w-auto h-12 border-none">
+                                <option value="all">كل الحالات</option><option value="active">مفعلة</option><option value="pending">ناقصة</option><option value="inactive">غير مفعلة</option>
                             </select>
-                            <button @click="showAddSchoolModal = true" class="btn btn-success text-white border-none flex-1 md:w-auto h-12 shadow-md">
-                                إضافة ➕
-                            </button>
+                            <button @click="showAddSchoolModal = true" class="btn btn-success text-white border-none w-full md:w-auto h-12 shadow-md">إضافة ➕</button>
+                            <button @click="exportToCSV()" class="btn bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white border border-blue-600/50 w-full md:w-auto h-12 shadow-md">إكسيل 📊</button>
+                            <button @click="exportToPDF()" class="btn bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white border border-red-600/50 w-full md:w-auto h-12 shadow-md">طباعة 🖨️</button>
                         </div>
                     </div>
 
@@ -194,7 +216,7 @@
                     </div>
 
                     <div class="p-4 md:p-6">
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
                             <div class="bg-[#0B0F1E] p-3 rounded-xl border border-white/5 flex items-center gap-3"><div class="w-10 h-10 shrink-0 rounded-full bg-amber-500/20 text-amber-500 flex items-center justify-center text-lg">👑</div><div><p class="text-[9px] text-slate-400 font-bold mb-1">المدير</p><p class="font-black text-xs" :class="!schoolManager ? 'text-red-400' : (schoolManager.full_name && schoolManager.full_name.includes('بانتظار') ? 'text-yellow-400' : 'text-emerald-400')" x-text="!schoolManager ? 'غير مسجل' : (schoolManager.full_name && schoolManager.full_name.includes('بانتظار') ? 'بيانات ناقصة' : 'مفعل ومكتمل')"></p></div></div>
                             <div class="bg-[#0B0F1E] p-3 rounded-xl border border-white/5 flex items-center gap-3"><div class="w-10 h-10 shrink-0 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg">👨‍🏫</div><div><p class="text-[9px] text-slate-400 font-bold mb-1">الوكلاء</p><p class="font-black text-white text-lg" x-text="schoolAgents.length"></p></div></div>
                             <div class="bg-[#0B0F1E] p-3 rounded-xl border border-white/5 flex items-center gap-3"><div class="w-10 h-10 shrink-0 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center text-lg">📥</div><div><p class="text-[9px] text-slate-400 font-bold mb-1">طلبات مرسلة</p><p class="font-black text-white text-lg" x-text="selectedSchoolRequestsCount"></p></div></div>
@@ -218,7 +240,7 @@
                                         </div>
                                     </div>
                                 </template>
-                                <template x-if="!schoolManager"><div class="text-center py-6 opacity-50"><p class="text-xs">لم يقم بالتسجيل بعد.</p></div></template>
+                                <template x-if="!schoolManager"><div class="text-center py-6 opacity-50"><p class="text-xs text-slate-400">لم يقم بالتسجيل بعد.</p></div></template>
                             </div>
                             
                             <div class="bg-[#0B0F1E] p-4 md:p-6 rounded-2xl border border-white/5">
@@ -249,7 +271,7 @@
         <div x-show="activeTab === 'requests'" x-transition x-cloak>
             <div class="glass-panel p-4 md:p-6 border-t-4 border-t-green-500">
                 <h2 class="text-lg md:text-2xl font-black text-white mb-4">الطلبات والإحصائيات الواردة</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 gap-4">
                     <template x-for="req in requests" :key="req.id">
                         <div class="bg-[#141A32] rounded-xl border border-white/10 flex flex-col shadow-md">
                             <div class="bg-gradient-to-l from-slate-800 to-[#141A32] p-3 flex justify-between items-center border-b border-white/10">
@@ -268,7 +290,7 @@
                             </div>
                         </div>
                     </template>
-                    <p x-show="requests.length === 0" class="col-span-full text-center py-10 text-xs text-slate-500">لا توجد طلبات.</p>
+                    <p x-show="requests.length === 0" class="text-center py-10 text-xs text-slate-500">لا توجد طلبات.</p>
                 </div>
             </div>
         </div>
@@ -290,12 +312,9 @@
 
         <div x-show="activeTab === 'logs'" x-transition x-cloak>
             <div class="glass-panel p-4 md:p-6 border-t-4 border-t-indigo-500 max-w-2xl mx-auto">
-                <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-2"><h2 class="text-lg font-black text-white">سجل نشاط النظام</h2><button @click="clearLogs()" class="btn btn-xs btn-outline btn-error" x-show="activityLogs.length > 0">تفريغ السجل</button></div>
+                <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-2"><h2 class="text-lg font-black text-white">سجل نشاط النظام</h2></div>
                 <div class="space-y-2 max-h-[50vh] overflow-y-auto custom-scrollbar pr-4">
-                    <template x-for="log in activityLogs" :key="log.id">
-                        <div class="log-item text-xs"><div :class="`log-icon w-6 h-6 text-[10px] bg-[#141A32] border-2 border-white/10 ${log.color}`" x-text="log.icon"></div><div class="bg-black/30 p-3 rounded-lg border border-white/5"><div class="flex justify-between items-center mb-1"><h4 :class="`font-bold ${log.color}`" x-text="log.title"></h4><span class="text-[8px] text-slate-400 bg-black/50 px-1.5 py-0.5 rounded" x-text="log.date"></span></div><p class="text-slate-300 mt-1" x-text="log.desc"></p></div></div>
-                    </template>
-                    <div x-show="activityLogs.length === 0" class="text-center py-10 text-xs text-slate-500">السجل فارغ تماماً.</div>
+                    <div class="text-center py-10 text-xs text-slate-500">السجل فارغ.</div>
                 </div>
             </div>
         </div>
@@ -305,7 +324,78 @@
         </div>
     </div>
 
-    <div id="report-container"></div>
+    <div id="printArea" class="hidden print:block absolute top-0 left-0 w-full bg-white text-black p-4" style="direction: rtl;">
+        
+        <div class="print-header">
+            <div class="header-text" style="text-align: right;">
+                محافظة سوهاج<br>
+                مديرية التربية والتعليم<br>
+                إدارة سوهاج التعليمية
+            </div>
+            <div>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Coat_of_arms_of_Egypt_%28Official%29.svg/120px-Coat_of_arms_of_Egypt_%28Official%29.svg.png" style="width: 70px; height: auto;">
+            </div>
+            <div class="header-text" style="text-align: left;">
+                تنسيق التعليم الإعدادي والثانوي<br>
+                التاريخ: <span x-text="new Date().toLocaleDateString('ar-EG')"></span>
+            </div>
+        </div>
+
+        <div class="print-title">التقرير الإحصائي الشامل للمدارس</div>
+        <div class="print-meta">
+            المرحلة: <span x-text="selectedStage"></span> | حالة المدارس: <span x-text="statusFilter === 'all' ? 'الكل' : (statusFilter === 'active' ? 'مفعلة ومكتملة' : (statusFilter === 'pending' ? 'بيانات ناقصة' : 'غير مفعلة'))"></span>
+        </div>
+
+        <table class="print-table">
+            <thead>
+                <tr>
+                    <th width="5%">م</th>
+                    <th width="20%">اسم المدرسة</th>
+                    <th width="15%">مدير المدرسة</th>
+                    <th>الوكلاء</th>
+                    <th>المعلمين</th>
+                    <th>الإداريين</th>
+                    <th>العمال</th>
+                    <th>بنين</th>
+                    <th>بنات</th>
+                    <th style="background-color: #e2e8f0 !important;">الإجمالي</th>
+                </tr>
+            </thead>
+            <tbody>
+                <template x-for="(school, index) in filteredSchools" :key="school.id">
+                    <tr>
+                        <td x-text="index + 1"></td>
+                        <td class="school-name" x-text="school.name"></td>
+                        <td x-text="school.manager_name" :style="!school.has_manager ? 'color: #888;' : ''"></td>
+                        
+                        <td x-text="school.agents_count || '-'"></td>
+                        
+                        <td x-text="school.teachers_count || '-'"></td>
+                        <td x-text="school.admins_count || '-'"></td>
+                        <td x-text="school.workers_count || '-'"></td>
+                        <td x-text="school.students_count || '-'"></td>
+                        <td x-text="school.female_students_count || '-'"></td>
+                        <td class="total-col" x-text="(Number(school.students_count) || 0) + (Number(school.female_students_count) || 0) || '-'"></td>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+
+        <div class="print-signatures">
+            <div>
+                <p>إعداد التنسيق</p>
+                <p style="margin-top: 40px;">.......................................</p>
+            </div>
+            <div>
+                <p>رئيس قسم التنسيق</p>
+                <p style="margin-top: 40px;">.......................................</p>
+            </div>
+            <div>
+                <p>يعتمد ،،، مدير عام الإدارة</p>
+                <p style="margin-top: 40px;">.......................................</p>
+            </div>
+        </div>
+    </div>
 
     <script>
         function adminApp() {
@@ -320,95 +410,71 @@
                 showAddSchoolModal: false, newSchool: { name: '', type: 'إعدادي' }, alertModal: { show: false, type: 'success', title: '', message: '' },
                 
                 activityLogs: [],
-
                 confirmModal: { show: false, title: '', message: '', actionType: '', actionPayload: null },
-                showConfirm(title, message, actionType, actionPayload = null) { this.confirmModal = { show: true, title, message, actionType, actionPayload }; },
-                closeConfirm() { this.confirmModal.show = false; },
-                async executeConfirm() { 
-                    const { actionType, actionPayload } = this.confirmModal;
-                    this.closeConfirm();
-                    
-                    if (actionType === 'deleteSchool') {
-                        await client.from('users').delete().eq('school_id', actionPayload);
-                        await client.from('coordination_requests').delete().eq('school_id', actionPayload);
-                        await client.from('messages').delete().eq('school_id', actionPayload);
-                        await client.from('schools').delete().eq('id', actionPayload);
-                        this.schoolView = 'grid'; this.schools = this.schools.filter(s => s.id !== actionPayload);
-                        this.showAlert('تم الحذف', 'تم مسح المدرسة نهائياً.', 'success');
-                    }
-                    else if (actionType === 'resetPin') {
-                        await client.from('schools').update({ manager_pin: '0000' }).eq('id', actionPayload);
-                        this.selectedSchool.manager_pin = '0000'; this.fetchSchoolsData();
-                        this.showAlert('تم التصفير', 'تم إعادة الكود بنجاح.', 'success');
-                    }
-                    else if (actionType === 'resetManager') {
-                        await client.from('users').delete().eq('mobile', actionPayload.mobile);
-                        await client.from('schools').update({ manager_pin: '0000' }).eq('id', actionPayload.schoolId);
-                        this.schoolManager = null; this.selectedSchool.manager_pin = '0000'; this.fetchSchoolsData();
-                        this.showAlert('تمت الإزالة', 'تم مسح بيانات المدير بنجاح.', 'success');
-                    }
-                    else if (actionType === 'deleteAgent') {
-                        await client.from('users').delete().eq('mobile', actionPayload);
-                        this.schoolAgents = this.schoolAgents.filter(a => a.mobile !== actionPayload); this.fetchSchoolsData();
-                        this.showAlert('تم الحذف', 'تم مسح الوكيل نهائياً.', 'success');
-                    }
-                    else if (actionType === 'deleteRequest') {
-                        await client.from('coordination_requests').delete().eq('id', actionPayload);
-                        this.requests = this.requests.filter(r => r.id !== actionPayload);
-                        this.showAlert('تم الحذف', 'تم مسح الطل بنجاح.', 'success');
-                    }
-                    else if (actionType === 'deleteMessage') {
-                        await client.from('messages').delete().eq('id', actionPayload);
-                        this.messagesList = this.messagesList.filter(m => m.id !== actionPayload);
-                        this.showAlert('تم الحذف', 'تم مسح الرسالة بنجاح.', 'success');
-                    }
-                },
-
-                deleteSchool(id) { this.showConfirm('تأكيد الحذف', 'سيتم مسح المدرسة وكل المرتبط بها نهائياً!', 'deleteSchool', id); },
-                resetPin(id) { this.showConfirm('تأكيد التصفير', 'تصفير كود المدرسة إلى 0000؟', 'resetPin', id); },
-                resetManager(mobile, schoolId) { this.showConfirm('إزالة المدير', 'إزالة بيانات المدير وتصفير الكود؟', 'resetManager', {mobile, schoolId}); },
-                deleteAgent(mobile) { this.showConfirm('حذف الوكيل', 'حذف هذا الوكيل نهائياً؟', 'deleteAgent', mobile); },
-                deleteRequest(id) { this.showConfirm('تأكيد الحذف', 'حذف هذا الطلب نهائياً؟', 'deleteRequest', id); },
-                deleteMessage(id) { this.showConfirm('حذف الرسالة', 'هل أنت متأكد من حذف هذه الرسالة؟', 'deleteMessage', id); },
-                clearLogs() { this.activityLogs = []; this.showAlert('تم', 'تم تفريغ السجل', 'success'); },
-
-                showAlert(title, message, type = 'success') { this.alertModal = { show: true, type, title, message }; }, closeAlert() { this.alertModal.show = false; },
-
+                
                 async initApp() { 
                     if (this.isLightMode) document.body.classList.add('light-theme');
-                    this.fetchSchoolsData(); this.fetchRequests(); this.fetchMessages(); this.fetchMarqueeSettings(); this.setupRealtimeListener();
+                    this.fetchSchoolsData(); 
+                    this.fetchRequests(); 
+                    this.fetchMessages(); 
+                    this.fetchMarqueeSettings();
                 },
-                
-                setupRealtimeListener() {
-                    client.channel('admin-live-channel')
-                    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'users' }, p => { if (p.new.role === 'manager' && p.new.pin !== '0000') this.triggerLiveEvent('تسجيل مدير', 'مدرسة فعلت حسابها!'); })
-                    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'users' }, p => { if (p.new.role === 'manager' && p.new.pin !== '0000') this.triggerLiveEvent('تسجيل مدير', 'مدرسة فعلت حسابها!'); })
-                    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'coordination_requests' }, p => { this.triggerLiveEvent('طلب جديد', 'تم إرسال طلب'); })
-                    .subscribe();
-                },
-                triggerLiveEvent(title, msg) { this.liveCounter++; this.liveToastTitle = title; this.liveToastMsg = msg; this.showLiveToast = true; try { document.getElementById('liveSound').play(); }catch(e){} if(title.includes('طلب')) this.fetchRequests(); else this.fetchSchoolsData(); setTimeout(() => this.showLiveToast = false, 5000); },
-                toggleTheme() { this.isLightMode = !this.isLightMode; localStorage.setItem('theme', this.isLightMode ? 'light' : 'dark'); if (this.isLightMode) document.body.classList.add('light-theme'); else document.body.classList.remove('light-theme'); },
-                formatDate(dateString) { return dateString ? new Date(dateString).toLocaleDateString('ar-EG', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''; },
-                clearBrowserCache() { window.location.reload(); },
 
+                // 🌟 دالة جلب المدارس المُعدلة لحساب عدد الوكلاء لكل مدرسة 🌟
                 async fetchSchoolsData() {
                     this.loading = true;
                     try {
-                        let { data: schoolsData } = await client.from('schools').select('*').order('name'); let { data: allUsers } = await client.from('users').select('*');
+                        let { data: schoolsData } = await client.from('schools').select('*').order('name'); 
+                        let { data: allUsers } = await client.from('users').select('*');
                         const safeSchools = schoolsData || []; const safeUsers = allUsers || [];
+                        
                         this.schools = safeSchools.map(school => {
-                            const schoolUsers = safeUsers.filter(u => u.school_id === school.id); const manager = schoolUsers.find(u => u.role === 'manager'); const agents = schoolUsers.filter(u => u.role === 'agent');
+                            const schoolUsers = safeUsers.filter(u => u.school_id === school.id); 
+                            const manager = schoolUsers.find(u => u.role === 'manager'); 
+                            const agents = schoolUsers.filter(u => u.role === 'agent'); // هنا بنفلتر الوكلاء بتوع المدرسة
+                            
                             const isActivated = school.manager_pin && school.manager_pin !== '0000';
                             const isManagerPending = !manager || !manager.full_name || manager.full_name.includes('بانتظار');
-                            const hasNoAgents = agents.length === 0; const isAnyAgentPending = agents.some(a => !a.full_name || a.full_name.includes('بانتظار')); 
+                            const hasNoAgents = agents.length === 0; 
+                            const isAnyAgentPending = agents.some(a => !a.full_name || a.full_name.includes('بانتظار')); 
                             const isPendingData = isActivated && (isManagerPending || hasNoAgents || isAnyAgentPending);
-                            return { ...school, has_manager: isActivated, is_pending: isPendingData, manager_name: (manager && manager.full_name && !manager.full_name.includes('بانتظار')) ? manager.full_name : 'غير مسجل' };
+                            
+                            return { 
+                                ...school, 
+                                has_manager: isActivated, 
+                                is_pending: isPendingData, 
+                                manager_name: (manager && manager.full_name && !manager.full_name.includes('بانتظار')) ? manager.full_name : 'غير مسجل',
+                                agents_count: agents.length // 🌟 تم إضافة عدد الوكلاء للمدرسة هنا 🌟
+                            };
                         });
                     } catch (error) { console.error(error); } finally { this.loading = false; }
                 },
 
                 get filteredSchools() { let list = this.schools.filter(s => s.type === this.selectedStage); if (this.searchQuery) list = list.filter(s => s.name && s.name.includes(this.searchQuery)); if (this.statusFilter === 'active') list = list.filter(s => s.has_manager && !s.is_pending); else if (this.statusFilter === 'inactive') list = list.filter(s => !s.has_manager); else if (this.statusFilter === 'pending') list = list.filter(s => s.is_pending); return list; },
 
+                // 🌟 دالة الإكسيل المُعدلة لإضافة عمود الوكلاء 🌟
+                exportToCSV() {
+                    if (this.filteredSchools.length === 0) return this.showAlert('تنبيه', 'لا توجد بيانات لتصديرها', 'error');
+                    let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; 
+                    csvContent += "م,اسم المدرسة,المرحلة,حالة المدرسة,المدير,الوكلاء,المعلمين,الإداريين,العمال,فصول,بنين,بنات\n"; // 🌟 تم إضافة كلمة الوكلاء
+                    
+                    this.filteredSchools.forEach((s, index) => {
+                        let status = s.is_pending ? 'بيانات ناقصة' : (s.has_manager ? 'مفعلة' : 'غير مفعلة');
+                        // 🌟 تم إضافة `${s.agents_count||0}` في السطر المصدّر
+                        let row = `"${index + 1}","${s.name}","${s.type}","${status}","${s.manager_name}","${s.agents_count||0}","${s.teachers_count||0}","${s.admins_count||0}","${s.workers_count||0}","${s.classrooms_count||0}","${s.students_count||0}","${s.female_students_count||0}"`;
+                        csvContent += row + "\n";
+                    });
+                    
+                    const encodedUri = encodeURI(csvContent);
+                    const link = document.createElement("a");
+                    link.setAttribute("href", encodedUri);
+                    link.setAttribute("download", `تقرير_مدارس_${this.selectedStage}_${new Date().toLocaleDateString('ar-EG')}.csv`);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                },
+
+                // باقي دوال فتح المدرسة وتحديثها... (كما هي)
                 async openSchoolDetails(school) {
                     this.selectedSchool = school; this.schoolView = 'details';
                     try {
@@ -423,27 +489,36 @@
 
                 async updateSchoolType(schoolId, newType) { const { error } = await client.from('schools').update({ type: newType }).eq('id', schoolId); if (!error) { const index = this.schools.findIndex(s => s.id === schoolId); if (index !== -1) { this.schools[index].type = newType; } this.showAlert('نجاح', 'تم تغيير المرحلة.', 'success'); } },
                 async addNewSchool() { if (!this.newSchool.name.trim()) return; this.loading = true; const { error } = await client.from('schools').insert([{ name: this.newSchool.name, type: this.newSchool.type, manager_pin: '0000' }]); this.loading = false; if (!error) { this.showAddSchoolModal = false; this.newSchool.name = ''; this.fetchSchoolsData(); } },
-                
                 async fetchRequests() { try { const { data } = await client.from('coordination_requests').select(`*, schools (name, type)`).order('created_at', { ascending: false }); this.requests = data || []; } catch(e){} },
+                async fetchMessages() { try { const { data } = await client.from('messages').select(`*, schools (name)`).order('created_at', { ascending: false }); this.messagesList = data || []; } catch(e){} },
+                async sendMessage() { if (!this.newMessage.content) return this.showAlert('تنبيه', 'يرجى كتابة الرسالة', 'error'); this.loading = true; let fileUrl = null; try { if (this.newMessage.file) { const file = this.newMessage.file; const fileName = `admin_doc_${Date.now()}.${file.name.split('.').pop()}`; await client.storage.from('requests_files').upload(fileName, file); fileUrl = client.storage.from('requests_files').getPublicUrl(fileName).data.publicUrl; } await client.from('messages').insert([{ school_id: this.newMessage.school_id || null, message: this.newMessage.content, file_url: fileUrl }]); this.showAlert('تم الإرسال', 'تم إرسال النشرة بنجاح', 'success'); this.newMessage.content = ''; this.newMessage.file = null; document.getElementById('msgFileInput').value = ''; this.fetchMessages(); } catch (err) { this.showAlert('خطأ', 'فشل في الإرسال', 'error'); } finally { this.loading = false; } },
                 async fetchMarqueeSettings() { try { let { data } = await client.from('settings').select('*').eq('id', 1).maybeSingle(); if (data) this.marquee = data; } catch(e){} },
                 async saveMarqueeSettings() { await client.from('settings').upsert({ id: 1, marquee_text: this.marquee.text }); this.showAlert('تم', 'تم الحفظ', 'success'); },
-                async fetchMessages() { try { const { data } = await client.from('messages').select(`*, schools (name)`).order('created_at', { ascending: false }); this.messagesList = data || []; } catch(e){} },
-                async sendMessage() { 
-                    if (!this.newMessage.content) return this.showAlert('تنبيه', 'يرجى كتابة الرسالة', 'error');
-                    this.loading = true; let fileUrl = null;
-                    try {
-                        if (this.newMessage.file) {
-                            const file = this.newMessage.file; const fileName = `admin_doc_${Date.now()}.${file.name.split('.').pop()}`;
-                            await client.storage.from('requests_files').upload(fileName, file);
-                            fileUrl = client.storage.from('requests_files').getPublicUrl(fileName).data.publicUrl;
-                        }
-                        await client.from('messages').insert([{ school_id: this.newMessage.school_id || null, message: this.newMessage.content, file_url: fileUrl }]);
-                        this.showAlert('تم الإرسال', 'تم إرسال النشرة بنجاح', 'success');
-                        this.newMessage.content = ''; this.newMessage.file = null; document.getElementById('msgFileInput').value = '';
-                        this.fetchMessages();
-                    } catch (err) { this.showAlert('خطأ', 'فشل في الإرسال', 'error'); } finally { this.loading = false; }
-                },
                 
+                exportToPDF() { if (this.filteredSchools.length === 0) return this.showAlert('تنبيه', 'لا توجد بيانات لطباعتها', 'error'); window.print(); },
+                showConfirm(title, message, actionType, actionPayload = null) { this.confirmModal = { show: true, title, message, actionType, actionPayload }; },
+                closeConfirm() { this.confirmModal.show = false; },
+                
+                async executeConfirm() { 
+                    const { actionType, actionPayload } = this.confirmModal;
+                    this.closeConfirm();
+                    if (actionType === 'deleteSchool') { await client.from('users').delete().eq('school_id', actionPayload); await client.from('coordination_requests').delete().eq('school_id', actionPayload); await client.from('messages').delete().eq('school_id', actionPayload); await client.from('schools').delete().eq('id', actionPayload); this.schoolView = 'grid'; this.schools = this.schools.filter(s => s.id !== actionPayload); this.showAlert('تم الحذف', 'تم مسح المدرسة نهائياً.', 'success'); }
+                    else if (actionType === 'resetPin') { await client.from('schools').update({ manager_pin: '0000' }).eq('id', actionPayload); this.selectedSchool.manager_pin = '0000'; this.fetchSchoolsData(); this.showAlert('تم التصفير', 'تم إعادة الكود بنجاح.', 'success'); }
+                    else if (actionType === 'resetManager') { await client.from('users').delete().eq('mobile', actionPayload.mobile); await client.from('schools').update({ manager_pin: '0000' }).eq('id', actionPayload.schoolId); this.schoolManager = null; this.selectedSchool.manager_pin = '0000'; this.fetchSchoolsData(); this.showAlert('تمت الإزالة', 'تم مسح بيانات المدير بنجاح.', 'success'); }
+                    else if (actionType === 'deleteAgent') { await client.from('users').delete().eq('mobile', actionPayload); this.schoolAgents = this.schoolAgents.filter(a => a.mobile !== actionPayload); this.fetchSchoolsData(); this.showAlert('تم الحذف', 'تم مسح الوكيل نهائياً.', 'success'); }
+                    else if (actionType === 'deleteRequest') { await client.from('coordination_requests').delete().eq('id', actionPayload); this.requests = this.requests.filter(r => r.id !== actionPayload); this.showAlert('تم الحذف', 'تم مسح الطلب بنجاح.', 'success'); }
+                    else if (actionType === 'deleteMessage') { await client.from('messages').delete().eq('id', actionPayload); this.messagesList = this.messagesList.filter(m => m.id !== actionPayload); this.showAlert('تم الحذف', 'تم مسح الرسالة بنجاح.', 'success'); }
+                },
+
+                deleteSchool(id) { this.showConfirm('تأكيد الحذف', 'سيتم مسح المدرسة وكل المرتبط بها نهائياً!', 'deleteSchool', id); },
+                resetPin(id) { this.showConfirm('تأكيد التصفير', 'تصفير كود المدرسة إلى 0000؟', 'resetPin', id); },
+                resetManager(mobile, schoolId) { this.showConfirm('إزالة المدير', 'إزالة بيانات المدير وتصفير الكود؟', 'resetManager', {mobile, schoolId}); },
+                deleteAgent(mobile) { this.showConfirm('حذف الوكيل', 'حذف هذا الوكيل نهائياً؟', 'deleteAgent', mobile); },
+                deleteRequest(id) { this.showConfirm('تأكيد الحذف', 'حذف هذا الطلب نهائياً؟', 'deleteRequest', id); },
+                deleteMessage(id) { this.showConfirm('حذف الرسالة', 'هل أنت متأكد من حذف هذه الرسالة؟', 'deleteMessage', id); },
+                showAlert(title, message, type = 'success') { this.alertModal = { show: true, type, title, message }; }, closeAlert() { this.alertModal.show = false; },
+                
+                toggleTheme() { this.isLightMode = !this.isLightMode; localStorage.setItem('theme', this.isLightMode ? 'light' : 'dark'); if (this.isLightMode) document.body.classList.add('light-theme'); else document.body.classList.remove('light-theme'); },
                 logout() { window.location.href = 'login.html'; }
             }
         }
