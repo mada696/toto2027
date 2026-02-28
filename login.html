@@ -24,7 +24,8 @@
         .role-container { background: rgba(11, 15, 30, 0.7); padding: 8px; border-radius: 1.2rem; border: 1px solid rgba(255,255,255,0.05); box-shadow: inset 0 4px 8px rgba(0,0,0,0.6); transition: all 0.4s; }
         .role-option { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); color: #8892B0; border: 1px solid rgba(255,255,255,0.05); background: rgba(255, 255, 255, 0.03); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .role-option.active { background: linear-gradient(135deg, #D68C29 0%, #B4731D 100%); color: white; box-shadow: 0 8px 20px rgba(214, 140, 41, 0.4), inset 0 2px 2px rgba(255,255,255,0.3); transform: translateY(-4px); border-color: transparent; }
-        .role-option.inactive:hover { color: #fff; background: rgba(255,255,255,0.08); transform: translateY(-1px); }
+        .role-option.inactive:hover:not(.locked) { color: #fff; background: rgba(255,255,255,0.08); transform: translateY(-1px); }
+        .role-option.locked { opacity: 0.5; cursor: not-allowed !important; filter: grayscale(100%); }
 
         .marquee-container { width: 100%; overflow: hidden; background: rgba(11, 15, 30, 0.95); border-bottom: 2px solid #D68C29; padding: 8px 0; position: fixed; top: 0; left: 0; z-index: 9999; display: block; direction: rtl; transition: background 0.4s;} 
         .marquee-content { display: inline-block; white-space: nowrap; font-weight: 800; color: #F5C678; animation: scroll-marquee var(--marquee-speed) linear infinite var(--marquee-dir); font-size: var(--marquee-size); padding: 0 20px; } 
@@ -71,7 +72,7 @@
         body.light-theme .glass-box { background: rgba(255, 255, 255, 0.95); border-color: #cbd5e1; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); }
         body.light-theme .role-container { background: #f8fafc; border-color: #e2e8f0; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
         body.light-theme .role-option { color: #64748b; border-color: transparent; }
-        body.light-theme .role-option.inactive:hover { background: #e2e8f0; color: #0f172a; }
+        body.light-theme .role-option.inactive:hover:not(.locked) { background: #e2e8f0; color: #0f172a; }
         body.light-theme .text-white\/80 { color: #475569 !important; font-weight: 900; }
         body.light-theme .text-slate-300 { color: #334155 !important; font-weight: 900; }
         body.light-theme .bg-black\/40 { background-color: #f8fafc !important; border-color: #cbd5e1 !important; }
@@ -155,7 +156,15 @@
         <div class="flex gap-2 mb-4 role-container">
             <label :class="`cursor-pointer flex-1 py-3 rounded-lg flex items-center justify-center role-option ${role === 'manager' ? 'active' : 'inactive'}`"><input type="radio" value="manager" x-model="role" class="hidden"><span class="font-black text-lg">مدير</span></label>
             <label :class="`cursor-pointer flex-1 py-3 rounded-lg flex items-center justify-center role-option ${role === 'agent' ? 'active' : 'inactive'}`"><input type="radio" value="agent" x-model="role" class="hidden"><span class="font-black text-lg">وكيل</span></label>
-            <label :class="`cursor-pointer flex-1 py-3 rounded-lg flex items-center justify-center role-option ${role === 'admin' ? 'active' : 'inactive'}`"><input type="radio" value="admin" x-model="role" class="hidden"><span class="font-black text-lg">مسئول</span></label>
+            
+            <label :class="`flex-1 py-3 rounded-lg flex items-center justify-center role-option transition-all ${isAdminUnlocked ? 'cursor-pointer' : 'locked'} ${role === 'admin' ? 'active' : 'inactive'}`">
+                <input type="radio" value="admin" x-model="role" class="hidden" :disabled="!isAdminUnlocked">
+                <span class="font-black text-lg flex items-center gap-1">
+                    مسئول
+                    <span x-show="!isAdminUnlocked" class="text-sm ml-1">🔒</span>
+                    <span x-show="isAdminUnlocked" x-cloak class="text-sm ml-1">🔓</span>
+                </span>
+            </label>
         </div>
         
         <div class="space-y-4">
@@ -265,6 +274,10 @@
             return {
                 role: 'manager', mobile: '', loading: false, showSetupModal: false, setupType: '', schoolsList: [], setup: { stage: 'إعدادي', schoolId: '', newPin: '' }, 
                 
+                // 🌟 قائمة أرقام المسئولين المسموح لهم بفتح قفل الدخول 🌟
+                // لو حبيت تضيف رقم مسئول تاني حطه بين علامتين التنصيص وافصل بفاصلة، مثال: ['01030302005', '01111111111']
+                adminNumbers: ['01030302005'], 
+                
                 marquee: { text: '', speed: '60', direction: 'normal', size: '1.2rem' }, 
 
                 showPinModal: false, showSettingsModal: false, adminPinInput: '', rememberMe: false,
@@ -277,6 +290,11 @@
 
                 alertModal: { show: false, type: 'success', title: '', message: '', action: null }, showAlert(title, message, type = 'success', action = null) { this.alertModal = { show: true, type, title, message, action }; }, closeAlert() { this.alertModal.show = false; if (this.alertModal.action) this.alertModal.action(); },
                 
+                // 🌟 دالة قراءة هل الرقم ده بتاع مسئول ولا لأ 🌟
+                get isAdminUnlocked() {
+                    return this.adminNumbers.includes(this.mobile);
+                },
+
                 async initData() { 
                     if (this.isLightMode) document.body.classList.add('light-theme');
                     await this.loadData();
@@ -308,6 +326,12 @@
 
                 async checkMobileLength() {
                     this.mobile = this.mobile.replace(/[^0-9]/g, '');
+                    
+                    // 🌟 حماية إضافية: لو مسح الرقم وهو مختار مسئول، يرجعه مدير تلقائياً 🌟
+                    if (this.role === 'admin' && !this.isAdminUnlocked) {
+                        this.role = 'manager';
+                    }
+
                     if (this.mobile.length === 11 && this.role === 'manager' && this.mobile !== this.lastCheckedMobile) {
                         this.lastCheckedMobile = this.mobile; 
                         let { data: user } = await client.from('users').select('pin').eq('mobile', this.mobile).maybeSingle();
@@ -369,7 +393,13 @@
                 loadSavedCredentials() {
                     const savedMobile = localStorage.getItem('login_mobile'); const savedPin = localStorage.getItem('login_pin'); const savedRole = localStorage.getItem('login_role');
                     if (savedMobile) {
-                        this.mobile = savedMobile; if (savedRole) this.role = savedRole; this.rememberMe = true;
+                        this.mobile = savedMobile; 
+                        
+                        // لو الرقم محفوظ وهو رقم أدمن، يقدر يختار أدمن تاني
+                        if (savedRole === 'admin' && this.isAdminUnlocked) { this.role = savedRole; }
+                        else if (savedRole !== 'admin') { this.role = savedRole; }
+                        
+                        this.rememberMe = true;
                         if (this.role !== 'agent' && savedPin) { setTimeout(() => { const pinBoxes = document.querySelectorAll('.pin-box'); for (let i = 0; i < savedPin.length; i++) { if(pinBoxes[i]) pinBoxes[i].value = savedPin[i]; } }, 100); }
                     }
                 },
@@ -407,7 +437,7 @@
                     if (finalPin.length !== 4) { this.loading = false; this.resetSlider(); return this.showAlert('تنبيه', 'برجاء إكمال كود المرور (4 أرقام)', 'error'); }
                     
                     if (this.role === 'admin') { 
-                        if (finalPin === '5555') { this.handleRememberMe(finalPin); window.location.href = 'admin_dashboard.html'; } else { this.resetSlider(); this.showAlert('خطأ', 'كود المسئول خطأ', 'error'); }
+                        if (finalPin === '5555' && this.isAdminUnlocked) { this.handleRememberMe(finalPin); window.location.href = 'admin_dashboard.html'; } else { this.resetSlider(); this.showAlert('خطأ', 'كود المسئول خطأ', 'error'); }
                         this.loading = false; return; 
                     }
                     
