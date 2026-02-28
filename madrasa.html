@@ -2,16 +2,19 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>إدارة المدرسة - التنسيق</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #141A32; min-height: 100vh; color: #E8EDEB; padding-bottom: 20px; overflow-x: hidden; transition: background-color 0.4s, color 0.4s; }
+        html, body { max-width: 100vw; overflow-x: hidden; }
+        body { font-family: 'Cairo', sans-serif; background-color: #141A32; min-height: 100vh; color: #E8EDEB; padding-bottom: 20px; transition: background-color 0.4s, color 0.4s; }
         .glass-panel { background: rgba(20, 26, 50, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(214, 140, 41, 0.3); border-radius: 1.5rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
         .input-light { background-color: #ffffff !important; color: #1e293b !important; border: 2px solid #cbd5e1; font-weight: 800; transition: all 0.3s ease;}
         .input-light:focus { border-color: #D68C29; outline: none; box-shadow: 0 0 0 3px rgba(214, 140, 41, 0.3); }
@@ -33,7 +36,14 @@
         .avatar-upload-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); color: white; font-size: 12px; font-weight: bold; padding: 6px 0; text-align: center; opacity: 0; transition: 0.3s;}
         .avatar-upload-wrapper:hover .avatar-upload-overlay { opacity: 1; }
 
-        /* 🌟 تنسيقات الوضع النهاري 🌟 */
+        .stepper-container { position: relative; display: flex; justify-content: space-between; align-items: center; margin-top: 10px; margin-bottom: 10px; padding: 0 10px;}
+        .stepper-line-bg { position: absolute; top: 16px; left: 20px; right: 20px; height: 4px; background-color: rgba(255,255,255,0.1); z-index: 1; border-radius: 4px; }
+        .stepper-line-fill { position: absolute; top: 16px; right: 20px; height: 4px; background-color: #10B981; z-index: 2; border-radius: 4px; transition: width 1s ease-in-out; }
+        .step-item { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 8px; width: 25%;}
+        .step-circle { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; transition: all 0.5s ease; border: 4px solid #141A32; box-shadow: 0 0 10px rgba(0,0,0,0.5);}
+        .step-circle.active { background-color: #10B981; color: white; }
+        .step-circle.inactive { background-color: #334155; color: #94a3b8; }
+        
         body.light-theme { background-color: #f1f5f9; color: #0f172a; }
         body.light-theme .glass-panel, body.light-theme .bg-\[\#141A32\], body.light-theme .bg-black\/30, body.light-theme .bg-black\/20 { background: #ffffff !important; border-color: #cbd5e1 !important; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         body.light-theme .main-card { background: #ffffff; border-color: #cbd5e1; }
@@ -43,11 +53,13 @@
         body.light-theme .text-\[\#F5C678\] { color: #b45309 !important; }
         body.light-theme .bg-\[\#0B0F1E\] { background: #f8fafc !important; border-color: #cbd5e1 !important; }
         body.light-theme .home-btn { background: #e2e8f0; color: #0f172a; border-color: #cbd5e1; }
+        body.light-theme .step-circle { border-color: #ffffff; }
+        body.light-theme .stepper-line-bg { background-color: #e2e8f0; }
+        body.light-theme table { color: #0f172a; } body.light-theme th { color: #475569; } body.light-theme tr { border-color: #cbd5e1 !important; }
         
         .theme-toggle-btn { position: fixed; top: 85px; left: 20px; z-index: 50; background: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: all 0.3s ease; border: 2px solid #D68C29; color: #F5C678; font-size: 1.3rem;}
         body.light-theme .theme-toggle-btn { background: #141A32; border-color: #cbd5e1; color: #b45309; }
 
-        /* 🌟 تنسيقات الطباعة 🌟 */
         @media print {
             body * { visibility: hidden; }
             #printArea, #printArea * { visibility: visible; }
@@ -56,7 +68,7 @@
             .print-border { border: 1px solid #000; padding: 8px; border-collapse: collapse; }
         }
 
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #D68C29; border-radius: 10px; }
         [x-cloak] { display: none !important; }
@@ -84,9 +96,27 @@
     <div class="p-4 max-w-5xl mx-auto min-h-[80vh] mt-4 relative print-hidden">
 
         <div x-show="currentView === 'menu'" x-transition.opacity x-cloak>
+            
+            <div x-show="currentUser?.role === 'manager'" class="glass-panel p-4 md:p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-white font-black text-sm md:text-lg">معدل اكتمال السجل المدرسي</h3>
+                    <span class="badge" :class="progressPercentage === 100 ? 'badge-success text-white' : 'bg-slate-700 text-white border-none'" x-text="`${Math.round(progressPercentage)}%`"></span>
+                </div>
+                
+                <div class="stepper-container">
+                    <div class="stepper-line-bg"></div>
+                    <div class="stepper-line-fill" :style="`width: ${progressLine}%`"></div>
+                    
+                    <div class="step-item"><div class="step-circle" :class="isManagerComplete ? 'active' : 'inactive'"><span x-show="isManagerComplete">✓</span><span x-show="!isManagerComplete">1</span></div><span class="text-[10px] md:text-xs font-bold text-center" :class="isManagerComplete ? 'text-green-500' : 'text-slate-400'">المدير</span></div>
+                    <div class="step-item"><div class="step-circle" :class="isAgentsComplete ? 'active' : 'inactive'"><span x-show="isAgentsComplete">✓</span><span x-show="!isAgentsComplete">2</span></div><span class="text-[10px] md:text-xs font-bold text-center" :class="isAgentsComplete ? 'text-green-500' : 'text-slate-400'">الوكلاء</span></div>
+                    <div class="step-item"><div class="step-circle" :class="isTeachersComplete ? 'active' : 'inactive'"><span x-show="isTeachersComplete">✓</span><span x-show="!isTeachersComplete">3</span></div><span class="text-[10px] md:text-xs font-bold text-center" :class="isTeachersComplete ? 'text-green-500' : 'text-slate-400'">المعلمين</span></div>
+                    <div class="step-item"><div class="step-circle" :class="isStatsComplete ? 'active' : 'inactive'"><span x-show="isStatsComplete">✓</span><span x-show="!isStatsComplete">4</span></div><span class="text-[10px] md:text-xs font-bold text-center" :class="isStatsComplete ? 'text-green-500' : 'text-slate-400'">الإحصاء</span></div>
+                </div>
+            </div>
+
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
                 <div x-show="currentUser?.role === 'manager'" @click="openManagerView()" class="main-card relative">
-                    <span x-show="!managerData.full_name" class="absolute top-3 right-3 flex h-4 w-4"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span class="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span></span>
+                    <span x-show="!isManagerComplete" class="absolute top-3 right-3 flex h-4 w-4"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span class="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span></span>
                     <div class="icon-wrapper"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg></div>
                     <div><h2 class="text-lg font-black text-white">بيانات المدير</h2><p class="text-[10px] text-slate-400 mt-1">السجل الوظيفي</p></div>
                 </div>
@@ -100,6 +130,12 @@
                     <div class="icon-wrapper !bg-cyan-500/20 !text-cyan-400"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></div>
                     <div><h2 class="text-lg font-black text-cyan-400">ملفات الوكلاء</h2><p class="text-[10px] text-slate-400 mt-1">عرض السجل الوظيفي</p></div>
                 </div>
+
+                <div x-show="currentUser?.role === 'manager'" @click="currentView = 'teachers_stats'" class="main-card relative bg-gradient-to-br from-amber-900/50 to-[#141A32]">
+                    <span x-show="!isTeachersComplete" class="absolute top-3 right-3 flex h-4 w-4"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span class="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span></span>
+                    <div class="icon-wrapper !bg-amber-500/20 !text-amber-400"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg></div>
+                    <div><h2 class="text-lg font-black text-amber-400">إحصاء المعلمين</h2><p class="text-[10px] text-slate-400 mt-1">عجز وزيادة المواد</p></div>
+                </div>
                 
                 <div x-show="currentUser?.role === 'agent'" @click="openAgentProfile()" class="main-card relative">
                     <span x-show="!currentUser?.full_name || currentUser?.full_name === 'بانتظار استكمال البيانات'" class="absolute top-3 right-3 flex h-4 w-4"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span class="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span></span>
@@ -107,9 +143,10 @@
                     <div><h2 class="text-lg font-black text-white">بياناتي الوظيفية</h2><p class="text-[10px] text-slate-400 mt-1">تحديث سجلي</p></div>
                 </div>
 
-                <div @click="currentView = 'statistics'; setTimeout(()=>renderCharts(), 200)" class="main-card">
+                <div @click="openStatistics()" class="main-card relative">
+                    <span x-show="currentUser?.role === 'manager' && !isStatsComplete" class="absolute top-3 right-3 flex h-4 w-4"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span class="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span></span>
                     <div class="icon-wrapper"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg></div>
-                    <div><h2 class="text-lg font-black text-white">الإحصاء الشامل</h2><p class="text-[10px] text-slate-400 mt-1">رسوم بيانية وأعداد</p></div>
+                    <div><h2 class="text-lg font-black text-white">الإحصاء الشامل</h2><p class="text-[10px] text-slate-400 mt-1">قوة العمل والطلاب</p></div>
                 </div>
 
                 <div @click="currentView = 'messages'" class="main-card relative">
@@ -120,7 +157,86 @@
 
                 <div @click="currentView = 'requests'" class="main-card md:col-span-2">
                     <div class="icon-wrapper"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></div>
-                    <div><h2 class="text-lg font-black text-white">إرسال طلب للتنسيق</h2><p class="text-[10px] text-slate-400 mt-1">رفع الملفات والإقرارات المطلوبة</p></div>
+                    <div><h2 class="text-lg font-black text-white">إرسال طلب للتنسيق</h2><p class="text-[10px] text-slate-400 mt-1">رفع الملفات والإقرارات</p></div>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="currentView === 'teachers_stats'" x-transition x-cloak>
+            <div class="flex justify-between items-center mb-4">
+                <button @click="currentView = 'menu'" class="home-btn mb-0"><svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg> الرئيسية</button>
+                <button @click="saveSubjectsStats()" x-show="currentUser?.role === 'manager'" class="btn btn-sm btn-success text-white border-none shadow-md">
+                    <span x-show="!loading">حفظ البيانات 💾</span><span x-show="loading" class="loading loading-spinner loading-xs"></span>
+                </button>
+            </div>
+            
+            <div class="glass-panel p-4 md:p-6 border-t-4 border-t-amber-500 overflow-hidden">
+                <h2 class="text-xl md:text-2xl font-black text-white text-center mb-6">👨‍🏫 إحصاء معلمي المواد الأساسية</h2>
+                <div class="overflow-x-auto custom-scrollbar pb-2 bg-black/20 rounded-xl border border-white/10">
+                    <table class="table w-full text-center text-xs md:text-sm">
+                        <thead>
+                            <tr class="text-slate-300 border-b border-white/10 whitespace-nowrap">
+                                <th class="bg-black/10">المادة</th>
+                                <th>أصلي</th>
+                                <th>منتدب (كلي/جزئي)</th>
+                                <th>بالحصة</th>
+                                <th class="text-red-400">العجز</th>
+                                <th class="text-green-400">الزيادة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template x-for="(stat, key) in school.subjects_stats" :key="key">
+                                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                    <td class="font-bold text-[#F5C678] bg-black/10 whitespace-nowrap" x-text="stat.name"></td>
+                                    <td><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="stat.original" class="input input-xs w-14 md:w-20 input-light text-center" :disabled="currentUser?.role !== 'manager'"></td>
+                                    <td><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="stat.delegated" class="input input-xs w-14 md:w-20 input-light text-center" :disabled="currentUser?.role !== 'manager'"></td>
+                                    <td><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="stat.session" class="input input-xs w-14 md:w-20 input-light text-center" :disabled="currentUser?.role !== 'manager'"></td>
+                                    <td><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="stat.deficit" class="input input-xs w-14 md:w-20 input-light text-center text-red-600 font-bold bg-red-50" :disabled="currentUser?.role !== 'manager'"></td>
+                                    <td><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="stat.surplus" class="input input-xs w-14 md:w-20 input-light text-center text-green-600 font-bold bg-green-50" :disabled="currentUser?.role !== 'manager'"></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="currentView === 'statistics'" x-transition x-cloak>
+            <div class="flex justify-between items-center mb-4">
+                <button @click="currentView = 'menu'" class="home-btn mb-0"><svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg> الرئيسية</button>
+                <button @click="exportStatsToAdmin" x-show="currentUser?.role === 'manager'" class="btn btn-sm btn-success text-white border-none shadow-md">إرسال الإحصاء 📤</button>
+            </div>
+            
+            <div class="glass-panel p-4 md:p-6 border-t-4 border-t-teal-500">
+                <h2 class="text-2xl font-black text-white text-center mb-6">📊 لوحة الإحصائيات الشاملة</h2>
+                
+                <div class="space-y-6 mb-8">
+                    <div class="bg-black/20 p-5 rounded-2xl border border-white/10">
+                        <h3 class="text-teal-400 font-bold border-b border-white/10 pb-2 mb-4">أعداد المدرسة العامة</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                            <div><label class="text-indigo-400 text-xs font-bold block mb-1">المعلمين</label><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.teachers_count" @input="debouncedRenderCharts()" class="input w-full input-light text-center font-black" :disabled="currentUser?.role !== 'manager'"></div>
+                            <div><label class="text-teal-400 text-xs font-bold block mb-1">الإداريين</label><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.admins_count" @input="debouncedRenderCharts()" class="input w-full input-light text-center font-black" :disabled="currentUser?.role !== 'manager'"></div>
+                            <div><label class="text-amber-400 text-xs font-bold block mb-1">العمال</label><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.workers_count" @input="debouncedRenderCharts()" class="input w-full input-light text-center font-black" :disabled="currentUser?.role !== 'manager'"></div>
+                            <div><label class="text-purple-400 text-xs font-bold block mb-1">الفصول</label><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.classrooms_count" class="input w-full input-light text-center font-black" :disabled="currentUser?.role !== 'manager'"></div>
+                            <div><label class="text-blue-400 text-xs font-bold block mb-1">البنين</label><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.students_count" @input="debouncedRenderCharts()" class="input w-full input-light text-center font-black" :disabled="currentUser?.role !== 'manager'"></div>
+                            <div><label class="text-pink-400 text-xs font-bold block mb-1">البنات</label><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.female_students_count" @input="debouncedRenderCharts()" class="input w-full input-light text-center font-black" :disabled="currentUser?.role !== 'manager'"></div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white/5 p-4 rounded-2xl border border-white/10 flex flex-col items-center justify-center h-[250px] w-full">
+                            <h4 class="text-sm font-bold text-slate-300 mb-2">توزيع قوة العمل</h4>
+                            <div class="w-full max-w-[200px] h-full relative flex items-center justify-center">
+                                <canvas id="staffChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="bg-white/5 p-4 rounded-2xl border border-white/10 flex flex-col items-center justify-center h-[250px] w-full">
+                            <h4 class="text-sm font-bold text-slate-300 mb-2">توزيع الطلاب</h4>
+                            <div class="w-full max-w-[200px] h-full relative flex items-center justify-center">
+                                <canvas id="studentChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -129,30 +245,22 @@
             <div class="flex justify-between items-center mb-4">
                 <button @click="currentView = 'menu'" class="home-btn mb-0">الرئيسية</button>
                 <button @click="fetchAgents()" class="btn btn-sm btn-ghost text-cyan-400 border border-cyan-500/30">
-                    <span x-show="!loadingAgents">تحديث 🔄</span>
-                    <span x-show="loadingAgents" class="loading loading-spinner loading-xs"></span>
+                    <span x-show="!loadingAgents">تحديث 🔄</span><span x-show="loadingAgents" class="loading loading-spinner loading-xs"></span>
                 </button>
             </div>
-            
             <div class="glass-panel p-6 border-t-4 border-t-cyan-500">
                 <h2 class="text-2xl font-black text-white text-center mb-8">السجلات الوظيفية للوكلاء</h2>
-                
                 <div x-show="schoolAgents.length === 0 && !loadingAgents" class="text-center py-10 bg-black/20 rounded-2xl border border-white/5">
                     <span class="text-6xl block mb-4 grayscale">👥</span>
                     <p class="text-white font-black text-xl mb-2">لا يوجد وكلاء مسجلين!</p>
-                    <p class="text-slate-400 mb-6 text-sm">لإظهار بيانات الوكيل هنا، يجب إضافته أولاً من شاشة (إدارة الوكلاء).</p>
-                    <button @click="currentView = 'agents'" class="btn btn-outline btn-info rounded-xl">الذهاب لإضافة وكيل ➕</button>
+                    <button @click="currentView = 'agents'" class="btn btn-outline btn-info rounded-xl mt-4">الذهاب لإضافة وكيل ➕</button>
                 </div>
-
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4" x-show="schoolAgents.length > 0">
                     <template x-for="(agent, i) in schoolAgents" :key="i + 'rec'">
                         <div class="bg-black/30 p-5 rounded-2xl border border-cyan-500/20 hover:border-cyan-500/50 transition-all">
                             <div class="flex items-center gap-4 mb-4 pb-4 border-b border-white/5">
                                 <img :src="agent.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" class="w-16 h-16 rounded-full border-2 border-cyan-500 object-cover bg-white">
-                                <div>
-                                    <h3 class="font-black text-white text-lg leading-tight" x-text="agent.full_name || 'بانتظار استكمال البيانات'"></h3>
-                                    <span class="text-xs font-bold bg-cyan-900/40 text-cyan-400 px-2 py-1 rounded mt-2 inline-block border border-cyan-500/30" x-text="agent.agent_assignment || 'بدون تكليف'"></span>
-                                </div>
+                                <div><h3 class="font-black text-white text-lg leading-tight" x-text="agent.full_name || 'بانتظار استكمال البيانات'"></h3><span class="text-xs font-bold bg-cyan-900/40 text-cyan-400 px-2 py-1 rounded mt-2 inline-block border border-cyan-500/30" x-text="agent.agent_assignment || 'بدون تكليف'"></span></div>
                             </div>
                             <div class="text-sm space-y-2 text-slate-300 bg-[#0B0F1E] p-4 rounded-xl border border-white/5">
                                 <div class="flex justify-between border-b border-white/5 pb-1"><span class="font-bold text-slate-500">القومي:</span><span class="font-mono text-yellow-300 tracking-widest font-bold" x-text="agent.nid || '---'"></span></div>
@@ -175,31 +283,25 @@
                 <div x-show="!isEditingForm">
                     <div class="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
                         <h2 class="text-2xl font-black text-white">السجل الوظيفي للمدير</h2>
-                        <button x-show="!managerData.full_name" @click="isEditingForm = true" class="btn btn-sm btn-success text-white border-none animate-pulse">تسجيل بياناتي</button>
-                        <button x-show="managerData.full_name" @click="isEditingForm = true" class="btn btn-sm bg-[#D68C29]/20 text-[#D68C29] hover:bg-[#D68C29] hover:text-white border-none">تعديل ✏️</button>
+                        <button x-show="!isManagerComplete" @click="isEditingForm = true" class="btn btn-sm btn-success text-white border-none animate-pulse">تسجيل بياناتي</button>
+                        <button x-show="isManagerComplete" @click="isEditingForm = true" class="btn btn-sm bg-[#D68C29]/20 text-[#D68C29] hover:bg-[#D68C29] hover:text-white border-none">تعديل ✏️</button>
                     </div>
-                    
                     <div class="bg-black/20 p-5 rounded-2xl border border-white/5 space-y-4">
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 bg-[#0B0F1E] p-3 rounded-xl border border-white/5">
-                            <div class="text-center p-2"><span class="text-[10px] text-slate-500 block">الوكلاء</span><span class="font-black text-blue-400 text-lg" x-text="schoolAgents.length"></span></div>
-                            <div class="text-center p-2 border-r border-white/10"><span class="text-[10px] text-slate-500 block">الطلبات</span><span class="font-black text-green-400 text-lg" x-text="requests.length"></span></div>
-                            <div class="text-center p-2 border-r border-white/10"><span class="text-[10px] text-slate-500 block">الرسائل</span><span class="font-black text-purple-400 text-lg" x-text="schoolMessages.length"></span></div>
-                            <div class="text-center p-2 border-r border-white/10"><span class="text-[10px] text-slate-500 block">الموقف</span><span class="font-black text-yellow-400 text-sm" x-text="school.manager_status || 'غير محدد'"></span></div>
-                        </div>
-
                         <div class="flex items-center gap-4 pb-4 border-b border-white/10">
                             <img :src="managerData.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" class="w-20 h-20 rounded-full border-4 border-[#D68C29] object-cover bg-white shadow-lg">
                             <div>
                                 <h3 class="text-xl font-black text-[#F5C678]" x-text="managerData.full_name || 'لم يتم التسجيل بعد'"></h3>
-                                <p class="text-slate-400 font-mono mt-1 text-sm" x-text="managerData.mobile || '---'"></p>
+                                <div class="flex gap-3 items-center mt-2">
+                                    <span class="text-slate-400 font-mono text-sm border border-slate-600 px-2 rounded" x-text="managerData.mobile || '---'"></span>
+                                    <span class="badge bg-green-600 border-none text-white font-bold" x-text="school.manager_status || 'الموقف غير محدد'"></span>
+                                </div>
                             </div>
                         </div>
-                        
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm md:text-base">
                             <div class="bg-[#141A32] p-3 rounded-xl border border-white/5"><span class="text-slate-500 block mb-1 font-bold">الرقم القومي</span><span class="text-yellow-400 font-mono font-bold tracking-widest" x-text="managerData.nid || '---'"></span></div>
                             <div class="bg-[#141A32] p-3 rounded-xl border border-white/5"><span class="text-slate-500 block mb-1 font-bold">تاريخ الميلاد</span><span class="text-white font-bold" x-text="managerData.dob || '---'"></span></div>
                             <div class="bg-[#141A32] p-3 rounded-xl border border-white/5"><span class="text-slate-500 block mb-1 font-bold">تاريخ التعيين</span><span class="text-white font-bold" x-text="managerData.hiring_date || '---'"></span></div>
-                            <div class="bg-[#141A32] p-3 rounded-xl border border-white/5"><span class="text-slate-500 block mb-1 font-bold">تاريخ استلام العمل</span><span class="text-white font-bold" x-text="managerData.job_assumption_date || '---'"></span></div>
+                            <div class="bg-[#141A32] p-3 rounded-xl border border-white/5"><span class="text-slate-500 block mb-1 font-bold">استلام العمل</span><span class="text-white font-bold" x-text="managerData.job_assumption_date || '---'"></span></div>
                             <div class="bg-green-900/20 p-3 rounded-xl border border-green-500/30"><span class="text-green-500 block mb-1 font-bold">تاريخ التجديد (+2 سنة)</span><span class="text-green-400 font-black" x-text="managerData.renewal_date || '---'"></span></div>
                             <div class="bg-red-900/20 p-3 rounded-xl border border-red-500/30"><span class="text-red-500 block mb-1 font-bold">تاريخ التقاعد (سن 60)</span><span class="text-red-400 font-black" x-text="managerData.retirement_date || '---'"></span></div>
                         </div>
@@ -209,26 +311,20 @@
                 <div x-show="isEditingForm" x-cloak>
                     <h2 class="text-2xl font-black text-[#F5C678] text-center mb-6">تحديث البيانات</h2>
                     <div class="mb-6 relative">
-                        <div class="avatar-upload-wrapper">
-                            <img :src="formData.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'">
-                            <div class="avatar-upload-overlay">تغيير الصورة</div>
-                            <input type="file" accept="image/*" @change="uploadAvatar" class="absolute inset-0 opacity-0 cursor-pointer z-10" :disabled="loadingAvatar">
-                        </div>
-                        <p x-show="!formData.avatar_url" class="text-center text-xs text-red-500 font-bold mt-2">⚠️ الصورة الشخصية إلزامية</p>
+                        <div class="avatar-upload-wrapper"><img :src="formData.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'"><div class="avatar-upload-overlay">تغيير الصورة</div><input type="file" accept="image/*" @change="uploadAvatar" class="absolute inset-0 opacity-0 cursor-pointer z-10" :disabled="loadingAvatar"></div>
                     </div>
-
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="md:col-span-2"><label>الاسم رباعياً (مهم جداً)</label><input type="text" x-model="formData.full_name" class="input w-full input-light" placeholder="الاسم الأول والثاني والثالث واللقب"></div>
-                        <div><label>الرقم القومي (14 رقم)</label><input type="tel" x-model="formData.nid" maxlength="14" @input="calculateDates" class="input w-full input-light font-mono tracking-widest text-center"></div>
+                        <div class="md:col-span-2"><label>الاسم رباعياً</label><input type="text" x-model="formData.full_name" class="input w-full input-light"></div>
+                        <div><label>الرقم القومي</label><input type="tel" x-model="formData.nid" maxlength="14" @input="calculateDates" class="input w-full input-light font-mono text-center"></div>
                         <div><label>الموبايل</label><input type="tel" x-model="formData.mobile" readonly class="input w-full input-readonly font-mono text-center"></div>
-                        <div><label>تاريخ التعيين الأول</label><input type="date" x-model="formData.hiring_date" class="input w-full input-light text-center"></div>
-                        <div><label>استلام العمل القيادي الحالي</label><input type="date" x-model="formData.job_assumption_date" @change="calculateDates" class="input w-full input-light border-[#D68C29] text-center"></div>
-                        <div><label>الموقف الوظيفي للقيادة</label>
+                        <div><label>تاريخ التعيين</label><input type="date" x-model="formData.hiring_date" class="input w-full input-light text-center"></div>
+                        <div><label>استلام العمل القيادي</label><input type="date" x-model="formData.job_assumption_date" @change="calculateDates" class="input w-full input-light border-[#D68C29] text-center"></div>
+                        <div><label>الموقف الوظيفي</label>
                             <select x-model="school.manager_status" class="select w-full input-light font-bold">
                                 <option value="" disabled selected>اختر الموقف...</option><option value="معين بقرار">معين بقرار</option><option value="مكلف">مكلف</option>
                             </select>
                         </div>
-                        <div class="bg-green-500/5 p-2 rounded-xl"><label class="!text-green-600">تاريخ التجديد (تلقائي)</label><input type="date" x-model="formData.renewal_date" readonly class="input w-full input-readonly text-green-600 text-center font-black"></div>
+                        <div class="bg-green-500/5 p-2 rounded-xl"><label class="!text-green-600">تاريخ التجديد</label><input type="date" x-model="formData.renewal_date" readonly class="input w-full input-readonly text-green-600 text-center font-black"></div>
                     </div>
                     <div class="flex gap-3 mt-6 pt-4 border-t border-white/10">
                         <button @click="validateAndShowOath" class="btn flex-1 btn-gold text-lg h-14 rounded-xl">حفظ وإنهاء 💾</button>
@@ -241,7 +337,7 @@
         <div x-show="currentView === 'agent_profile'" x-transition x-cloak>
             <div class="flex justify-between items-center mb-4">
                 <button @click="currentView = 'menu'; isEditingForm = false" class="home-btn mb-0">الرئيسية</button>
-                <button @click="printPage()" class="btn btn-sm btn-ghost border border-blue-500/50 text-blue-400">🖨️ طباعة السجل الرسمي</button>
+                <button @click="printPage()" class="btn btn-sm btn-ghost border border-blue-500/50 text-blue-400">🖨️ طباعة السجل</button>
             </div>
             <div class="glass-panel p-6 border-t-4 border-t-blue-500">
                 <div x-show="!isEditingForm">
@@ -277,12 +373,7 @@
                 <div x-show="isEditingForm" x-cloak>
                     <h2 class="text-2xl font-black text-blue-400 text-center mb-6">تسجيل بيانات الوكيل</h2>
                     <div class="mb-6 relative">
-                        <div class="avatar-upload-wrapper !border-blue-500">
-                            <img :src="formData.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'">
-                            <div class="avatar-upload-overlay">تغيير الصورة</div>
-                            <input type="file" accept="image/*" @change="uploadAvatar" class="absolute inset-0 opacity-0 cursor-pointer z-10" :disabled="loadingAvatar">
-                        </div>
-                        <p x-show="!formData.avatar_url" class="text-center text-xs text-red-500 font-bold mt-2">⚠️ الصورة الشخصية إلزامية</p>
+                        <div class="avatar-upload-wrapper !border-blue-500"><img :src="formData.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'"><div class="avatar-upload-overlay">تغيير الصورة</div><input type="file" accept="image/*" @change="uploadAvatar" class="absolute inset-0 opacity-0 cursor-pointer z-10" :disabled="loadingAvatar"></div>
                     </div>
 
                     <div class="bg-black/20 p-6 rounded-3xl border border-white/10 space-y-5">
@@ -297,7 +388,7 @@
                             <div><label>الرقم القومي (14 رقم)</label><input type="tel" x-model="formData.nid" maxlength="14" @input="calculateDates" class="input w-full input-light h-14 rounded-xl text-center font-mono text-lg tracking-widest"></div>
                             <div><label>الموبايل</label><input type="tel" x-model="formData.mobile" readonly class="input w-full input-readonly h-14 rounded-xl text-center font-mono text-lg"></div>
                             <div><label>تاريخ التعيين الأول</label><input type="date" x-model="formData.hiring_date" class="input w-full input-light h-14 rounded-xl text-center"></div>
-                            <div><label>استلام العمل القيادي الحالي</label><input type="date" x-model="formData.job_assumption_date" @change="calculateDates" class="input w-full input-light border-blue-500 h-14 rounded-xl text-center"></div>
+                            <div><label>استلام العمل الحالي</label><input type="date" x-model="formData.job_assumption_date" @change="calculateDates" class="input w-full input-light border-blue-500 h-14 rounded-xl text-center"></div>
                             <div><label>الموقف المالي</label>
                                 <select x-model="formData.job_status" class="select w-full input-light h-14 rounded-xl font-bold">
                                     <option value="" disabled selected>اختر الموقف...</option><option value="معين بقرار">معين بقرار</option><option value="مكلف">مكلف</option>
@@ -308,42 +399,6 @@
                         <div class="flex gap-3 mt-8 pt-6 border-t border-white/10">
                             <button @click="validateAndShowOath" class="btn flex-1 bg-blue-600 hover:bg-blue-700 text-white h-14 rounded-xl text-xl font-black border-none">حفظ بياناتي 💾</button>
                             <button @click="isEditingForm = false" class="btn bg-slate-700 text-white h-14 rounded-xl border-none px-8">إلغاء</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div x-show="currentView === 'statistics'" x-transition x-cloak>
-            <div class="flex justify-between items-center mb-4">
-                <button @click="currentView = 'menu'" class="home-btn mb-0"><svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg> الرئيسية</button>
-                <button @click="exportStatsToAdmin" x-show="currentUser?.role === 'manager'" class="btn btn-sm btn-success text-white border-none shadow-md">إرسال للتنسيق 📤</button>
-            </div>
-            
-            <div class="glass-panel p-6 border-t-4 border-t-teal-500">
-                <h2 class="text-2xl font-black text-white text-center mb-6">📊 لوحة الإحصائيات الشاملة</h2>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                    <div class="space-y-4 bg-black/20 p-5 rounded-2xl border border-white/10">
-                        <h3 class="text-teal-400 font-bold border-b border-white/10 pb-2 mb-4">تحديث الأرقام</h3>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div><label class="text-indigo-400">المعلمين</label><input type="number" x-model="school.teachers_count" @input="renderCharts()" class="input w-full input-light text-center font-black" :disabled="currentUser?.role !== 'manager'"></div>
-                            <div><label class="text-teal-400">الإداريين</label><input type="number" x-model="school.admins_count" @input="renderCharts()" class="input w-full input-light text-center font-black" :disabled="currentUser?.role !== 'manager'"></div>
-                            <div><label class="text-amber-400">العمال</label><input type="number" x-model="school.workers_count" @input="renderCharts()" class="input w-full input-light text-center font-black" :disabled="currentUser?.role !== 'manager'"></div>
-                            <div><label class="text-purple-400">الفصول</label><input type="number" x-model="school.classrooms_count" class="input w-full input-light text-center font-black" :disabled="currentUser?.role !== 'manager'"></div>
-                            <div><label class="text-blue-400">البنين</label><input type="number" x-model="school.students_count" @input="renderCharts()" class="input w-full input-light text-center font-black" :disabled="currentUser?.role !== 'manager'"></div>
-                            <div><label class="text-pink-400">البنات</label><input type="number" x-model="school.female_students_count" @input="renderCharts()" class="input w-full input-light text-center font-black" :disabled="currentUser?.role !== 'manager'"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="bg-white/5 p-4 rounded-2xl border border-white/10 flex flex-col items-center justify-center h-[250px]">
-                            <h4 class="text-sm font-bold text-slate-300 mb-2">توزيع قوة العمل</h4>
-                            <div class="w-full max-w-[200px] h-full relative"><canvas id="staffChart"></canvas></div>
-                        </div>
-                        <div class="bg-white/5 p-4 rounded-2xl border border-white/10 flex flex-col items-center justify-center h-[250px]">
-                            <h4 class="text-sm font-bold text-slate-300 mb-2">توزيع الطلاب</h4>
-                            <div class="w-full max-w-[200px] h-full relative"><canvas id="studentChart"></canvas></div>
                         </div>
                     </div>
                 </div>
@@ -371,7 +426,7 @@
 
         <div x-show="currentView === 'messages'" x-transition x-cloak>
             <button @click="currentView = 'menu'" class="home-btn">الرئيسية</button>
-            <div class="glass-panel p-6 border-t-4 border-t-purple-500"><h2 class="text-2xl font-black text-white text-center mb-6">✉️ صندوق التعليمات والنشرات</h2><div class="space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2"><template x-for="msg in schoolMessages" :key="msg.id"><div class="bg-black/30 p-5 rounded-2xl border border-purple-500/30"><div class="flex justify-between items-center border-b border-white/10 pb-2 mb-3"><span :class="`badge text-white font-bold border-none ${msg.school_id ? 'bg-blue-600' : 'bg-purple-600'}`" x-text="msg.school_id ? 'رسالة خاصة بمدرستك' : 'تعميم إداري'"></span><span class="text-xs text-slate-400 font-bold" x-text="new Date(msg.created_at).toLocaleDateString('ar-EG')"></span></div><p class="text-white text-sm whitespace-pre-wrap leading-loose" x-text="msg.message"></p><template x-if="msg.file_url"><div class="mt-4 pt-3 border-t border-white/5"><a :href="msg.file_url" target="_blank" class="btn btn-sm bg-purple-600/20 text-purple-300 border-none rounded-lg">عرض المرفق الرسمي 📎</a></div></template></div></template><div x-show="schoolMessages.length === 0" class="text-center text-slate-500 py-10 font-bold">لا توجد رسائل واردة حالياً.</div></div></div>
+            <div class="glass-panel p-6 border-t-4 border-t-purple-500"><h2 class="text-2xl font-black text-white text-center mb-6">✉️ صندوق التعليمات والنشرات</h2><div class="space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2"><template x-for="msg in schoolMessages" :key="msg.id"><div class="bg-black/30 p-5 rounded-2xl border border-purple-500/30"><div class="flex justify-between items-center border-b border-white/10 pb-2 mb-3"><span :class="`badge text-white font-bold border-none ${msg.school_id ? 'bg-blue-600' : 'bg-purple-600'}`" x-text="msg.school_id ? 'رسالة خاصة بمدرستك' : 'تعميم إداري'"></span><span class="text-xs text-slate-400 font-bold" x-text="new Date(msg.created_at).toLocaleDateString('ar-EG')"></span></div><p class="text-white text-sm whitespace-pre-wrap leading-loose" x-text="msg.message"></p><template x-if="msg.file_url"><div class="mt-4 pt-3 border-t border-white/5"><a :href="msg.file_url" target="_blank" class="btn btn-sm bg-purple-600/20 text-purple-300 border-none rounded-lg">عرض المرفق الرسمي 📎</a></div></template></div></template><div x-show="schoolMessages.length === 0" class="text-center text-slate-500 py-10 font-bold">لا توجد رسائل.</div></div></div>
         </div>
 
         <div x-show="currentView === 'requests'" x-transition x-cloak>
@@ -382,74 +437,36 @@
     </div>
 
     <div id="printArea" class="hidden print:block absolute top-0 left-0 w-full bg-white text-black p-8" style="direction: rtl;">
-        <div style="display: flex; justify-content: space-between; border-bottom: 3px solid black; padding-bottom: 10px; margin-bottom: 20px;">
-            <div style="text-align: right; line-height: 1.5; font-weight: bold; font-size: 16px;">
-                <p>محافظة سوهاج</p>
-                <p>مديرية التربية والتعليم</p>
-                <p>إدارة سوهاج التعليمية</p>
-            </div>
-            <div style="text-align: center;">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Coat_of_arms_of_Egypt_%28Official%29.svg/120px-Coat_of_arms_of_Egypt_%28Official%29.svg.png" style="width: 80px;">
-            </div>
-            <div style="text-align: left; line-height: 1.5; font-weight: bold; font-size: 16px;">
-                <p>تنسيق التعليم الإعدادي والثانوي</p>
-                <p>مدرسة: <span x-text="school.name"></span></p>
-                <p>التاريخ: <span x-text="new Date().toLocaleDateString('ar-EG')"></span></p>
-            </div>
         </div>
-
-        <h2 style="text-align: center; font-size: 24px; font-weight: bold; text-decoration: underline; margin-bottom: 30px;">صحيفة أحوال وتشكيل إدارة المدرسة</h2>
-
-        <div style="margin-bottom: 30px;">
-            <h3 style="background: #eee; padding: 8px; border: 1px solid black; font-weight: bold;">أولاً: بيانات السيد/ة مدير المدرسة</h3>
-            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-                <tr><th class="print-border" style="width: 20%; background: #f9f9f9; text-align: right;">الاسم رباعي</th><td class="print-border" colspan="3" font-weight="bold" x-text="managerData.full_name || 'غير مسجل'"></td></tr>
-                <tr><th class="print-border" style="background: #f9f9f9; text-align: right;">الرقم القومي</th><td class="print-border" style="font-family: monospace;" x-text="managerData.nid || '---'"></td><th class="print-border" style="background: #f9f9f9; text-align: right;">تاريخ الميلاد</th><td class="print-border" x-text="managerData.dob || '---'"></td></tr>
-                <tr><th class="print-border" style="background: #f9f9f9; text-align: right;">تاريخ التعيين</th><td class="print-border" x-text="managerData.hiring_date || '---'"></td><th class="print-border" style="background: #f9f9f9; text-align: right;">تاريخ استلام العمل</th><td class="print-border" x-text="managerData.job_assumption_date || '---'"></td></tr>
-                <tr><th class="print-border" style="background: #f9f9f9; text-align: right;">الموقف الوظيفي</th><td class="print-border" font-weight="bold" x-text="school.manager_status || '---'"></td><th class="print-border" style="background: #f9f9f9; text-align: right;">تاريخ التجديد</th><td class="print-border" x-text="managerData.renewal_date || '---'"></td></tr>
-            </table>
-        </div>
-
-        <div>
-            <h3 style="background: #eee; padding: 8px; border: 1px solid black; font-weight: bold;">ثانياً: طاقم الوكلاء بالمدرسة</h3>
-            <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; text-align: center;">
-                <thead>
-                    <tr style="background: #f9f9f9;">
-                        <th class="print-border">م</th><th class="print-border">الاسم رباعي</th><th class="print-border">الرقم القومي</th><th class="print-border">التكليف</th><th class="print-border">الموقف المالي</th><th class="print-border">استلام العمل</th><th class="print-border">التجديد</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <template x-for="(agent, idx) in schoolAgents" :key="idx + 'p'">
-                        <tr>
-                            <td class="print-border" x-text="idx + 1"></td><td class="print-border" style="text-align: right; font-weight: bold;" x-text="agent.full_name || 'غير مسجل'"></td>
-                            <td class="print-border" style="font-family: monospace;" x-text="agent.nid || '---'"></td><td class="print-border" x-text="agent.agent_assignment || '---'"></td>
-                            <td class="print-border" x-text="agent.job_status || '---'"></td><td class="print-border" x-text="agent.job_assumption_date || '---'"></td><td class="print-border" x-text="agent.renewal_date || '---'"></td>
-                        </tr>
-                    </template>
-                </tbody>
-            </table>
-        </div>
-
-        <div style="margin-top: 60px; display: flex; justify-content: space-between; text-align: center; font-weight: bold; font-size: 16px;">
-            <div><p>توقيع مدير المدرسة</p><p style="margin-top: 40px;">.......................................</p></div>
-            <div><p>خاتم شعار الجمهورية (المدرسة)</p><div style="width: 80px; height: 80px; border-radius: 50%; border: 2px dashed #999; margin: 15px auto;"></div></div>
-            <div><p>يعتمد ،،، مدير عام الإدارة</p><p style="margin-top: 40px;">.......................................</p></div>
-        </div>
-    </div>
 
     <script>
         function madrasaApp() {
             const client = supabase.createClient('https://zjvnppqygcpccbtgebbq.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqdm5wcHF5Z2NwY2NidGdlYmJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MTE1MjgsImV4cCI6MjA4Njk4NzUyOH0.LnUKMQkfh4YWMvUxO11wAw5ZY_k52PGAeVMVOky_ts0');
+            
+            const defaultSubjectsStats = {
+                arabic: { name: 'اللغة العربية', original: '', delegated: '', session: '', surplus: '', deficit: '' },
+                english: { name: 'اللغة الإنجليزية', original: '', delegated: '', session: '', surplus: '', deficit: '' },
+                social: { name: 'الدراسات الاجتماعية', original: '', delegated: '', session: '', surplus: '', deficit: '' },
+                math: { name: 'الرياضيات', original: '', delegated: '', session: '', surplus: '', deficit: '' },
+                science: { name: 'العلوم', original: '', delegated: '', session: '', surplus: '', deficit: '' }
+            };
+
             return {
                 currentView: 'menu', isEditingForm: false, showOathModal: false, loading: false, sendingReport: false, loadingAvatar: false, loadingAgents: false,
-                currentUser: null, managerData: {}, school: { manager_status: '', teachers_count: 0, admins_count: 0, workers_count: 0, students_count: 0, female_students_count: 0, classrooms_count: 0 }, 
+                currentUser: null, managerData: {}, school: { manager_status: '', teachers_count: '', admins_count: '', workers_count: '', students_count: '', female_students_count: '', classrooms_count: '', subjects_stats: defaultSubjectsStats }, 
                 schoolAgents: [], formData: {}, newAgentMobile: '', requestForm: { statement: '', file: null },
-                schoolMessages: [], requests: [],
-                isLightMode: localStorage.getItem('theme') === 'light',
-                
+                schoolMessages: [], requests: [], isLightMode: localStorage.getItem('theme') === 'light',
                 staffChart: null, studentChart: null,
-
                 alertModal: { show: false, type: 'success', title: '', message: '' }, showAlert(title, message, type = 'success') { this.alertModal = { show: true, type, title, message }; }, closeAlert() { this.alertModal.show = false; },
+
+                // 🌟 حسابات التقدم المُحدثة لـ 4 خطوات 🌟
+                get isManagerComplete() { return this.managerData && this.managerData.full_name && !this.managerData.full_name.includes('بانتظار') && this.managerData.nid && this.managerData.avatar_url; },
+                get isAgentsComplete() { return this.schoolAgents && this.schoolAgents.length > 0 && this.schoolAgents.every(a => a.full_name && !a.full_name.includes('بانتظار')); },
+                get isTeachersComplete() { return this.school && this.school.subjects_stats && Object.values(this.school.subjects_stats).some(s => Number(s.original) > 0 || Number(s.delegated) > 0 || Number(s.session) > 0 || Number(s.deficit) > 0 || Number(s.surplus) > 0); },
+                get isStatsComplete() { return this.school && this.school.manager_status && this.school.manager_status !== ''; },
+                
+                get progressPercentage() { let c = 0; if (this.isManagerComplete) c++; if (this.isAgentsComplete) c++; if (this.isTeachersComplete) c++; if (this.isStatsComplete) c++; return (c / 4) * 100; },
+                get progressLine() { let c = 0; if (this.isManagerComplete) c++; if (this.isAgentsComplete) c++; if (this.isTeachersComplete) c++; if (this.isStatsComplete) c++; if (c === 0) return 0; if (c === 1) return 25; if (c === 2) return 50; if (c === 3) return 75; return 100; },
 
                 async initApp() {
                     if (this.isLightMode) document.body.classList.add('light-theme');
@@ -460,7 +477,13 @@
                     if (!user) { localStorage.removeItem('login_mobile'); return window.location.href = 'login.html'; }
 
                     this.currentUser = user; this.school = user.schools || {};
-                    ['teachers_count', 'admins_count', 'workers_count', 'students_count', 'female_students_count', 'classrooms_count'].forEach(k => { if(this.school[k] === undefined || this.school[k] === null) this.school[k] = 0; });
+                    ['teachers_count', 'admins_count', 'workers_count', 'students_count', 'female_students_count', 'classrooms_count'].forEach(k => { if(this.school[k] === undefined || this.school[k] === null || this.school[k] === 0) this.school[k] = ''; });
+                    
+                    if (typeof this.school.subjects_stats === 'object' && this.school.subjects_stats !== null && Object.keys(this.school.subjects_stats).length > 0) {
+                        // Data exists
+                    } else {
+                        this.school.subjects_stats = JSON.parse(JSON.stringify(defaultSubjectsStats));
+                    }
                     
                     let { data: mgr } = await client.from('users').select('*').eq('school_id', this.school.id).eq('role', 'manager').maybeSingle();
                     this.managerData = mgr || {};
@@ -468,167 +491,91 @@
                     this.fetchAgents(); this.fetchSchoolMessages(); this.fetchRequests();
                 },
 
-                toggleTheme() {
-                    this.isLightMode = !this.isLightMode;
-                    localStorage.setItem('theme', this.isLightMode ? 'light' : 'dark');
-                    if (this.isLightMode) { document.body.classList.add('light-theme'); } else { document.body.classList.remove('light-theme'); }
-                    if (this.currentView === 'statistics') setTimeout(() => this.renderCharts(), 100);
+                // دالة فتح الإحصاء العام (بتأخير لرسم التشارتس)
+                openStatistics() {
+                    this.currentView = 'statistics';
+                    setTimeout(() => { this.renderCharts(); }, 200);
                 },
 
-                printPage() { window.print(); },
-
-                renderCharts() {
-                    const isDark = !this.isLightMode;
-                    const textColor = isDark ? '#E8EDEB' : '#0f172a';
-                    
-                    if(this.staffChart) this.staffChart.destroy();
-                    if(this.studentChart) this.studentChart.destroy();
-
-                    const ctxStaff = document.getElementById('staffChart');
-                    if(ctxStaff) {
-                        this.staffChart = new Chart(ctxStaff, {
-                            type: 'doughnut',
-                            data: { labels: ['معلمين', 'إداريين', 'عمال'], datasets: [{ data: [this.school.teachers_count||0, this.school.admins_count||0, this.school.workers_count||0], backgroundColor: ['#818cf8', '#2dd4bf', '#fbbf24'], borderWidth: isDark? 0: 2 }] },
-                            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: textColor, font: { family: 'Cairo' } } } }, cutout: '60%' }
-                        });
-                    }
-
-                    const ctxStudent = document.getElementById('studentChart');
-                    if(ctxStudent) {
-                        this.studentChart = new Chart(ctxStudent, {
-                            type: 'pie',
-                            data: { labels: ['بنين', 'بنات'], datasets: [{ data: [this.school.students_count||0, this.school.female_students_count||0], backgroundColor: ['#60a5fa', '#f472b6'], borderWidth: isDark? 0: 2 }] },
-                            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: textColor, font: { family: 'Cairo' } } } } }
-                        });
-                    }
-                },
-
-                async fetchSchoolMessages() { const { data } = await client.from('messages').select('*').or(`school_id.is.null,school_id.eq.${this.school.id}`).order('created_at', { ascending: false }); this.schoolMessages = data || []; },
-                
-                async fetchRequests() { const { data } = await client.from('coordination_requests').select('*').eq('school_id', this.school.id); this.requests = data || []; },
-
-                // 🌟 دالة جلب الوكلاء المعدلة لحل المشكلة 🌟
-                async fetchAgents() { 
-                    this.loadingAgents = true; 
-                    const s_id = this.currentUser?.school_id; 
-                    if (!s_id) { this.loadingAgents = false; return; }
-                    
+                // 🌟 دالة حفظ إحصاء المعلمين المستقلة 🌟
+                async saveSubjectsStats() {
+                    this.loading = true;
                     try {
-                        const { data, error } = await client.from('users').select('*').eq('school_id', s_id).eq('role', 'agent');
+                        const { error } = await client.from('schools').update({
+                            subjects_stats: this.school.subjects_stats
+                        }).eq('id', this.school.id);
                         if (error) throw error;
-                        this.schoolAgents = data || []; 
+                        this.showAlert('تم الحفظ', 'تم حفظ إحصاء المواد الأساسية بنجاح 💾', 'success');
                     } catch (err) {
-                        console.error(err);
-                        this.schoolAgents = [];
+                        this.showAlert('خطأ', 'تأكد من إضافة عمود subjects_stats في قاعدة البيانات', 'error');
                     } finally {
-                        this.loadingAgents = false; 
+                        this.loading = false;
                     }
-                },
-                
-                openManagerView() { this.currentView = 'manager'; this.isEditingForm = false; this.formData = { ...this.managerData }; if(!this.formData.mobile) this.formData.mobile = this.currentUser.mobile; },
-                openAgentProfile() { this.currentView = 'agent_profile'; this.formData = { ...this.currentUser }; if (!this.currentUser.full_name || this.currentUser.full_name === 'بانتظار استكمال البيانات') { this.formData.full_name = ''; this.isEditingForm = true; } else { this.isEditingForm = false; } },
-                
-                calculateDates() { 
-                    let nid = this.formData.nid; 
-                    if (nid && nid.length === 14) { 
-                        let y = parseInt((nid[0] === '2' ? '19' : '20') + nid.substring(1, 3)), m = nid.substring(3, 5), d = nid.substring(5, 7); 
-                        this.formData.dob = `${y}-${m}-${d}`; this.formData.retirement_date = `${y + 60}-${m}-${d}`; 
-                    } 
-                    if (this.formData.job_assumption_date) { 
-                        let date = new Date(this.formData.job_assumption_date); date.setFullYear(date.getFullYear() + 2); 
-                        this.formData.renewal_date = date.toISOString().split('T')[0]; 
-                    } 
-                },
-
-                async uploadAvatar(e) {
-                    const file = e.target.files[0]; if(!file) return;
-                    this.loadingAvatar = true;
-                    try {
-                        const fileName = `${Date.now()}_avatar_${this.currentUser.mobile}.${file.name.split('.').pop()}`;
-                        const { error: uploadError } = await client.storage.from('avatars').upload(fileName, file);
-                        if(uploadError) throw uploadError;
-                        const { data } = client.storage.from('avatars').getPublicUrl(fileName);
-                        await client.from('users').update({ avatar_url: data.publicUrl }).eq('mobile', this.currentUser.mobile);
-                        this.currentUser.avatar_url = data.publicUrl;
-                        if(this.currentUser.role === 'manager') this.managerData.avatar_url = data.publicUrl; else this.fetchAgents();
-                        this.formData.avatar_url = data.publicUrl; 
-                        this.showAlert('نجاح ✅', 'تم تحديث الصورة الشخصية بنجاح', 'success');
-                    } catch(err) { this.showAlert('خطأ بالرفع', 'حدث خطأ أثناء رفع الصورة', 'error'); }
-                    finally { this.loadingAvatar = false; }
-                },
-
-                validateAndShowOath() {
-                    if (!this.formData.avatar_url) return this.showAlert('صورة مفقودة', 'إرفاق الصورة الشخصية إلزامي.', 'error');
-                    const nameParts = (this.formData.full_name || '').trim().split(/\s+/);
-                    if (nameParts.length < 4) return this.showAlert('بيانات غير صحيحة', 'يجب إدخال الاسم رباعياً.', 'error');
-                    const nid = (this.formData.nid || '').trim();
-                    if (nid.length !== 14 || isNaN(nid)) return this.showAlert('بيانات غير صحيحة', 'الرقم القومي 14 رقم.', 'error');
-                    this.showOathModal = true;
-                },
-
-                async confirmAndSave() {
-                    this.showOathModal = false; this.loading = true;
-                    const payload = { full_name: this.formData.full_name, nid: this.formData.nid, dob: this.formData.dob || null, hiring_date: this.formData.hiring_date || null, job_assumption_date: this.formData.job_assumption_date || null, retirement_date: this.formData.retirement_date || null, renewal_date: this.formData.renewal_date || null, agent_assignment: this.formData.agent_assignment || null, job_status: this.formData.job_status || null };
-                    const { error } = await client.from('users').update(payload).eq('mobile', this.currentUser.mobile);
-                    if (error) { this.loading = false; return this.showAlert('خطأ', 'حدث خطأ أثناء الحفظ.', 'error'); }
-                    
-                    if (this.currentUser.role === 'manager') { await client.from('schools').update({ manager_status: this.school.manager_status }).eq('id', this.school.id); }
-
-                    this.currentUser = { ...this.currentUser, ...payload };
-                    if(this.currentUser.role === 'manager') { this.managerData = { ...this.currentUser }; } else { await this.fetchAgents(); }
-                    this.loading = false; this.isEditingForm = false; 
-                    this.showAlert('تم التسجيل بنجاح ✅', 'تم حفظ بياناتك بنجاح.', 'success');
-                },
-
-                async addNewAgent() { 
-                    if (!this.newAgentMobile || this.newAgentMobile.length !== 11) return this.showAlert('خطأ', 'أدخل رقم موبايل 11 رقماً صحيحاً.', 'error');
-                    this.loadingAgents = true; const s_id = this.currentUser.school_id;
-                    const newObj = { mobile: this.newAgentMobile, school_id: s_id, role: 'agent', pin: '0000', full_name: 'بانتظار استكمال البيانات' };
-                    const { error } = await client.from('users').insert([newObj]); 
-                    if (error) { this.loadingAgents = false; return this.showAlert('خطأ', 'الرقم مسجل مسبقاً أو خطأ بالاتصال.', 'error'); }
-                    
-                    this.schoolAgents = [...this.schoolAgents, newObj]; 
-                    this.newAgentMobile = ''; this.loadingAgents = false; 
-                    this.showAlert('نجاح ✅', 'تم إضافة الوكيل بنجاح. يمكنه الآن الدخول لتسجيل بياناته.', 'success'); 
-                },
-                
-                async removeAgent(mobile) { 
-                    if (!confirm('حذف هذا الوكيل نهائياً؟')) return; 
-                    this.schoolAgents = this.schoolAgents.filter(a => a.mobile !== mobile); 
-                    await client.from('users').delete().eq('mobile', mobile); 
-                },
-
-                async submitRequest() {
-                    if (!this.requestForm.statement) return this.showAlert('تنبيه', 'يرجى كتابة الطلب', 'error');
-                    this.loading = true; let fileUrl = null;
-                    try {
-                        if (this.requestForm.file) {
-                            const file = this.requestForm.file; const fileName = `${Date.now()}_doc_${this.school.id}.${file.name.split('.').pop()}`;
-                            await client.storage.from('requests_files').upload(fileName, file);
-                            fileUrl = client.storage.from('requests_files').getPublicUrl(fileName).data.publicUrl;
-                        }
-                        await client.from('coordination_requests').insert([{ school_id: this.school.id, statement: this.requestForm.statement, file_url: fileUrl }]);
-                        this.showAlert('تم الإرسال', 'تم إرسال الطلب للتنسيق! 🚀', 'success');
-                        this.requestForm.statement = ''; this.requestForm.file = null; 
-                        this.fetchRequests();
-                        setTimeout(() => { this.currentView = 'menu'; }, 2000);
-                    } catch (err) { this.showAlert('خطأ', 'حدث خطأ بالرفع', 'error'); } finally { this.loading = false; }
                 },
 
                 async exportStatsToAdmin() {
-                    if (!this.school.manager_status && this.currentUser.role === 'manager') return this.showAlert('خطأ', 'يرجى تحديد الموقف الوظيفي للمدير أولاً.', 'error');
+                    if (!this.school.manager_status && this.currentUser.role === 'manager') return this.showAlert('تنبيه', 'يجب تحديد الموقف الوظيفي للمدير', 'error');
                     this.sendingReport = true;
                     try {
-                        await client.from('schools').update({ teachers_count: this.school.teachers_count || 0, admins_count: this.school.admins_count || 0, workers_count: this.school.workers_count || 0, classrooms_count: this.school.classrooms_count || 0, students_count: this.school.students_count || 0, female_students_count: this.school.female_students_count || 0, manager_status: this.school.manager_status }).eq('id', this.school.id);
+                        await client.from('schools').update({ 
+                            teachers_count: this.school.teachers_count || 0, admins_count: this.school.admins_count || 0, workers_count: this.school.workers_count || 0, classrooms_count: this.school.classrooms_count || 0, students_count: this.school.students_count || 0, female_students_count: this.school.female_students_count || 0, manager_status: this.school.manager_status,
+                            subjects_stats: this.school.subjects_stats
+                        }).eq('id', this.school.id);
+                        
                         let agentsText = '';
                         if (this.schoolAgents.length > 0) { this.schoolAgents.forEach((a, i) => { agentsText += `👨‍🏫 الوكيل ${i + 1} (${a.agent_assignment || 'بدون'}): [${a.job_status || 'لم يحدد'}] - ${a.full_name || 'غير مسجل'}\n`; }); } else { agentsText = '👨‍🏫 لا يوجد وكلاء.\n'; }
-                        const reportText = `📊 إحصاء المدرسة الشامل\n-----------------------------------------\n🏫 مدرسة: ${this.school.name}\n-----------------------------------------\n👨‍💼 المدير: [${this.school.manager_status}] - ${this.managerData.full_name || 'غير مسجل'}\n${agentsText}\n-----------------------------------------\n👥 قوة العمل:\n👨‍🏫 المعلمين: ${this.school.teachers_count || 0} | 👨‍💻 الإداريين: ${this.school.admins_count || 0} | 🧹 العمال: ${this.school.workers_count || 0}\n-----------------------------------------\n🎓 أعداد الطلاب والفصول:\n👦 البنين: ${this.school.students_count || 0} | 👧 البنات: ${this.school.female_students_count || 0} | 🚪 الفصول: ${this.school.classrooms_count || 0}`;
+                        
+                        let subjectsText = '-----------------------------------------\n📚 إحصاء المواد الأساسية:\n';
+                        for (const key in this.school.subjects_stats) {
+                            let s = this.school.subjects_stats[key];
+                            subjectsText += `▪️ ${s.name}: أصلي(${s.original||0}) | منتدب(${s.delegated||0}) | بالحصة(${s.session||0}) | 🔴 عجز(${s.deficit||0}) | 🟢 زيادة(${s.surplus||0})\n`;
+                        }
+
+                        const reportText = `📊 إحصاء المدرسة الشامل\n-----------------------------------------\n🏫 مدرسة: ${this.school.name}\n-----------------------------------------\n👨‍💼 المدير: [${this.school.manager_status}] - ${this.managerData.full_name || 'غير مسجل'}\n${agentsText}\n-----------------------------------------\n👥 قوة العمل:\n👨‍🏫 المعلمين: ${this.school.teachers_count || 0} | 👨‍💻 الإداريين: ${this.school.admins_count || 0} | 🧹 العمال: ${this.school.workers_count || 0}\n-----------------------------------------\n🎓 أعداد الطلاب والفصول:\n👦 البنين: ${this.school.students_count || 0} | 👧 البنات: ${this.school.female_students_count || 0} | 🚪 الفصول: ${this.school.classrooms_count || 0}\n${subjectsText}`;
+                        
                         await client.from('coordination_requests').insert([{ school_id: this.school.id, statement: reportText }]);
                         this.showAlert('تم بنجاح ✅', 'تم إرسال الإحصاء إلى التنسيق.', 'success');
                     } catch (err) { this.showAlert('خطأ', 'حدث خطأ بالتصدير.', 'error'); }
                     this.sendingReport = false;
                 },
 
+                // باقي الدوال كما هي...
+                toggleTheme() { this.isLightMode = !this.isLightMode; localStorage.setItem('theme', this.isLightMode ? 'light' : 'dark'); if (this.isLightMode) document.body.classList.add('light-theme'); else document.body.classList.remove('light-theme'); if (this.currentView === 'statistics') setTimeout(() => this.renderCharts(), 100); },
+                
+                // دالة رسم التشارتس (Debounced عشان متضربش)
+                debouncedRenderCharts() {
+                    clearTimeout(this.chartTimeout);
+                    this.chartTimeout = setTimeout(() => {
+                        this.renderCharts();
+                    }, 300);
+                },
+
+                renderCharts() {
+                    const isDark = !this.isLightMode; const textColor = isDark ? '#E8EDEB' : '#0f172a';
+                    const ctxStaff = document.getElementById('staffChart');
+                    const ctxStudent = document.getElementById('studentChart');
+                    
+                    if(!ctxStaff || !ctxStudent) return; // حماية لو الكانفاس مش موجود
+
+                    if(this.staffChart) this.staffChart.destroy(); if(this.studentChart) this.studentChart.destroy();
+
+                    this.staffChart = new Chart(ctxStaff, { type: 'doughnut', data: { labels: ['معلمين', 'إداريين', 'عمال'], datasets: [{ data: [this.school.teachers_count||0, this.school.admins_count||0, this.school.workers_count||0], backgroundColor: ['#818cf8', '#2dd4bf', '#fbbf24'], borderWidth: isDark? 0: 2 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: textColor, font: { family: 'Cairo' } } } }, cutout: '60%' } });
+
+                    this.studentChart = new Chart(ctxStudent, { type: 'pie', data: { labels: ['بنين', 'بنات'], datasets: [{ data: [this.school.students_count||0, this.school.female_students_count||0], backgroundColor: ['#60a5fa', '#f472b6'], borderWidth: isDark? 0: 2 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: textColor, font: { family: 'Cairo' } } } } } });
+                },
+
+                async fetchSchoolMessages() { const { data } = await client.from('messages').select('*').or(`school_id.is.null,school_id.eq.${this.school.id}`).order('created_at', { ascending: false }); this.schoolMessages = data || []; },
+                async fetchRequests() { const { data } = await client.from('coordination_requests').select('*').eq('school_id', this.school.id); this.requests = data || []; },
+                async fetchAgents() { this.loadingAgents = true; const s_id = this.currentUser?.school_id; if (!s_id) { this.loadingAgents = false; return; } try { const { data, error } = await client.from('users').select('*').eq('school_id', s_id).eq('role', 'agent'); if (error) throw error; this.schoolAgents = data || []; } catch (err) { this.schoolAgents = []; } finally { this.loadingAgents = false; } },
+                openManagerView() { this.currentView = 'manager'; this.isEditingForm = false; this.formData = { ...this.managerData }; if(!this.formData.mobile) this.formData.mobile = this.currentUser.mobile; },
+                openAgentProfile() { this.currentView = 'agent_profile'; this.formData = { ...this.currentUser }; if (!this.currentUser.full_name || this.currentUser.full_name === 'بانتظار استكمال البيانات') { this.formData.full_name = ''; this.isEditingForm = true; } else { this.isEditingForm = false; } },
+                calculateDates() { let nid = this.formData.nid; if (nid && nid.length === 14) { let y = parseInt((nid[0] === '2' ? '19' : '20') + nid.substring(1, 3)), m = nid.substring(3, 5), d = nid.substring(5, 7); this.formData.dob = `${y}-${m}-${d}`; this.formData.retirement_date = `${y + 60}-${m}-${d}`; } if (this.formData.job_assumption_date) { let date = new Date(this.formData.job_assumption_date); date.setFullYear(date.getFullYear() + 2); this.formData.renewal_date = date.toISOString().split('T')[0]; } },
+                async uploadAvatar(e) { const file = e.target.files[0]; if(!file) return; this.loadingAvatar = true; try { const fileName = `${Date.now()}_avatar_${this.currentUser.mobile}.${file.name.split('.').pop()}`; const { error: uploadError } = await client.storage.from('avatars').upload(fileName, file); if(uploadError) throw uploadError; const { data } = client.storage.from('avatars').getPublicUrl(fileName); await client.from('users').update({ avatar_url: data.publicUrl }).eq('mobile', this.currentUser.mobile); this.currentUser.avatar_url = data.publicUrl; if(this.currentUser.role === 'manager') this.managerData.avatar_url = data.publicUrl; else this.fetchAgents(); this.formData.avatar_url = data.publicUrl; this.showAlert('نجاح ✅', 'تم تحديث الصورة', 'success'); } catch(err) { this.showAlert('خطأ', 'فشل الرفع', 'error'); } finally { this.loadingAvatar = false; } },
+                validateAndShowOath() { if (!this.formData.avatar_url) return this.showAlert('مفقود', 'الصورة الشخصية إلزامية.', 'error'); const nameParts = (this.formData.full_name || '').trim().split(/\s+/); if (nameParts.length < 4) return this.showAlert('خطأ', 'يجب إدخال الاسم رباعياً.', 'error'); const nid = (this.formData.nid || '').trim(); if (nid.length !== 14 || isNaN(nid)) return this.showAlert('خطأ', 'الرقم القومي 14 رقم.', 'error'); this.showOathModal = true; },
+                async confirmAndSave() { this.showOathModal = false; this.loading = true; const payload = { full_name: this.formData.full_name, nid: this.formData.nid, dob: this.formData.dob || null, hiring_date: this.formData.hiring_date || null, job_assumption_date: this.formData.job_assumption_date || null, retirement_date: this.formData.retirement_date || null, renewal_date: this.formData.renewal_date || null, agent_assignment: this.formData.agent_assignment || null, job_status: this.formData.job_status || null }; const { error } = await client.from('users').update(payload).eq('mobile', this.currentUser.mobile); if (error) { this.loading = false; return this.showAlert('خطأ', 'فشل الحفظ', 'error'); } if (this.currentUser.role === 'manager') { await client.from('schools').update({ manager_status: this.school.manager_status }).eq('id', this.school.id); } this.currentUser = { ...this.currentUser, ...payload }; if(this.currentUser.role === 'manager') { this.managerData = { ...this.currentUser }; } else { await this.fetchAgents(); } this.loading = false; this.isEditingForm = false; this.showAlert('تم ✅', 'تم حفظ بياناتك بنجاح.', 'success'); },
+                async addNewAgent() { if (!this.newAgentMobile || this.newAgentMobile.length !== 11) return this.showAlert('خطأ', 'أدخل رقم 11 رقم.', 'error'); this.loadingAgents = true; const s_id = this.currentUser.school_id; const newObj = { mobile: this.newAgentMobile, school_id: s_id, role: 'agent', pin: '0000', full_name: 'بانتظار استكمال البيانات' }; const { error } = await client.from('users').insert([newObj]); if (error) { this.loadingAgents = false; return this.showAlert('خطأ', 'مسجل مسبقاً', 'error'); } this.schoolAgents = [...this.schoolAgents, newObj]; this.newAgentMobile = ''; this.loadingAgents = false; this.showAlert('تم ✅', 'تم إضافة الوكيل.', 'success'); },
+                async removeAgent(mobile) { if (!confirm('تأكيد الحذف؟')) return; this.schoolAgents = this.schoolAgents.filter(a => a.mobile !== mobile); await client.from('users').delete().eq('mobile', mobile); },
+                async submitRequest() { if (!this.requestForm.statement) return this.showAlert('تنبيه', 'يرجى كتابة الطلب', 'error'); this.loading = true; let fileUrl = null; try { if (this.requestForm.file) { const file = this.requestForm.file; const fileName = `${Date.now()}_doc_${this.school.id}.${file.name.split('.').pop()}`; await client.storage.from('requests_files').upload(fileName, file); fileUrl = client.storage.from('requests_files').getPublicUrl(fileName).data.publicUrl; } await client.from('coordination_requests').insert([{ school_id: this.school.id, statement: this.requestForm.statement, file_url: fileUrl }]); this.showAlert('تم', 'تم إرسال الطلب! 🚀', 'success'); this.requestForm.statement = ''; this.requestForm.file = null; this.fetchRequests(); setTimeout(() => { this.currentView = 'menu'; }, 2000); } catch (err) { this.showAlert('خطأ', 'فشل الرفع', 'error'); } finally { this.loading = false; } },
                 logout() { localStorage.clear(); window.location.href = 'login.html'; }
             }
         }
