@@ -52,30 +52,22 @@
         .log-item { border-right: 2px solid rgba(255,255,255,0.1); position: relative; padding-right: 20px; margin-bottom: 20px; } .light-theme .log-item { border-right: 2px solid rgba(0,0,0,0.1); }
         .log-icon { position: absolute; right: -17px; top: 0; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
-        /* 🌟 تنسيقات الطباعة الاحترافية 🌟 */
+        /* 🌟 تنسيقات الطباعة 🌟 */
         @media print {
             body * { visibility: hidden; }
             #printArea, #printArea * { visibility: visible; }
             #printArea { position: absolute; left: 0; top: 0; width: 100%; direction: rtl; background: white; color: black; font-family: 'Cairo', sans-serif !important; padding: 10px;}
             .print-hidden { display: none !important; }
-            
-            /* ترويسة التقرير */
             .print-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 4px double #000; padding-bottom: 15px; margin-bottom: 25px; }
             .header-text { font-weight: 900; font-size: 15px; line-height: 1.6; }
-            
-            /* عنوان التقرير */
             .print-title { text-align: center; font-size: 24px; font-weight: 900; margin-bottom: 10px; text-decoration: underline; }
             .print-meta { text-align: center; font-size: 14px; font-weight: 800; margin-bottom: 25px; color: #333; }
-            
-            /* تصميم الجدول الاحترافي */
             .print-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
             .print-table th, .print-table td { border: 1px solid #000; padding: 10px 5px; text-align: center; vertical-align: middle; }
             .print-table th { background-color: #f1f5f9 !important; font-weight: 900; -webkit-print-color-adjust: exact; color-adjust: exact; font-size: 14px; }
             .print-table tr:nth-child(even) { background-color: #fafafa !important; -webkit-print-color-adjust: exact; color-adjust: exact; }
             .print-table td.school-name { font-weight: 900; text-align: right; padding-right: 15px; }
             .print-table td.total-col { font-weight: 900; background-color: #e2e8f0 !important; -webkit-print-color-adjust: exact; color-adjust: exact; font-size: 14px;}
-            
-            /* توقيعات */
             .print-signatures { margin-top: 60px; display: flex; justify-content: space-around; text-align: center; font-weight: 900; font-size: 16px; }
         }
     </style>
@@ -93,9 +85,7 @@
             <div class="space-y-4">
                 <input type="text" x-model="newSchool.name" placeholder="اكتب اسم المدرسة..." class="input w-full input-light h-12 text-center font-bold">
                 <select x-model="newSchool.type" class="select w-full input-light h-12 font-bold text-center">
-                    <option value="إعدادي">إعدادي</option>
-                    <option value="ثانوي">ثانوي</option>
-                    <option value="خاصة">خاصة</option>
+                    <option value="إعدادي">إعدادي</option><option value="ثانوي">ثانوي</option><option value="خاصة">خاصة</option>
                 </select>
                 <div class="flex gap-2 mt-4">
                     <button @click="addNewSchool()" class="btn flex-1 btn-success text-white border-none font-bold">إضافة ➕</button>
@@ -113,8 +103,38 @@
             <h3 class="text-xl md:text-2xl font-black text-white mb-2" x-text="confirmModal.title"></h3>
             <p class="text-slate-400 font-bold mb-6 text-xs md:text-sm" x-text="confirmModal.message"></p>
             <div class="flex gap-3 mt-6">
-                <button @click.prevent="executeConfirm()" class="btn flex-1 bg-yellow-600 hover:bg-yellow-700 text-white font-black text-base h-12 rounded-xl border-none">متأكد</button>
+                <button @click.prevent="executeConfirm()" class="btn flex-1 bg-yellow-600 hover:bg-yellow-700 text-white font-black text-base h-12 rounded-xl border-none">
+                    <span x-show="!loadingAction">متأكد</span><span x-show="loadingAction" class="loading loading-spinner"></span>
+                </button>
                 <button @click.prevent="closeConfirm()" class="btn flex-1 bg-slate-700 hover:bg-slate-600 text-white font-black text-base h-12 rounded-xl border-none">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <div x-show="showRequestModal" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 print-hidden" x-cloak x-transition>
+        <div class="bg-[#141A32] w-full max-w-3xl max-h-[90vh] rounded-3xl shadow-2xl border border-[#D68C29]/30 flex flex-col overflow-hidden">
+            
+            <div class="p-4 md:p-6 bg-gradient-to-r from-slate-900 to-[#141A32] border-b border-white/10 flex justify-between items-center shrink-0">
+                <div>
+                    <h3 class="text-xl md:text-2xl font-black text-[#F5C678] flex items-center gap-2">
+                        <span>🏫</span> <span x-text="selectedRequest?.schools?.name"></span>
+                    </h3>
+                    <p class="text-slate-400 text-xs md:text-sm font-bold mt-1" x-text="formatDate(selectedRequest?.created_at)"></p>
+                </div>
+                <button @click="closeRequestDetails" class="btn btn-sm btn-circle btn-error text-white text-xl">✕</button>
+            </div>
+            
+            <div class="p-4 md:p-6 overflow-y-auto custom-scrollbar flex-1 bg-black/10">
+                <div class="text-sm md:text-base text-white leading-relaxed" x-html="selectedRequest ? formatReport(selectedRequest.statement) : ''"></div>
+            </div>
+            
+            <div class="p-4 md:p-6 bg-black/40 border-t border-white/10 flex justify-between items-center shrink-0">
+                <template x-if="selectedRequest?.file_url">
+                    <a :href="selectedRequest.file_url" target="_blank" class="btn bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white border-blue-600/50 rounded-xl px-6">تحميل المرفق 📎</a>
+                </template>
+                <span x-show="!selectedRequest?.file_url" class="text-sm text-slate-500 font-bold bg-black/30 border border-white/5 px-6 py-2.5 rounded-xl">بدون مرفقات</span>
+                
+                <button @click="closeRequestDetails" class="btn bg-slate-700 text-white hover:bg-slate-600 border-none rounded-xl px-8">إغلاق</button>
             </div>
         </div>
     </div>
@@ -169,7 +189,6 @@
                             <button @click="exportToPDF()" class="btn bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white border border-red-600/50 w-full md:w-auto h-12 shadow-md">طباعة 🖨️</button>
                         </div>
                     </div>
-
                 </div>
 
                 <div class="grid grid-cols-3 gap-2 md:gap-6 mb-8">
@@ -270,27 +289,33 @@
 
         <div x-show="activeTab === 'requests'" x-transition x-cloak>
             <div class="glass-panel p-4 md:p-6 border-t-4 border-t-green-500">
-                <h2 class="text-lg md:text-2xl font-black text-white mb-4">الطلبات والإحصائيات الواردة</h2>
-                <div class="grid grid-cols-1 gap-4">
+                <h2 class="text-lg md:text-2xl font-black text-white mb-6">صندوق الطلبات والإحصائيات الواردة</h2>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <template x-for="req in requests" :key="req.id">
-                        <div class="bg-[#141A32] rounded-xl border border-white/10 flex flex-col shadow-md">
-                            <div class="bg-gradient-to-l from-slate-800 to-[#141A32] p-3 flex justify-between items-center border-b border-white/10">
-                                <div><h3 class="text-sm md:text-base font-black text-[#F5C678]" x-text="req.schools?.name"></h3><p class="text-[10px] text-slate-400" x-text="req.schools?.type"></p></div>
-                                <span class="text-[9px] text-white bg-slate-700 px-2 py-1 rounded" x-text="formatDate(req.created_at)"></span>
+                        <div class="bg-[#141A32] rounded-2xl border border-white/10 flex flex-col shadow-xl overflow-hidden hover:border-[#D68C29]/50 transition-all hover:transform hover:-translate-y-1">
+                            
+                            <div class="bg-gradient-to-l from-slate-800 to-[#141A32] p-4 flex justify-between items-center border-b border-white/10">
+                                <div>
+                                    <h3 class="text-sm font-black text-[#F5C678]" x-text="req.schools?.name"></h3>
+                                    <p class="text-[10px] text-slate-400 font-bold mt-1" x-text="req.schools?.type"></p>
+                                </div>
                             </div>
                             
-                            <div class="p-4 flex-1 flex flex-col bg-black/20">
-                                <div class="text-xs md:text-sm text-white bg-[#0B0F1E] p-4 rounded-lg mb-3 leading-relaxed whitespace-pre-wrap text-right border border-white/5 font-medium font-mono" x-text="req.statement"></div>
+                            <div class="p-4 flex-1 flex flex-col bg-black/20 justify-center items-center gap-3">
+                                <div class="text-slate-300 text-sm font-black text-center bg-black/40 px-4 py-2 rounded-xl border border-white/5 w-full" 
+                                     x-text="req.statement.includes('إحصاء المدرسة الشامل') ? '📊 إحصاء شامل' : '📝 طلب / إقرار'">
+                                </div>
+                                <span class="text-[10px] text-slate-500 font-bold" x-text="formatDate(req.created_at)"></span>
                                 
-                                <div class="flex justify-between items-center mt-auto border-t border-white/10 pt-3">
-                                    <template x-if="req.file_url"><a :href="req.file_url" target="_blank" class="text-[11px] md:text-xs text-blue-400 font-bold bg-blue-500/10 px-3 py-1.5 rounded hover:bg-blue-500/30">تحميل المرفق 📎</a></template>
-                                    <span x-show="!req.file_url" class="text-[10px] text-slate-500">بدون مرفقات</span>
-                                    <button @click="deleteRequest(req.id)" class="text-[11px] md:text-xs text-red-500 font-bold bg-red-500/10 px-3 py-1.5 rounded hover:bg-red-500/30">حذف الطلب 🗑️</button>
+                                <div class="flex gap-2 w-full mt-2">
+                                    <button @click="openRequestDetails(req)" class="btn flex-1 bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white font-bold border border-blue-600/50 rounded-xl h-10 min-h-0 text-xs">عرض التفاصيل 👁️</button>
+                                    <button @click="deleteRequest(req.id)" class="btn bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white font-bold border border-red-600/50 rounded-xl px-3 h-10 min-h-0" title="حذف">🗑️</button>
                                 </div>
                             </div>
                         </div>
                     </template>
-                    <p x-show="requests.length === 0" class="text-center py-10 text-xs text-slate-500">لا توجد طلبات.</p>
+                    <p x-show="requests.length === 0" class="col-span-full text-center py-10 text-sm font-bold text-slate-500">لا توجد طلبات أو إحصائيات واردة حالياً.</p>
                 </div>
             </div>
         </div>
@@ -320,80 +345,52 @@
         </div>
 
         <div x-show="activeTab === 'settings'" x-transition x-cloak>
-            <div class="max-w-xl mx-auto"><div class="glass-panel p-4 md:p-6 border-t-4 border-t-[#F5C678]"><h2 class="text-lg font-black text-white mb-4">إعدادات شريط الإعلانات</h2><textarea x-model="marquee.text" class="textarea w-full input-light h-20 text-sm" placeholder="اكتب النص الذي سيظهر في الشريط المتحرك للمدارس..."></textarea><button @click="saveMarqueeSettings" class="btn w-full btn-gold mt-4 font-bold">حفظ الإعدادات 💾</button></div></div>
+            <div class="max-w-xl mx-auto">
+                <div class="glass-panel p-4 md:p-6 border-t-4 border-t-[#F5C678] mb-6">
+                    <h2 class="text-lg font-black text-white mb-4">إعدادات شريط الإعلانات</h2>
+                    <textarea x-model="marquee.text" class="textarea w-full input-light h-20 text-sm" placeholder="اكتب النص الذي سيظهر في الشريط المتحرك للمدارس..."></textarea>
+                    <button @click="saveMarqueeSettings" class="btn w-full btn-gold mt-4 font-bold">حفظ الإعدادات 💾</button>
+                </div>
+
+                <div class="bg-red-500/10 p-4 md:p-6 rounded-3xl border border-red-500/30 shadow-lg">
+                    <h2 class="text-xl font-black text-red-500 mb-4 flex items-center gap-2"><span>⚠️</span> منطقة الخطر (Danger Zone)</h2>
+                    <div class="space-y-4">
+                        <div class="bg-black/30 p-4 rounded-xl border border-red-500/20 flex flex-col md:flex-row justify-between items-center gap-4">
+                            <div><h3 class="text-white font-bold text-sm">تصفير بيانات النظام (مع الاحتفاظ بالمدارس)</h3><p class="text-[10px] text-slate-400 mt-1 leading-relaxed">مسح جميع المديرين والوكلاء والطلبات وتصفير إحصائيات المدارس وكود المرور للبدء من جديد.</p></div>
+                            <button @click="resetSystemData()" class="btn btn-sm md:btn-md btn-warning text-black font-bold shrink-0">تصفير النظام 🔄</button>
+                        </div>
+                        <div class="bg-black/30 p-4 rounded-xl border border-red-500/20 flex flex-col md:flex-row justify-between items-center gap-4">
+                            <div><h3 class="text-white font-bold text-sm">مسح شامل (حذف كل شيء)</h3><p class="text-[10px] text-slate-400 mt-1 leading-relaxed">مسح أسماء المدارس وجميع بيانات النظام من الجذور.</p></div>
+                            <button @click="wipeAllData()" class="btn btn-sm md:btn-md btn-error text-white font-bold shrink-0">مسح شامل 🗑️</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <div id="printArea" class="hidden print:block absolute top-0 left-0 w-full bg-white text-black p-4" style="direction: rtl;">
-        
         <div class="print-header">
-            <div class="header-text" style="text-align: right;">
-                محافظة سوهاج<br>
-                مديرية التربية والتعليم<br>
-                إدارة سوهاج التعليمية
-            </div>
-            <div>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Coat_of_arms_of_Egypt_%28Official%29.svg/120px-Coat_of_arms_of_Egypt_%28Official%29.svg.png" style="width: 70px; height: auto;">
-            </div>
-            <div class="header-text" style="text-align: left;">
-                تنسيق التعليم الإعدادي والثانوي<br>
-                التاريخ: <span x-text="new Date().toLocaleDateString('ar-EG')"></span>
-            </div>
+            <div class="header-text" style="text-align: right;">محافظة سوهاج<br>مديرية التربية والتعليم<br>إدارة سوهاج التعليمية</div>
+            <div><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Coat_of_arms_of_Egypt_%28Official%29.svg/120px-Coat_of_arms_of_Egypt_%28Official%29.svg.png" style="width: 70px; height: auto;"></div>
+            <div class="header-text" style="text-align: left;">تنسيق التعليم الإعدادي والثانوي<br>التاريخ: <span x-text="new Date().toLocaleDateString('ar-EG')"></span></div>
         </div>
-
         <div class="print-title">التقرير الإحصائي الشامل للمدارس</div>
-        <div class="print-meta">
-            المرحلة: <span x-text="selectedStage"></span> | حالة المدارس: <span x-text="statusFilter === 'all' ? 'الكل' : (statusFilter === 'active' ? 'مفعلة ومكتملة' : (statusFilter === 'pending' ? 'بيانات ناقصة' : 'غير مفعلة'))"></span>
-        </div>
-
+        <div class="print-meta">المرحلة: <span x-text="selectedStage"></span> | حالة المدارس: <span x-text="statusFilter === 'all' ? 'الكل' : (statusFilter === 'active' ? 'مفعلة ومكتملة' : (statusFilter === 'pending' ? 'بيانات ناقصة' : 'غير مفعلة'))"></span></div>
         <table class="print-table">
             <thead>
-                <tr>
-                    <th width="5%">م</th>
-                    <th width="20%">اسم المدرسة</th>
-                    <th width="15%">مدير المدرسة</th>
-                    <th>الوكلاء</th>
-                    <th>المعلمين</th>
-                    <th>الإداريين</th>
-                    <th>العمال</th>
-                    <th>بنين</th>
-                    <th>بنات</th>
-                    <th style="background-color: #e2e8f0 !important;">الإجمالي</th>
-                </tr>
+                <tr><th width="5%">م</th><th width="20%">اسم المدرسة</th><th width="15%">مدير المدرسة</th><th>الوكلاء</th><th>المعلمين</th><th>الإداريين</th><th>العمال</th><th>بنين</th><th>بنات</th><th style="background-color: #e2e8f0 !important;">الإجمالي</th></tr>
             </thead>
             <tbody>
                 <template x-for="(school, index) in filteredSchools" :key="school.id">
-                    <tr>
-                        <td x-text="index + 1"></td>
-                        <td class="school-name" x-text="school.name"></td>
-                        <td x-text="school.manager_name" :style="!school.has_manager ? 'color: #888;' : ''"></td>
-                        
-                        <td x-text="school.agents_count || '-'"></td>
-                        
-                        <td x-text="school.teachers_count || '-'"></td>
-                        <td x-text="school.admins_count || '-'"></td>
-                        <td x-text="school.workers_count || '-'"></td>
-                        <td x-text="school.students_count || '-'"></td>
-                        <td x-text="school.female_students_count || '-'"></td>
-                        <td class="total-col" x-text="(Number(school.students_count) || 0) + (Number(school.female_students_count) || 0) || '-'"></td>
-                    </tr>
+                    <tr><td x-text="index + 1"></td><td class="school-name" x-text="school.name"></td><td x-text="school.manager_name" :style="!school.has_manager ? 'color: #888;' : ''"></td><td x-text="school.agents_count || '-'"></td><td x-text="school.teachers_count || '-'"></td><td x-text="school.admins_count || '-'"></td><td x-text="school.workers_count || '-'"></td><td x-text="school.students_count || '-'"></td><td x-text="school.female_students_count || '-'"></td><td class="total-col" x-text="(Number(school.students_count) || 0) + (Number(school.female_students_count) || 0) || '-'"></td></tr>
                 </template>
             </tbody>
         </table>
-
         <div class="print-signatures">
-            <div>
-                <p>إعداد التنسيق</p>
-                <p style="margin-top: 40px;">.......................................</p>
-            </div>
-            <div>
-                <p>رئيس قسم التنسيق</p>
-                <p style="margin-top: 40px;">.......................................</p>
-            </div>
-            <div>
-                <p>يعتمد ،،، مدير عام الإدارة</p>
-                <p style="margin-top: 40px;">.......................................</p>
-            </div>
+            <div><p>إعداد التنسيق</p><p style="margin-top: 40px;">.......................................</p></div>
+            <div><p>رئيس قسم التنسيق</p><p style="margin-top: 40px;">.......................................</p></div>
+            <div><p>يعتمد ،،، مدير عام الإدارة</p><p style="margin-top: 40px;">.......................................</p></div>
         </div>
     </div>
 
@@ -403,11 +400,14 @@
             
             return {
                 activeTab: 'schools', schoolView: 'grid', selectedStage: 'إعدادي', searchQuery: '', statusFilter: 'all', isLightMode: localStorage.getItem('theme') === 'light',
-                loading: false, imageLoading: false, schools: [], schoolsWithUsers: [], selectedSchool: {}, schoolManager: null, schoolAgents: [],
+                loading: false, loadingAction: false, schools: [], schoolsWithUsers: [], selectedSchool: {}, schoolManager: null, schoolAgents: [],
                 requests: [], marquee: { text: '', speed: '15', direction: 'normal', size: '1.2rem', webhook_url: '' }, messagesList: [], newMessage: { school_id: '', content: '', file: null },
                 liveCounter: 0, showLiveToast: false, liveToastTitle: '', liveToastMsg: '', 
                 selectedSchoolRequestsCount: 0, selectedSchoolMessagesCount: 0,
                 showAddSchoolModal: false, newSchool: { name: '', type: 'إعدادي' }, alertModal: { show: false, type: 'success', title: '', message: '' },
+                
+                // 🌟 متغيرات نافذة عرض الطلب 🌟
+                showRequestModal: false, selectedRequest: null,
                 
                 activityLogs: [],
                 confirmModal: { show: false, title: '', message: '', actionType: '', actionPayload: null },
@@ -418,63 +418,107 @@
                     this.fetchRequests(); 
                     this.fetchMessages(); 
                     this.fetchMarqueeSettings();
+                    this.setupRealtimeListener();
                 },
 
-                // 🌟 دالة جلب المدارس المُعدلة لحساب عدد الوكلاء لكل مدرسة 🌟
+                // 🌟 دوال فتح وقفل تفاصيل الطلب 🌟
+                openRequestDetails(req) {
+                    this.selectedRequest = req;
+                    this.showRequestModal = true;
+                },
+                closeRequestDetails() {
+                    this.showRequestModal = false;
+                    setTimeout(() => { this.selectedRequest = null; }, 300); // تاخير عشان الانيميشن
+                },
+
+                formatReport(text) {
+                    if (!text || !text.includes('إحصاء المدرسة الشامل')) {
+                        return `<div class="whitespace-pre-wrap text-base font-bold text-slate-300 p-4 bg-black/20 rounded-xl border border-white/5">${text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>`;
+                    }
+
+                    let html = text
+                        .replace(/📊 إحصاء المدرسة الشامل/g, '<div class="text-center border-b border-white/10 pb-4 mb-6"><span class="text-2xl font-black text-teal-400">📊 الإحصاء الشامل للمدرسة</span></div>')
+                        .replace(/-----------------------------------------/g, '')
+                        .replace(/🏫 مدرسة: (.*)/g, '<div class="bg-gradient-to-l from-[#D68C29]/20 to-transparent p-4 rounded-xl mb-6 text-right border-r-4 border-[#D68C29] shadow-lg"><span class="text-white font-black text-xl">🏫 $1</span></div>')
+                        .replace(/👨‍💼 المدير: (.*)/g, '<div class="flex items-center gap-3 mb-3 p-3 bg-black/40 rounded-xl border border-white/5 shadow-inner"><span class="bg-amber-500/20 text-amber-400 px-3 py-1.5 rounded text-sm font-bold shrink-0 border border-amber-500/30">👑 المدير</span> <span class="font-black text-base text-white">$1</span></div>')
+                        .replace(/👨‍🏫 الوكيل (.*): (.*)/g, '<div class="flex items-center gap-3 mb-3 p-3 bg-black/40 rounded-xl border border-white/5 shadow-inner ml-4"><span class="bg-blue-500/20 text-blue-400 px-3 py-1.5 rounded text-sm font-bold shrink-0 border border-blue-500/30">👨‍🏫 وكيل $1</span> <span class="font-bold text-sm text-slate-300">$2</span></div>')
+                        .replace(/👨‍🏫 لا يوجد وكلاء./g, '<div class="text-center text-slate-500 text-sm font-bold my-4 bg-black/20 py-3 rounded-xl border border-dashed border-white/10">لا يوجد وكلاء مسجلين</div>')
+                        
+                        .replace(/👥 قوة العمل:/g, '<h5 class="font-black text-indigo-400 mt-8 mb-4 text-lg flex items-center gap-2 border-r-4 border-indigo-400 pr-3 bg-indigo-500/5 py-2 rounded-l-xl"><span>👥</span> قوة العمل الأساسية</h5>')
+                        .replace(/👨‍🏫 المعلمين: (.*?) \| 👨‍💻 الإداريين: (.*?) \| 🧹 العمال: (.*)/g,
+                            '<div class="grid grid-cols-3 gap-3 text-center mb-6">' +
+                            '<div class="bg-gradient-to-b from-black/40 to-black/20 border border-indigo-500/30 rounded-2xl p-4 shadow-lg hover:border-indigo-400 transition-colors"><span class="block text-indigo-400 text-xs font-bold mb-2">المعلمين</span><span class="font-black text-3xl text-white">$1</span></div>' +
+                            '<div class="bg-gradient-to-b from-black/40 to-black/20 border border-teal-500/30 rounded-2xl p-4 shadow-lg hover:border-teal-400 transition-colors"><span class="block text-teal-400 text-xs font-bold mb-2">الإداريين</span><span class="font-black text-3xl text-white">$2</span></div>' +
+                            '<div class="bg-gradient-to-b from-black/40 to-black/20 border border-amber-500/30 rounded-2xl p-4 shadow-lg hover:border-amber-400 transition-colors"><span class="block text-amber-400 text-xs font-bold mb-2">العمال</span><span class="font-black text-3xl text-white">$3</span></div>' +
+                            '</div>')
+                        
+                        .replace(/🎓 أعداد الطلاب والفصول:/g, '<h5 class="font-black text-blue-400 mt-8 mb-4 text-lg flex items-center gap-2 border-r-4 border-blue-400 pr-3 bg-blue-500/5 py-2 rounded-l-xl"><span>🎓</span> الطلاب والفصول</h5>')
+                        .replace(/👦 البنين: (.*?) \| 👧 البنات: (.*?) \| 🚪 الفصول: (.*)/g,
+                            '<div class="grid grid-cols-3 gap-3 text-center mb-6">' +
+                            '<div class="bg-gradient-to-b from-black/40 to-black/20 border border-blue-500/30 rounded-2xl p-4 shadow-lg hover:border-blue-400 transition-colors"><span class="block text-blue-400 text-xs font-bold mb-2">البنين</span><span class="font-black text-3xl text-white">$1</span></div>' +
+                            '<div class="bg-gradient-to-b from-black/40 to-black/20 border border-pink-500/30 rounded-2xl p-4 shadow-lg hover:border-pink-400 transition-colors"><span class="block text-pink-400 text-xs font-bold mb-2">البنات</span><span class="font-black text-3xl text-white">$2</span></div>' +
+                            '<div class="bg-gradient-to-b from-black/40 to-black/20 border border-purple-500/30 rounded-2xl p-4 shadow-lg hover:border-purple-400 transition-colors"><span class="block text-purple-400 text-xs font-bold mb-2">الفصول</span><span class="font-black text-3xl text-white">$3</span></div>' +
+                            '</div>')
+                        
+                        .replace(/📚 إحصاء المواد الأساسية:/g, '<h5 class="font-black text-green-400 mt-8 mb-4 text-lg flex items-center gap-2 border-r-4 border-green-400 pr-3 bg-green-500/5 py-2 rounded-l-xl"><span>📚</span> عجز وزيادة المواد الأساسية</h5><div class="space-y-3">')
+                        .replace(/▪️ (.*?): أصلي\((.*?)\) \| منتدب\((.*?)\) \| بالحصة\((.*?)\) \| 🔴 عجز\((.*?)\) \| 🟢 زيادة\((.*?)\)/g,
+                            '<div class="bg-black/30 p-4 rounded-2xl border border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 hover:bg-black/40 transition-colors">' +
+                            '<span class="font-black text-[#F5C678] text-base w-full md:w-auto text-center md:text-right border-b md:border-b-0 border-white/10 pb-3 md:pb-0 shrink-0">$1</span>' +
+                            '<div class="flex gap-2 flex-wrap justify-center w-full md:w-auto">' +
+                            '<span class="bg-black/40 border border-white/5 px-3 py-1.5 rounded-lg text-xs text-slate-400 font-bold">أصلي: <b class="text-white text-sm">$2</b></span>' +
+                            '<span class="bg-black/40 border border-white/5 px-3 py-1.5 rounded-lg text-xs text-slate-400 font-bold">منتدب: <b class="text-white text-sm">$3</b></span>' +
+                            '<span class="bg-black/40 border border-white/5 px-3 py-1.5 rounded-lg text-xs text-slate-400 font-bold">حصة: <b class="text-white text-sm">$4</b></span>' +
+                            '</div>' +
+                            '<div class="flex gap-2 w-full md:w-auto justify-center md:justify-end shrink-0">' +
+                            '<span class="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-1.5 rounded-lg text-xs font-black flex-1 md:flex-none text-center shadow-inner">عجز: <b class="text-base">$5</b></span>' +
+                            '<span class="bg-green-500/10 border border-green-500/30 text-green-400 px-4 py-1.5 rounded-lg text-xs font-black flex-1 md:flex-none text-center shadow-inner">زيادة: <b class="text-base">$6</b></span>' +
+                            '</div>' +
+                            '</div>');
+
+                    if (html.includes('<div class="space-y-3">')) { html += '</div>'; }
+                    return html;
+                },
+
                 async fetchSchoolsData() {
                     this.loading = true;
                     try {
                         let { data: schoolsData } = await client.from('schools').select('*').order('name'); 
                         let { data: allUsers } = await client.from('users').select('*');
                         const safeSchools = schoolsData || []; const safeUsers = allUsers || [];
-                        
                         this.schools = safeSchools.map(school => {
                             const schoolUsers = safeUsers.filter(u => u.school_id === school.id); 
                             const manager = schoolUsers.find(u => u.role === 'manager'); 
-                            const agents = schoolUsers.filter(u => u.role === 'agent'); // هنا بنفلتر الوكلاء بتوع المدرسة
-                            
+                            const agents = schoolUsers.filter(u => u.role === 'agent');
                             const isActivated = school.manager_pin && school.manager_pin !== '0000';
                             const isManagerPending = !manager || !manager.full_name || manager.full_name.includes('بانتظار');
                             const hasNoAgents = agents.length === 0; 
                             const isAnyAgentPending = agents.some(a => !a.full_name || a.full_name.includes('بانتظار')); 
                             const isPendingData = isActivated && (isManagerPending || hasNoAgents || isAnyAgentPending);
-                            
-                            return { 
-                                ...school, 
-                                has_manager: isActivated, 
-                                is_pending: isPendingData, 
-                                manager_name: (manager && manager.full_name && !manager.full_name.includes('بانتظار')) ? manager.full_name : 'غير مسجل',
-                                agents_count: agents.length // 🌟 تم إضافة عدد الوكلاء للمدرسة هنا 🌟
-                            };
+                            return { ...school, has_manager: isActivated, is_pending: isPendingData, manager_name: (manager && manager.full_name && !manager.full_name.includes('بانتظار')) ? manager.full_name : 'غير مسجل', agents_count: agents.length };
                         });
-                    } catch (error) { console.error(error); } finally { this.loading = false; }
+                    } catch (error) {} finally { this.loading = false; }
                 },
 
                 get filteredSchools() { let list = this.schools.filter(s => s.type === this.selectedStage); if (this.searchQuery) list = list.filter(s => s.name && s.name.includes(this.searchQuery)); if (this.statusFilter === 'active') list = list.filter(s => s.has_manager && !s.is_pending); else if (this.statusFilter === 'inactive') list = list.filter(s => !s.has_manager); else if (this.statusFilter === 'pending') list = list.filter(s => s.is_pending); return list; },
 
-                // 🌟 دالة الإكسيل المُعدلة لإضافة عمود الوكلاء 🌟
                 exportToCSV() {
                     if (this.filteredSchools.length === 0) return this.showAlert('تنبيه', 'لا توجد بيانات لتصديرها', 'error');
                     let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; 
-                    csvContent += "م,اسم المدرسة,المرحلة,حالة المدرسة,المدير,الوكلاء,المعلمين,الإداريين,العمال,فصول,بنين,بنات\n"; // 🌟 تم إضافة كلمة الوكلاء
-                    
+                    csvContent += "م,اسم المدرسة,المرحلة,حالة المدرسة,المدير,الوكلاء,المعلمين,الإداريين,العمال,فصول,بنين,بنات\n"; 
                     this.filteredSchools.forEach((s, index) => {
                         let status = s.is_pending ? 'بيانات ناقصة' : (s.has_manager ? 'مفعلة' : 'غير مفعلة');
-                        // 🌟 تم إضافة `${s.agents_count||0}` في السطر المصدّر
                         let row = `"${index + 1}","${s.name}","${s.type}","${status}","${s.manager_name}","${s.agents_count||0}","${s.teachers_count||0}","${s.admins_count||0}","${s.workers_count||0}","${s.classrooms_count||0}","${s.students_count||0}","${s.female_students_count||0}"`;
                         csvContent += row + "\n";
                     });
-                    
                     const encodedUri = encodeURI(csvContent);
                     const link = document.createElement("a");
                     link.setAttribute("href", encodedUri);
                     link.setAttribute("download", `تقرير_مدارس_${this.selectedStage}_${new Date().toLocaleDateString('ar-EG')}.csv`);
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
+                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
                 },
 
-                // باقي دوال فتح المدرسة وتحديثها... (كما هي)
+                exportToPDF() { if (this.filteredSchools.length === 0) return this.showAlert('تنبيه', 'لا توجد بيانات لطباعتها', 'error'); window.print(); },
+
                 async openSchoolDetails(school) {
                     this.selectedSchool = school; this.schoolView = 'details';
                     try {
@@ -484,42 +528,64 @@
                         this.schoolAgents = agts || [];
                         this.selectedSchoolRequestsCount = this.requests.filter(r => r.school_id === school.id).length || 0;
                         this.selectedSchoolMessagesCount = this.messagesList.filter(m => m.school_id === school.id || m.school_id === null).length || 0;
-                    } catch(e) { console.error(e); }
+                    } catch(e) {}
                 },
 
                 async updateSchoolType(schoolId, newType) { const { error } = await client.from('schools').update({ type: newType }).eq('id', schoolId); if (!error) { const index = this.schools.findIndex(s => s.id === schoolId); if (index !== -1) { this.schools[index].type = newType; } this.showAlert('نجاح', 'تم تغيير المرحلة.', 'success'); } },
                 async addNewSchool() { if (!this.newSchool.name.trim()) return; this.loading = true; const { error } = await client.from('schools').insert([{ name: this.newSchool.name, type: this.newSchool.type, manager_pin: '0000' }]); this.loading = false; if (!error) { this.showAddSchoolModal = false; this.newSchool.name = ''; this.fetchSchoolsData(); } },
                 async fetchRequests() { try { const { data } = await client.from('coordination_requests').select(`*, schools (name, type)`).order('created_at', { ascending: false }); this.requests = data || []; } catch(e){} },
                 async fetchMessages() { try { const { data } = await client.from('messages').select(`*, schools (name)`).order('created_at', { ascending: false }); this.messagesList = data || []; } catch(e){} },
+                
                 async sendMessage() { if (!this.newMessage.content) return this.showAlert('تنبيه', 'يرجى كتابة الرسالة', 'error'); this.loading = true; let fileUrl = null; try { if (this.newMessage.file) { const file = this.newMessage.file; const fileName = `admin_doc_${Date.now()}.${file.name.split('.').pop()}`; await client.storage.from('requests_files').upload(fileName, file); fileUrl = client.storage.from('requests_files').getPublicUrl(fileName).data.publicUrl; } await client.from('messages').insert([{ school_id: this.newMessage.school_id || null, message: this.newMessage.content, file_url: fileUrl }]); this.showAlert('تم الإرسال', 'تم إرسال النشرة بنجاح', 'success'); this.newMessage.content = ''; this.newMessage.file = null; document.getElementById('msgFileInput').value = ''; this.fetchMessages(); } catch (err) { this.showAlert('خطأ', 'فشل في الإرسال', 'error'); } finally { this.loading = false; } },
                 async fetchMarqueeSettings() { try { let { data } = await client.from('settings').select('*').eq('id', 1).maybeSingle(); if (data) this.marquee = data; } catch(e){} },
                 async saveMarqueeSettings() { await client.from('settings').upsert({ id: 1, marquee_text: this.marquee.text }); this.showAlert('تم', 'تم الحفظ', 'success'); },
+
+                resetSystemData() { this.showConfirm('تحذير شديد!', 'هل أنت متأكد من تصفير إحصائيات كل المدارس ومسح جميع المديرين والوكلاء؟', 'resetSystem'); },
+                wipeAllData() { this.showConfirm('تحذير خطير جداً!', 'سيتم مسح المدارس والمستخدمين وكل شيء في قاعدة البيانات نهائياً. هل أنت متأكد؟', 'wipeAll'); },
                 
-                exportToPDF() { if (this.filteredSchools.length === 0) return this.showAlert('تنبيه', 'لا توجد بيانات لطباعتها', 'error'); window.print(); },
                 showConfirm(title, message, actionType, actionPayload = null) { this.confirmModal = { show: true, title, message, actionType, actionPayload }; },
                 closeConfirm() { this.confirmModal.show = false; },
                 
                 async executeConfirm() { 
                     const { actionType, actionPayload } = this.confirmModal;
-                    this.closeConfirm();
-                    if (actionType === 'deleteSchool') { await client.from('users').delete().eq('school_id', actionPayload); await client.from('coordination_requests').delete().eq('school_id', actionPayload); await client.from('messages').delete().eq('school_id', actionPayload); await client.from('schools').delete().eq('id', actionPayload); this.schoolView = 'grid'; this.schools = this.schools.filter(s => s.id !== actionPayload); this.showAlert('تم الحذف', 'تم مسح المدرسة نهائياً.', 'success'); }
-                    else if (actionType === 'resetPin') { await client.from('schools').update({ manager_pin: '0000' }).eq('id', actionPayload); this.selectedSchool.manager_pin = '0000'; this.fetchSchoolsData(); this.showAlert('تم التصفير', 'تم إعادة الكود بنجاح.', 'success'); }
-                    else if (actionType === 'resetManager') { await client.from('users').delete().eq('mobile', actionPayload.mobile); await client.from('schools').update({ manager_pin: '0000' }).eq('id', actionPayload.schoolId); this.schoolManager = null; this.selectedSchool.manager_pin = '0000'; this.fetchSchoolsData(); this.showAlert('تمت الإزالة', 'تم مسح بيانات المدير بنجاح.', 'success'); }
-                    else if (actionType === 'deleteAgent') { await client.from('users').delete().eq('mobile', actionPayload); this.schoolAgents = this.schoolAgents.filter(a => a.mobile !== actionPayload); this.fetchSchoolsData(); this.showAlert('تم الحذف', 'تم مسح الوكيل نهائياً.', 'success'); }
-                    else if (actionType === 'deleteRequest') { await client.from('coordination_requests').delete().eq('id', actionPayload); this.requests = this.requests.filter(r => r.id !== actionPayload); this.showAlert('تم الحذف', 'تم مسح الطلب بنجاح.', 'success'); }
-                    else if (actionType === 'deleteMessage') { await client.from('messages').delete().eq('id', actionPayload); this.messagesList = this.messagesList.filter(m => m.id !== actionPayload); this.showAlert('تم الحذف', 'تم مسح الرسالة بنجاح.', 'success'); }
+                    this.loadingAction = true;
+                    try {
+                        if (actionType === 'deleteSchool') { await client.from('users').delete().eq('school_id', actionPayload); await client.from('coordination_requests').delete().eq('school_id', actionPayload); await client.from('messages').delete().eq('school_id', actionPayload); await client.from('schools').delete().eq('id', actionPayload); this.schoolView = 'grid'; this.schools = this.schools.filter(s => s.id !== actionPayload); this.showAlert('تم الحذف', 'تم مسح المدرسة نهائياً.', 'success'); }
+                        else if (actionType === 'resetPin') { await client.from('schools').update({ manager_pin: '0000' }).eq('id', actionPayload); this.selectedSchool.manager_pin = '0000'; this.fetchSchoolsData(); this.showAlert('تم التصفير', 'تم إعادة الكود بنجاح.', 'success'); }
+                        else if (actionType === 'resetManager') { await client.from('users').delete().eq('mobile', actionPayload.mobile); await client.from('schools').update({ manager_pin: '0000' }).eq('id', actionPayload.schoolId); this.schoolManager = null; this.selectedSchool.manager_pin = '0000'; this.fetchSchoolsData(); this.showAlert('تمت الإزالة', 'تم مسح بيانات المدير بنجاح.', 'success'); }
+                        else if (actionType === 'deleteAgent') { await client.from('users').delete().eq('mobile', actionPayload); this.schoolAgents = this.schoolAgents.filter(a => a.mobile !== actionPayload); this.fetchSchoolsData(); this.showAlert('تم الحذف', 'تم مسح الوكيل نهائياً.', 'success'); }
+                        else if (actionType === 'deleteRequest') { await client.from('coordination_requests').delete().eq('id', actionPayload); this.requests = this.requests.filter(r => r.id !== actionPayload); this.showAlert('تم الحذف', 'تم مسح الطلب بنجاح.', 'success'); this.closeRequestDetails(); }
+                        else if (actionType === 'deleteMessage') { await client.from('messages').delete().eq('id', actionPayload); this.messagesList = this.messagesList.filter(m => m.id !== actionPayload); this.showAlert('تم الحذف', 'تم مسح الرسالة بنجاح.', 'success'); }
+                        else if (actionType === 'resetSystem') {
+                            await this.clearTable('users', 'id'); await this.clearTable('coordination_requests', 'id'); await this.clearTable('messages', 'id');
+                            const defaultSubjectsStats = { arabic: { name: 'اللغة العربية', original: '', delegated: '', session: '', surplus: '', deficit: '' }, english: { name: 'اللغة الإنجليزية', original: '', delegated: '', session: '', surplus: '', deficit: '' }, social: { name: 'الدراسات الاجتماعية', original: '', delegated: '', session: '', surplus: '', deficit: '' }, math: { name: 'الرياضيات', original: '', delegated: '', session: '', surplus: '', deficit: '' }, science: { name: 'العلوم', original: '', delegated: '', session: '', surplus: '', deficit: '' } };
+                            const { data: schoolsIds } = await client.from('schools').select('id');
+                            if (schoolsIds && schoolsIds.length > 0) { const ids = schoolsIds.map(s => s.id); for (let i = 0; i < ids.length; i += 500) { await client.from('schools').update({ manager_pin: '0000', manager_status: null, teachers_count: 0, admins_count: 0, workers_count: 0, classrooms_count: 0, students_count: 0, female_students_count: 0, subjects_stats: defaultSubjectsStats }).in('id', ids.slice(i, i + 500)); } }
+                            this.requests = []; this.messagesList = []; this.fetchSchoolsData(); this.showAlert('تم التصفير', 'تم تصفير النظام بنجاح مع الاحتفاظ بأسماء المدارس.', 'success');
+                        }
+                        else if (actionType === 'wipeAll') {
+                            await this.clearTable('users', 'id'); await this.clearTable('coordination_requests', 'id'); await this.clearTable('messages', 'id'); await this.clearTable('schools', 'id');
+                            this.schools = []; this.requests = []; this.messagesList = []; this.fetchSchoolsData(); this.showAlert('تم المسح', 'تم مسح قاعدة البيانات بالكامل بنجاح.', 'success');
+                        }
+                    } catch (err) {} finally { this.loadingAction = false; this.closeConfirm(); }
                 },
 
-                deleteSchool(id) { this.showConfirm('تأكيد الحذف', 'سيتم مسح المدرسة وكل المرتبط بها نهائياً!', 'deleteSchool', id); },
-                resetPin(id) { this.showConfirm('تأكيد التصفير', 'تصفير كود المدرسة إلى 0000؟', 'resetPin', id); },
-                resetManager(mobile, schoolId) { this.showConfirm('إزالة المدير', 'إزالة بيانات المدير وتصفير الكود؟', 'resetManager', {mobile, schoolId}); },
-                deleteAgent(mobile) { this.showConfirm('حذف الوكيل', 'حذف هذا الوكيل نهائياً؟', 'deleteAgent', mobile); },
-                deleteRequest(id) { this.showConfirm('تأكيد الحذف', 'حذف هذا الطلب نهائياً؟', 'deleteRequest', id); },
-                deleteMessage(id) { this.showConfirm('حذف الرسالة', 'هل أنت متأكد من حذف هذه الرسالة؟', 'deleteMessage', id); },
+                async clearTable(tableName, idColumn = 'id') { const { data } = await client.from(tableName).select(idColumn); if (data && data.length > 0) { const ids = data.map(r => r[idColumn]); for (let i = 0; i < ids.length; i += 500) { await client.from(tableName).delete().in(idColumn, ids.slice(i, i + 500)); } } },
+                deleteSchool(id) { this.showConfirm('تأكيد الحذف', 'سيتم مسح المدرسة وكل المرتبط بها نهائياً!', 'deleteSchool', id); }, resetPin(id) { this.showConfirm('تأكيد التصفير', 'تصفير كود المدرسة إلى 0000؟', 'resetPin', id); }, resetManager(mobile, schoolId) { this.showConfirm('إزالة المدير', 'إزالة بيانات المدير وتصفير الكود؟', 'resetManager', {mobile, schoolId}); }, deleteAgent(mobile) { this.showConfirm('حذف الوكيل', 'حذف هذا الوكيل نهائياً؟', 'deleteAgent', mobile); }, deleteRequest(id) { this.showConfirm('تأكيد الحذف', 'حذف هذا الطلب نهائياً؟', 'deleteRequest', id); }, deleteMessage(id) { this.showConfirm('حذف الرسالة', 'هل أنت متأكد من حذف هذه الرسالة؟', 'deleteMessage', id); },
                 showAlert(title, message, type = 'success') { this.alertModal = { show: true, type, title, message }; }, closeAlert() { this.alertModal.show = false; },
                 
+                setupRealtimeListener() {
+                    client.channel('admin-live-channel')
+                    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'users' }, p => { if (p.new.role === 'manager' && p.new.pin !== '0000') this.triggerLiveEvent('تسجيل مدير', 'مدرسة فعلت حسابها!'); })
+                    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'users' }, p => { if (p.new.role === 'manager' && p.new.pin !== '0000') this.triggerLiveEvent('تسجيل مدير', 'مدرسة فعلت حسابها!'); })
+                    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'coordination_requests' }, p => { this.triggerLiveEvent('طلب جديد', 'تم إرسال طلب'); })
+                    .subscribe();
+                },
+                triggerLiveEvent(title, msg) { this.liveCounter++; this.liveToastTitle = title; this.liveToastMsg = msg; this.showLiveToast = true; try { document.getElementById('liveSound').play(); }catch(e){} if(title.includes('طلب')) this.fetchRequests(); else this.fetchSchoolsData(); setTimeout(() => this.showLiveToast = false, 5000); },
                 toggleTheme() { this.isLightMode = !this.isLightMode; localStorage.setItem('theme', this.isLightMode ? 'light' : 'dark'); if (this.isLightMode) document.body.classList.add('light-theme'); else document.body.classList.remove('light-theme'); },
-                logout() { window.location.href = 'login.html'; }
+                formatDate(dateString) { return dateString ? new Date(dateString).toLocaleDateString('ar-EG', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''; },
+                clearBrowserCache() { window.location.reload(); },
+                logout() { localStorage.clear(); window.location.href = 'login.html'; }
             }
         }
     </script>
