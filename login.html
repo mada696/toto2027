@@ -26,7 +26,6 @@
         .role-option.active { background: linear-gradient(135deg, #D68C29 0%, #B4731D 100%); color: white; box-shadow: 0 8px 20px rgba(214, 140, 41, 0.4), inset 0 2px 2px rgba(255,255,255,0.3); transform: translateY(-4px); border-color: transparent; }
         .role-option.inactive:hover { color: #fff; background: rgba(255,255,255,0.08); transform: translateY(-1px); }
 
-        /* 🌟 إعدادات الشريط الأصلي 🌟 */
         .marquee-container { width: 100%; overflow: hidden; background: rgba(11, 15, 30, 0.95); border-bottom: 2px solid #D68C29; padding: 8px 0; position: fixed; top: 0; left: 0; z-index: 9999; display: block; direction: rtl; transition: background 0.4s;} 
         .marquee-content { display: inline-block; white-space: nowrap; font-weight: 800; color: #F5C678; animation: scroll-marquee var(--marquee-speed) linear infinite var(--marquee-dir); font-size: var(--marquee-size); padding: 0 20px; } 
         @keyframes scroll-marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100vw); } }
@@ -39,7 +38,6 @@
         @keyframes fadeSwap1 { 0%, 40% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } 48%, 92% { opacity: 0; transform: translateY(-15px) scale(0.95); filter: blur(4px); } 100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
         @keyframes fadeSwap2 { 0%, 40% { opacity: 0; transform: translateY(15px) scale(0.95); filter: blur(4px); } 48%, 92% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } 100% { opacity: 0; transform: translateY(-15px) scale(0.95); filter: blur(4px); } }
 
-        /* 🌟 ضبط أماكن الأزرار لمنع التداخل 🌟 */
         .whatsapp-floating-btn { position: fixed; bottom: 30px; left: 20px; background-color: #25D366; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); text-decoration: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 500; border: 2px solid rgba(255,255,255,0.2); }
         .whatsapp-floating-btn:hover { transform: scale(1.1) rotate(-5deg); box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6); background-color: #20BA56; }
         .whatsapp-icon { width: 28px; height: 28px; fill: currentColor; }
@@ -68,9 +66,6 @@
         @keyframes pulse-thumb { 0% { box-shadow: 0 0 0 0 rgba(214, 140, 41, 0.6); } 70% { box-shadow: 0 0 0 15px rgba(214, 140, 41, 0); } 100% { box-shadow: 0 0 0 0 rgba(214, 140, 41, 0); } }
         .thumb-pulse { animation: pulse-thumb 2s infinite; }
 
-        /* =========================================
-           🌟 إعدادات الألوان لكبار السن (الوضع النهاري) 🌟
-           ========================================= */
         body.light-theme { background-color: #f1f5f9; color: #0f172a; }
         body.light-theme::before { background-image: none; }
         body.light-theme .glass-box { background: rgba(255, 255, 255, 0.95); border-color: #cbd5e1; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); }
@@ -173,10 +168,10 @@
                 <div class="text-right pb-1">
                     <label class="text-xs font-bold text-white/80 block mb-1">كود المرور</label>
                     <div class="flex justify-center gap-2 md:gap-3" dir="ltr" id="pin-container">
-                        <input type="tel" maxlength="1" class="pin-box" @input="autoTab" @keydown.backspace="autoBack" autocomplete="off" data-lpignore="true">
-                        <input type="tel" maxlength="1" class="pin-box" @input="autoTab" @keydown.backspace="autoBack" autocomplete="off" data-lpignore="true">
-                        <input type="tel" maxlength="1" class="pin-box" @input="autoTab" @keydown.backspace="autoBack" autocomplete="off" data-lpignore="true">
-                        <input type="tel" maxlength="1" class="pin-box" @input="handleLast" @keydown.backspace="autoBack" autocomplete="off" data-lpignore="true">
+                        <input type="password" inputmode="numeric" maxlength="1" class="pin-box" @input="autoTab" @keydown.backspace="autoBack" autocomplete="off" data-lpignore="true">
+                        <input type="password" inputmode="numeric" maxlength="1" class="pin-box" @input="autoTab" @keydown.backspace="autoBack" autocomplete="off" data-lpignore="true">
+                        <input type="password" inputmode="numeric" maxlength="1" class="pin-box" @input="autoTab" @keydown.backspace="autoBack" autocomplete="off" data-lpignore="true">
+                        <input type="password" inputmode="numeric" maxlength="1" class="pin-box" @input="handleLast" @keydown.backspace="autoBack" autocomplete="off" data-lpignore="true">
                     </div>
                 </div>
             </div>
@@ -227,7 +222,7 @@
                 </template>
                 <div class="bg-red-50 p-4 rounded-xl border border-red-200 mt-4">
                     <label class="block text-sm text-red-700 font-bold mb-1 text-center">كود مرور جديد (إجباري)</label>
-                    <input type="password" x-model="setup.newPin" maxlength="4" class="input w-full input-light border-red-300 h-14 text-center tracking-widest text-2xl" placeholder="4 أرقام" autocomplete="new-password">
+                    <input type="password" inputmode="numeric" x-model="setup.newPin" maxlength="4" class="input w-full input-light border-red-300 h-14 text-center tracking-widest text-2xl" placeholder="••••" autocomplete="new-password">
                 </div>
                 <button @click="saveSetup" class="btn w-full h-14 bg-blue-600 hover:bg-blue-700 text-white font-black text-xl rounded-xl mt-4">
                     <span x-show="!loading">تفعيل وخروج ✅</span>
@@ -238,16 +233,40 @@
         </div>
     </div>
     
-    <div x-show="showPinModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4" x-cloak><div class="bg-[#141A32] w-full max-w-sm p-6 rounded-3xl text-center border-t-8 border-[#D68C29]"><h3 class="text-xl font-black text-white mb-4">🔐 كود المسئول للتحكم</h3><input type="password" x-model="adminPinInput" maxlength="4" class="input w-full input-light text-center text-2xl font-black h-14 mb-4"><div class="flex gap-2"><button @click="verifyPin" class="btn flex-1 btn-gold font-black h-12 rounded-xl">تحقق</button><button @click="showPinModal = false; adminPinInput = ''" class="btn bg-slate-700 text-white border-none h-12 rounded-xl">إلغاء</button></div></div></div>
+    <div x-show="showPinModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4" x-cloak><div class="bg-[#141A32] w-full max-w-sm p-6 rounded-3xl text-center border-t-8 border-[#D68C29]"><h3 class="text-xl font-black text-white mb-4">🔐 كود المسئول للتحكم</h3><input type="password" inputmode="numeric" x-model="adminPinInput" maxlength="4" class="input w-full input-light text-center text-2xl font-black h-14 mb-4"><div class="flex gap-2"><button @click="verifyPin" class="btn flex-1 btn-gold font-black h-12 rounded-xl">تحقق</button><button @click="showPinModal = false; adminPinInput = ''" class="btn bg-slate-700 text-white border-none h-12 rounded-xl">إلغاء</button></div></div></div>
     
-    <div x-show="showSettingsModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4" x-cloak><div class="bg-[#141A32] w-full max-w-sm p-6 rounded-3xl text-right border-t-8 border-green-500"><h3 class="text-xl font-black text-white mb-6 text-center">⚙️ إعدادات الإعلان</h3><div class="space-y-4"><div><label class="text-white block mb-1">النص</label><textarea x-model="marquee.text" class="textarea w-full input-light h-24"></textarea></div><div><label class="text-white block mb-1">السرعة</label><select x-model="marquee.speed" class="select w-full input-light"><option value="30">بطيء جداً</option><option value="20">بطيء</option><option value="15">متوسط</option><option value="8">سريع</option></select></div><div class="grid grid-cols-2 gap-2"><div><label class="text-white block mb-1">الاتجاه</label><select x-model="marquee.direction" class="select w-full input-light"><option value="normal">يمين لليسار</option><option value="reverse">يسار لليمين</option></select></div><div><label class="text-white block mb-1">الحجم</label><select x-model="marquee.size" class="select w-full input-light"><option value="1rem">صغير</option><option value="1.2rem">متوسط</option><option value="1.6rem">كبير</option></select></div></div></div><div class="flex gap-2 mt-6"><button @click="saveMarqueeSettings" class="btn flex-1 bg-green-600 border-none text-white font-black h-12 rounded-xl">حفظ</button><button @click="showSettingsModal = false" class="btn bg-slate-700 text-white h-12 rounded-xl border-none">إغلاق</button></div></div></div>
+    <div x-show="showSettingsModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4" x-cloak>
+        <div class="bg-[#141A32] w-full max-w-md p-6 rounded-3xl text-right border-t-8 border-green-500 max-h-[85vh] overflow-y-auto">
+            <h3 class="text-xl font-black text-white mb-6 text-center">⚙️ إعدادات الإعلانات</h3>
+            
+            <div class="space-y-6">
+                <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+                    <h4 class="text-[#F5C678] font-bold mb-3">شريط الإعلانات الإداري</h4>
+                    <div class="space-y-3">
+                        <div><label class="text-white text-xs block mb-1">النص</label><textarea x-model="marquee.text" class="textarea w-full input-light h-16"></textarea></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div><label class="text-white text-xs block mb-1">السرعة</label><select x-model="marquee.speed" class="select w-full input-light select-sm"><option value="30">سريع (30ث)</option><option value="60">متوسط (60ث)</option><option value="90">بطيء (90ث)</option><option value="120">بطيء جداً (120ث)</option></select></div>
+                            <div><label class="text-white text-xs block mb-1">الاتجاه</label><select x-model="marquee.direction" class="select w-full input-light select-sm"><option value="normal">يمين لليسار</option><option value="reverse">يسار لليمين</option></select></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-2 mt-6">
+                <button @click="saveMarqueeSettings" class="btn flex-1 bg-green-600 border-none text-white font-black h-12 rounded-xl">حفظ التعديلات</button>
+                <button @click="showSettingsModal = false" class="btn bg-slate-700 text-white h-12 rounded-xl border-none">إغلاق</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         function loginApp() {
             const client = supabase.createClient('https://zjvnppqygcpccbtgebbq.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqdm5wcHF5Z2NwY2NidGdlYmJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MTE1MjgsImV4cCI6MjA4Njk4NzUyOH0.LnUKMQkfh4YWMvUxO11wAw5ZY_k52PGAeVMVOky_ts0');
             return {
                 role: 'manager', mobile: '', loading: false, showSetupModal: false, setupType: '', schoolsList: [], setup: { stage: 'إعدادي', schoolId: '', newPin: '' }, 
-                marquee: { text: '', speed: '15', direction: 'normal', size: '1.2rem' }, 
+                
+                marquee: { text: '', speed: '60', direction: 'normal', size: '1.2rem' }, 
+
                 showPinModal: false, showSettingsModal: false, adminPinInput: '', rememberMe: false,
                 
                 liveCounter: 0, showLiveToast: false, liveToastTitle: '', liveToastMsg: '',
@@ -260,11 +279,25 @@
                 
                 async initData() { 
                     if (this.isLightMode) document.body.classList.add('light-theme');
-                    this.fetchMarqueeSettings(); 
-                    let { data } = await client.from('schools').select('id, name, type').order('name'); 
-                    if(data) this.schoolsList = data; 
+                    await this.loadData();
                     this.loadSavedCredentials();
                     this.setupRealtimeListener();
+                },
+
+                async loadData() {
+                    let { data: settingsData } = await client.from('settings').select('*').eq('id', 1).maybeSingle(); 
+                    if (settingsData) {
+                        this.marquee.text = settingsData.marquee_text || ''; 
+                        this.marquee.speed = settingsData.marquee_speed || '60'; 
+                        this.marquee.direction = settingsData.marquee_direction || 'normal'; 
+                        this.marquee.size = settingsData.marquee_size || '1.2rem'; 
+                    }
+                    await this.refreshSchools();
+                },
+
+                async refreshSchools() {
+                    let { data: schoolsData } = await client.from('schools').select('id, name, manager_pin, type').order('name'); 
+                    if(schoolsData) { this.schoolsList = schoolsData; }
                 },
                 
                 toggleTheme() {
@@ -317,11 +350,12 @@
                 
                 setupRealtimeListener() {
                     client.channel('login-live-channel')
+                    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'schools' }, payload => { this.refreshSchools(); })
                     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'users' }, payload => {
-                        if (payload.new.role === 'manager' && payload.new.pin !== '0000') { this.triggerLiveEvent('تسجيل مدير جديد', 'مدرسة قامت بتفعيل حسابها الآن!'); }
+                        if (payload.new.role === 'manager' && payload.new.pin !== '0000') { this.triggerLiveEvent('تسجيل مدير جديد', 'مدرسة قامت بتفعيل حسابها الآن!'); this.refreshSchools(); }
                     })
                     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'users' }, payload => {
-                        if (payload.new.role === 'manager' && payload.new.pin !== '0000') { this.triggerLiveEvent('تسجيل مدير جديد', 'مدرسة قامت بتفعيل حسابها الآن!'); }
+                        if (payload.new.role === 'manager' && payload.new.pin !== '0000') { this.triggerLiveEvent('تسجيل مدير جديد', 'مدرسة قامت بتفعيل حسابها الآن!'); this.refreshSchools(); }
                     })
                     .subscribe();
                 },
@@ -345,9 +379,13 @@
                     } else { localStorage.removeItem('login_mobile'); localStorage.removeItem('login_pin'); localStorage.removeItem('login_role'); }
                 },
 
-                async fetchMarqueeSettings() { let { data } = await client.from('settings').select('*').eq('id', 1).maybeSingle(); if (data && data.marquee_text) { this.marquee.text = data.marquee_text; this.marquee.speed = data.marquee_speed || '15'; this.marquee.direction = data.marquee_direction || 'normal'; this.marquee.size = data.marquee_size || '1.2rem'; } },
                 verifyPin() { if (this.adminPinInput === '5555') { this.showPinModal = false; this.showSettingsModal = true; } else { this.showAlert('خطأ', 'كود المسئول خاطئ', 'error'); } this.adminPinInput = ''; },
-                async saveMarqueeSettings() { await client.from('settings').upsert({ id: 1, marquee_text: this.marquee.text, marquee_speed: this.marquee.speed, marquee_direction: this.marquee.direction, marquee_size: this.marquee.size }); this.showAlert('تم الحفظ', 'تم التحديث بنجاح', 'success'); this.showSettingsModal = false; },
+                
+                async saveMarqueeSettings() { 
+                    await client.from('settings').upsert({ id: 1, marquee_text: this.marquee.text, marquee_speed: this.marquee.speed, marquee_direction: this.marquee.direction, marquee_size: this.marquee.size }); 
+                    this.showAlert('تم الحفظ', 'تم تحديث الإعدادات بنجاح', 'success'); this.showSettingsModal = false; 
+                },
+
                 get filteredSchools() { return this.schoolsList.filter(s => s.type === this.setup.stage); },
                 autoTab(e) { e.target.value = e.target.value.replace(/[^0-9]/g, ''); if (e.target.value && e.target.nextElementSibling) e.target.nextElementSibling.focus(); }, 
                 handleLast(e) { this.autoTab(e); const fullPin = this.getPin(); if (fullPin.length === 4 && this.mobile.length === 11 && this.role !== 'agent') { e.target.blur(); } }, 
