@@ -48,27 +48,59 @@
         .live-toast-container.show { transform: translateX(0); }
         .live-toast-box { background: linear-gradient(135deg, rgba(16, 185, 129, 0.95) 0%, rgba(5, 150, 105, 0.95) 100%); backdrop-filter: blur(10px); border: 1px solid #34D399; color: white; padding: 15px 25px; border-radius: 1rem; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4); display: flex; align-items: center; gap: 15px; }
         .pulse-live { animation: pulseRed 2s infinite; } @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
-        
-        .log-item { border-right: 2px solid rgba(255,255,255,0.1); position: relative; padding-right: 20px; margin-bottom: 20px; } .light-theme .log-item { border-right: 2px solid rgba(0,0,0,0.1); }
-        .log-icon { position: absolute; right: -17px; top: 0; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
-        /* 🌟 تنسيقات الطباعة 🌟 */
+        /* 🌟 تنسيقات الطباعة الخارقة الجديدة (مبنية من الصفر) 🌟 */
+        .print-only { display: none; }
+        
         @media print {
-            body * { visibility: hidden; }
-            #printArea, #printArea * { visibility: visible; }
-            #printArea { position: absolute; left: 0; top: 0; width: 100%; direction: rtl; background: white; color: black; font-family: 'Cairo', sans-serif !important; padding: 10px;}
-            .print-hidden { display: none !important; }
-            .print-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 4px double #000; padding-bottom: 15px; margin-bottom: 25px; }
-            .header-text { font-weight: 900; font-size: 15px; line-height: 1.6; }
-            .print-title { text-align: center; font-size: 24px; font-weight: 900; margin-bottom: 10px; text-decoration: underline; }
-            .print-meta { text-align: center; font-size: 14px; font-weight: 800; margin-bottom: 25px; color: #333; }
-            .print-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-            .print-table th, .print-table td { border: 1px solid #000; padding: 10px 5px; text-align: center; vertical-align: middle; }
-            .print-table th { background-color: #f1f5f9 !important; font-weight: 900; -webkit-print-color-adjust: exact; color-adjust: exact; font-size: 14px; }
-            .print-table tr:nth-child(even) { background-color: #fafafa !important; -webkit-print-color-adjust: exact; color-adjust: exact; }
-            .print-table td.school-name { font-weight: 900; text-align: right; padding-right: 15px; }
-            .print-table td.total-col { font-weight: 900; background-color: #e2e8f0 !important; -webkit-print-color-adjust: exact; color-adjust: exact; font-size: 14px;}
-            .print-signatures { margin-top: 60px; display: flex; justify-content: space-around; text-align: center; font-weight: 900; font-size: 16px; }
+            /* إجبار المتصفح على الطباعة بالعرض وبدون هوامش مزعجة */
+            @page { size: A4 landscape; margin: 10mm; }
+            
+            /* إخفاء واجهة الموقع بالكامل بشكل سليم يمنع الصفحات البيضاء */
+            body > *:not(#printArea) { display: none !important; }
+            
+            body, html { 
+                background: #fff !important; 
+                color: #000 !important; 
+                margin: 0 !important; 
+                padding: 0 !important; 
+            }
+
+            #printArea { 
+                display: block !important; 
+                direction: rtl !important; 
+                font-family: 'Cairo', sans-serif !important; 
+                width: 100% !important;
+                color: #000 !important;
+            }
+
+            .print-header { display: flex !important; justify-content: space-between !important; align-items: center !important; border-bottom: 4px double #000 !important; padding-bottom: 10px !important; margin-bottom: 20px !important; }
+            .print-header-text { font-weight: 900 !important; font-size: 14px !important; line-height: 1.6 !important; }
+            .print-header-right { text-align: right !important; }
+            .print-header-left { text-align: left !important; }
+            .print-header img { width: 65px !important; height: auto !important; }
+            
+            .print-title { text-align: center !important; font-size: 22px !important; font-weight: 900 !important; margin-bottom: 5px !important; text-decoration: underline !important; color: #000 !important;}
+            .print-meta { text-align: center !important; font-size: 14px !important; font-weight: bold !important; margin-bottom: 20px !important; color: #444 !important; }
+            
+            .print-table { width: 100% !important; border-collapse: collapse !important; border: 2px solid #000 !important; page-break-inside: auto !important; margin-bottom: 30px !important;}
+            /* تكرار الهيدر لو الجدول طويل نزل صفحة تانية */
+            .print-table thead { display: table-header-group !important; }
+            /* منع انقسام السطر بين صفحتين */
+            .print-table tr { page-break-inside: avoid !important; page-break-after: auto !important; }
+            
+            .print-table th, .print-table td { border: 1px solid #000 !important; padding: 10px 4px !important; text-align: center !important; vertical-align: middle !important; font-size: 13px !important; color: #000 !important; }
+            
+            .print-table th { background-color: #e2e8f0 !important; font-weight: 900 !important; border-bottom: 2px solid #000 !important; -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
+            /* تظليل صف وترك صف لسهولة القراءة */
+            .print-table tbody tr:nth-child(even) td { background-color: #f8fafc !important; -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
+            
+            .print-table td.school-name { text-align: right !important; padding-right: 10px !important; font-weight: 900 !important; white-space: nowrap !important; width: 22% !important;}
+            .print-table th.total-col, .print-table td.total-col { background-color: #cbd5e1 !important; font-weight: 900 !important; -webkit-print-color-adjust: exact !important; color-adjust: exact !important; border-right: 2px solid #000 !important;}
+            
+            .print-signatures { display: flex !important; justify-content: space-between !important; margin-top: 40px !important; page-break-inside: avoid !important; padding: 0 50px !important;}
+            .print-signatures div { text-align: center !important; font-size: 15px !important; font-weight: 900 !important; color: #000 !important;}
+            .sign-line { margin-top: 40px !important; color: #888 !important; }
         }
     </style>
 </head>
@@ -168,16 +200,13 @@
         <div x-show="activeTab === 'schools'" x-transition x-cloak>
             <div x-show="schoolView === 'grid'" x-transition>
                 <div class="flex flex-col lg:flex-row justify-between items-center mb-6 gap-4 bg-[#141A32]/50 p-4 rounded-2xl border border-white/5">
-                    
                     <div class="flex flex-wrap justify-center gap-2 w-full lg:w-auto">
                         <div class="badge bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500 py-3 px-2 md:px-4 text-[10px] md:text-sm w-[48%] md:w-auto" x-text="`مكتملة: ${schools.filter(s => s.type === selectedStage && s.has_manager && !s.is_pending).length}`"></div>
                         <div class="badge bg-yellow-500/20 text-yellow-400 font-bold border border-yellow-500 py-3 px-2 md:px-4 text-[10px] md:text-sm w-[48%] md:w-auto" x-text="`ناقصة: ${schools.filter(s => s.type === selectedStage && s.is_pending).length}`"></div>
                         <div class="badge bg-slate-700/50 text-slate-300 font-bold border border-slate-600 py-3 px-2 md:px-4 text-[10px] md:text-sm w-full md:w-auto mt-1 lg:mt-0" x-text="`غير مفعلة: ${schools.filter(s => s.type === selectedStage && !s.has_manager).length}`"></div>
                     </div>
-                    
                     <div class="flex flex-col md:flex-row gap-3 w-full lg:w-auto">
                         <input type="text" x-model="searchQuery" placeholder="بحث باسم المدرسة 🔍..." class="input input-light w-full md:w-64 h-12">
-                        
                         <div class="grid grid-cols-2 md:flex gap-2 w-full md:w-auto">
                             <select x-model="statusFilter" class="select input-light w-full md:w-auto h-12 border-none">
                                 <option value="all">كل الحالات</option><option value="active">مفعلة</option><option value="pending">ناقصة</option><option value="inactive">غير مفعلة</option>
@@ -225,10 +254,16 @@
                                 <select x-model="selectedSchool.type" @change="updateSchoolType(selectedSchool.id, selectedSchool.type)" class="select select-xs bg-[#D68C29] text-white border-none font-bold mt-2 w-full md:w-auto"><option value="إعدادي">إعدادي</option><option value="ثانوي">ثانوي</option><option value="خاصة">خاصة</option></select>
                             </div>
                         </div>
-                        <div class="bg-[#0B0F1E] p-3 rounded-xl border border-white/10 text-center w-full md:w-auto">
+                        <div class="bg-[#0B0F1E] p-3 rounded-xl border border-white/10 text-center w-full md:w-auto relative">
                             <p class="text-[10px] text-slate-400 font-bold mb-1">كود الدخول</p>
                             <p class="text-2xl font-black pin-display" x-text="selectedSchool.manager_pin"></p>
-                            <div class="flex gap-2 mt-2"><button @click="resetPin(selectedSchool.id)" class="btn btn-xs flex-1 btn-warning rounded">تصفير</button><button @click="deleteSchool(selectedSchool.id)" class="btn btn-xs flex-1 btn-error rounded text-white">حذف</button></div>
+                            <div class="flex flex-col gap-2 mt-2">
+                                <div class="flex gap-2 w-full">
+                                    <button @click="resetPin(selectedSchool.id)" class="btn btn-xs flex-1 btn-warning rounded">تصفير</button>
+                                    <button @click="deleteSchool(selectedSchool.id)" class="btn btn-xs flex-1 btn-error rounded text-white">حذف</button>
+                                </div>
+                                <button x-show="backupSchoolId === selectedSchool.id" @click="undoResetPin()" x-transition class="btn btn-xs bg-emerald-600 hover:bg-emerald-700 text-white border-none w-full rounded shadow-[0_0_10px_rgba(16,185,129,0.5)] animate-pulse">تراجع واستعادة الكود ↩️</button>
+                            </div>
                         </div>
                     </div>
 
@@ -246,9 +281,7 @@
                                     <h3 class="font-bold text-[#D68C29] text-base md:text-xl">👨‍💼 مدير المدرسة</h3>
                                     <template x-if="schoolManager">
                                         <div class="flex gap-2">
-                                            <a :href="`https://wa.me/2${schoolManager.mobile}?text=${encodeURIComponent('السيد الفاضل / مدير مدرسة ' + selectedSchool.name + '،\nتحية طيبة وبعد..\nتلاحظ لدينا من خلال المتابعة الدورية لمنصة التنسيق الإلكتروني عدم استكمال البيانات الخاصة بمدرستكم (سواء بيانات السجل الوظيفي أو الإحصاء الشامل).\nبرجاء التكرم بسرعة الدخول للمنصة واستكمال المطلوب عبر الرابط:\nwww.tanseeqedarasohag.co.site\n\nإدارة سوهاج التعليمية')}`" target="_blank" class="btn btn-xs bg-green-600 hover:bg-green-700 text-white border-none shadow-md">
-                                                تذكير واتس 💬
-                                            </a>
+                                            <a :href="`https://wa.me/2${schoolManager.mobile}?text=${encodeURIComponent('السيد الفاضل / مدير مدرسة ' + selectedSchool.name + '،\nتحية طيبة وبعد..\nتلاحظ لدينا من خلال المتابعة الدورية لمنصة التنسيق الإلكتروني عدم استكمال البيانات الخاصة بمدرستكم (سواء بيانات السجل الوظيفي أو الإحصاء الشامل).\nبرجاء التكرم بسرعة الدخول للمنصة واستكمال المطلوب عبر الرابط:\nwww.tanseeqedarasohag.co.site\n\nإدارة سوهاج التعليمية')}`" target="_blank" class="btn btn-xs bg-green-600 hover:bg-green-700 text-white border-none shadow-md">تذكير واتس 💬</a>
                                             <button @click="resetManager(schoolManager.mobile, selectedSchool.id)" class="btn btn-xs btn-error text-white hover:bg-red-600 border-none shadow-md">إزالة 🗑️</button>
                                         </div>
                                     </template>
@@ -295,24 +328,15 @@
         <div x-show="activeTab === 'requests'" x-transition x-cloak>
             <div class="glass-panel p-4 md:p-6 border-t-4 border-t-green-500">
                 <h2 class="text-lg md:text-2xl font-black text-white mb-6">صندوق الطلبات والإحصائيات الواردة</h2>
-                
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <template x-for="req in requests" :key="req.id">
                         <div class="bg-[#141A32] rounded-2xl border border-white/10 flex flex-col shadow-xl overflow-hidden hover:border-[#D68C29]/50 transition-all hover:transform hover:-translate-y-1">
-                            
                             <div class="bg-gradient-to-l from-slate-800 to-[#141A32] p-4 flex justify-between items-center border-b border-white/10">
-                                <div>
-                                    <h3 class="text-sm font-black text-[#F5C678]" x-text="req.schools?.name"></h3>
-                                    <p class="text-[10px] text-slate-400 font-bold mt-1" x-text="req.schools?.type"></p>
-                                </div>
+                                <div><h3 class="text-sm font-black text-[#F5C678]" x-text="req.schools?.name"></h3><p class="text-[10px] text-slate-400 font-bold mt-1" x-text="req.schools?.type"></p></div>
                             </div>
-                            
                             <div class="p-4 flex-1 flex flex-col bg-black/20 justify-center items-center gap-3">
-                                <div class="text-slate-300 text-sm font-black text-center bg-black/40 px-4 py-2 rounded-xl border border-white/5 w-full" 
-                                     x-text="req.statement.includes('إحصاء المدرسة الشامل') ? '📊 إحصاء شامل' : '📝 طلب / إقرار'">
-                                </div>
+                                <div class="text-slate-300 text-sm font-black text-center bg-black/40 px-4 py-2 rounded-xl border border-white/5 w-full" x-text="req.statement.includes('إحصاء المدرسة الشامل') ? '📊 إحصاء شامل' : '📝 طلب / إقرار'"></div>
                                 <span class="text-[10px] text-slate-500 font-bold" x-text="formatDate(req.created_at)"></span>
-                                
                                 <div class="flex gap-2 w-full mt-2">
                                     <button @click="openRequestDetails(req)" class="btn flex-1 bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white font-bold border border-blue-600/50 rounded-xl h-10 min-h-0 text-xs">عرض التفاصيل 👁️</button>
                                     <button @click="deleteRequest(req.id)" class="btn bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white font-bold border border-red-600/50 rounded-xl px-3 h-10 min-h-0" title="حذف">🗑️</button>
@@ -374,28 +398,50 @@
         </div>
     </div>
 
-    <div id="printArea" class="hidden print:block absolute top-0 left-0 w-full bg-white text-black p-4" style="direction: rtl;">
+    <div id="printArea" class="print-only">
         <div class="print-header">
-            <div class="header-text" style="text-align: right;">محافظة سوهاج<br>مديرية التربية والتعليم<br>إدارة سوهاج التعليمية</div>
-            <div><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Coat_of_arms_of_Egypt_%28Official%29.svg/120px-Coat_of_arms_of_Egypt_%28Official%29.svg.png" style="width: 70px; height: auto;"></div>
-            <div class="header-text" style="text-align: left;">تنسيق التعليم الإعدادي والثانوي<br>التاريخ: <span x-text="new Date().toLocaleDateString('ar-EG')"></span></div>
+            <div class="print-header-text print-header-right">محافظة سوهاج<br>مديرية التربية والتعليم<br>إدارة سوهاج التعليمية</div>
+            <div><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Coat_of_arms_of_Egypt_%28Official%29.svg/120px-Coat_of_arms_of_Egypt_%28Official%29.svg.png" alt="شعار"></div>
+            <div class="print-header-text print-header-left">تنسيق التعليم الإعدادي والثانوي<br>التاريخ: <span x-text="new Date().toLocaleDateString('ar-EG')"></span></div>
         </div>
         <div class="print-title">التقرير الإحصائي الشامل للمدارس</div>
         <div class="print-meta">المرحلة: <span x-text="selectedStage"></span> | حالة المدارس: <span x-text="statusFilter === 'all' ? 'الكل' : (statusFilter === 'active' ? 'مفعلة ومكتملة' : (statusFilter === 'pending' ? 'بيانات ناقصة' : 'غير مفعلة'))"></span></div>
         <table class="print-table">
             <thead>
-                <tr><th width="5%">م</th><th width="20%">اسم المدرسة</th><th width="15%">مدير المدرسة</th><th>الوكلاء</th><th>المعلمين</th><th>الإداريين</th><th>العمال</th><th>بنين</th><th>بنات</th><th style="background-color: #e2e8f0 !important;">الإجمالي</th></tr>
+                <tr>
+                    <th width="4%">م</th>
+                    <th width="20%">اسم المدرسة</th>
+                    <th width="14%">مدير المدرسة</th>
+                    <th width="6%">وكلاء</th>
+                    <th width="8%">معلمين</th>
+                    <th width="8%">إداريين</th>
+                    <th width="8%">عمال</th>
+                    <th width="8%">بنين</th>
+                    <th width="8%">بنات</th>
+                    <th width="10%" class="total-col">الإجمالي</th>
+                </tr>
             </thead>
             <tbody>
                 <template x-for="(school, index) in filteredSchools" :key="school.id">
-                    <tr><td x-text="index + 1"></td><td class="school-name" x-text="school.name"></td><td x-text="school.manager_name" :style="!school.has_manager ? 'color: #888;' : ''"></td><td x-text="school.agents_count || '-'"></td><td x-text="school.teachers_count || '-'"></td><td x-text="school.admins_count || '-'"></td><td x-text="school.workers_count || '-'"></td><td x-text="school.students_count || '-'"></td><td x-text="school.female_students_count || '-'"></td><td class="total-col" x-text="(Number(school.students_count) || 0) + (Number(school.female_students_count) || 0) || '-'"></td></tr>
+                    <tr>
+                        <td x-text="index + 1"></td>
+                        <td class="school-name" x-text="school.name"></td>
+                        <td x-text="school.manager_name" :style="!school.has_manager ? 'color: #888;' : ''"></td>
+                        <td x-text="school.agents_count || '-'"></td>
+                        <td x-text="school.teachers_count || '-'"></td>
+                        <td x-text="school.admins_count || '-'"></td>
+                        <td x-text="school.workers_count || '-'"></td>
+                        <td x-text="school.students_count || '-'"></td>
+                        <td x-text="school.female_students_count || '-'"></td>
+                        <td class="total-col" x-text="(Number(school.students_count) || 0) + (Number(school.female_students_count) || 0) || '-'"></td>
+                    </tr>
                 </template>
             </tbody>
         </table>
         <div class="print-signatures">
-            <div><p>إعداد التنسيق</p><p style="margin-top: 40px;">.......................................</p></div>
-            <div><p>رئيس قسم التنسيق</p><p style="margin-top: 40px;">.......................................</p></div>
-            <div><p>يعتمد ،،، مدير عام الإدارة</p><p style="margin-top: 40px;">.......................................</p></div>
+            <div>إعداد التنسيق<p class="sign-line">.......................................</p></div>
+            <div>رئيس قسم التنسيق<p class="sign-line">.......................................</p></div>
+            <div>يعتمد ،،، مدير عام الإدارة<p class="sign-line">.......................................</p></div>
         </div>
     </div>
 
@@ -414,6 +460,8 @@
                 showRequestModal: false, selectedRequest: null,
                 activityLogs: [], confirmModal: { show: false, title: '', message: '', actionType: '', actionPayload: null },
                 
+                backupPin: null, backupSchoolId: null,
+
                 async initApp() { 
                     if (this.isLightMode) document.body.classList.add('light-theme');
                     this.fetchSchoolsData(); this.fetchRequests(); this.fetchMessages(); this.fetchMarqueeSettings();
@@ -491,7 +539,6 @@
                 async addNewSchool() { if (!this.newSchool.name.trim()) return; this.loading = true; const { error } = await client.from('schools').insert([{ name: this.newSchool.name, type: this.newSchool.type, manager_pin: '0000' }]); this.loading = false; if (!error) { this.showAddSchoolModal = false; this.newSchool.name = ''; this.fetchSchoolsData(); } },
                 async fetchRequests() { try { const { data } = await client.from('coordination_requests').select(`*, schools (name, type)`).order('created_at', { ascending: false }); this.requests = data || []; } catch(e){} },
                 async fetchMessages() { try { const { data } = await client.from('messages').select(`*, schools (name)`).order('created_at', { ascending: false }); this.messagesList = data || []; } catch(e){} },
-                
                 async sendMessage() { if (!this.newMessage.content) return this.showAlert('تنبيه', 'يرجى كتابة الرسالة', 'error'); this.loading = true; let fileUrl = null; try { if (this.newMessage.file) { const file = this.newMessage.file; const fileName = `admin_doc_${Date.now()}.${file.name.split('.').pop()}`; await client.storage.from('requests_files').upload(fileName, file); fileUrl = client.storage.from('requests_files').getPublicUrl(fileName).data.publicUrl; } await client.from('messages').insert([{ school_id: this.newMessage.school_id || null, message: this.newMessage.content, file_url: fileUrl }]); this.showAlert('تم الإرسال', 'تم إرسال النشرة بنجاح', 'success'); this.newMessage.content = ''; this.newMessage.file = null; document.getElementById('msgFileInput').value = ''; this.fetchMessages(); } catch (err) { this.showAlert('خطأ', 'فشل في الإرسال', 'error'); } finally { this.loading = false; } },
                 async fetchMarqueeSettings() { try { let { data } = await client.from('settings').select('*').eq('id', 1).maybeSingle(); if (data) this.marquee = data; } catch(e){} },
                 async saveMarqueeSettings() { await client.from('settings').upsert({ id: 1, marquee_text: this.marquee.text }); this.showAlert('تم', 'تم الحفظ', 'success'); },
@@ -506,7 +553,14 @@
                     this.loadingAction = true;
                     try {
                         if (actionType === 'deleteSchool') { await client.from('users').delete().eq('school_id', actionPayload); await client.from('coordination_requests').delete().eq('school_id', actionPayload); await client.from('messages').delete().eq('school_id', actionPayload); await client.from('schools').delete().eq('id', actionPayload); this.schoolView = 'grid'; this.schools = this.schools.filter(s => s.id !== actionPayload); this.showAlert('تم الحذف', 'تم مسح المدرسة نهائياً.', 'success'); }
-                        else if (actionType === 'resetPin') { await client.from('schools').update({ manager_pin: '0000' }).eq('id', actionPayload); this.selectedSchool.manager_pin = '0000'; this.fetchSchoolsData(); this.showAlert('تم التصفير', 'تم إعادة الكود بنجاح.', 'success'); }
+                        else if (actionType === 'resetPin') { 
+                            this.backupPin = this.selectedSchool.manager_pin;
+                            this.backupSchoolId = actionPayload;
+                            await client.from('schools').update({ manager_pin: '0000' }).eq('id', actionPayload); 
+                            this.selectedSchool.manager_pin = '0000'; 
+                            this.fetchSchoolsData(); 
+                            this.showAlert('تم التصفير', 'تم إعادة الكود. يمكنك التراجع في حالة الخطأ ↩️', 'success'); 
+                        }
                         else if (actionType === 'resetManager') { await client.from('users').delete().eq('mobile', actionPayload.mobile); await client.from('schools').update({ manager_pin: '0000' }).eq('id', actionPayload.schoolId); this.schoolManager = null; this.selectedSchool.manager_pin = '0000'; this.fetchSchoolsData(); this.showAlert('تمت الإزالة', 'تم مسح بيانات المدير بنجاح.', 'success'); }
                         else if (actionType === 'deleteAgent') { await client.from('users').delete().eq('mobile', actionPayload); this.schoolAgents = this.schoolAgents.filter(a => a.mobile !== actionPayload); this.fetchSchoolsData(); this.showAlert('تم الحذف', 'تم مسح الوكيل نهائياً.', 'success'); }
                         else if (actionType === 'deleteRequest') { await client.from('coordination_requests').delete().eq('id', actionPayload); this.requests = this.requests.filter(r => r.id !== actionPayload); this.showAlert('تم الحذف', 'تم مسح الطلب بنجاح.', 'success'); this.closeRequestDetails(); }
@@ -523,6 +577,17 @@
                             this.schools = []; this.requests = []; this.messagesList = []; this.fetchSchoolsData(); this.showAlert('تم المسح', 'تم مسح قاعدة البيانات بالكامل بنجاح.', 'success');
                         }
                     } catch (err) {} finally { this.loadingAction = false; this.closeConfirm(); }
+                },
+
+                async undoResetPin() {
+                    this.loadingAction = true;
+                    try {
+                        await client.from('schools').update({ manager_pin: this.backupPin }).eq('id', this.backupSchoolId);
+                        this.selectedSchool.manager_pin = this.backupPin;
+                        this.fetchSchoolsData();
+                        this.backupPin = null; this.backupSchoolId = null;
+                        this.showAlert('تم التراجع', 'تم استعادة كود المرور القديم بنجاح ✅', 'success');
+                    } catch (err) { this.showAlert('خطأ', 'حدث خطأ أثناء استعادة الكود', 'error'); } finally { this.loadingAction = false; }
                 },
 
                 async clearTable(tableName, idColumn = 'id') { const { data } = await client.from(tableName).select(idColumn); if (data && data.length > 0) { const ids = data.map(r => r[idColumn]); for (let i = 0; i < ids.length; i += 500) { await client.from(tableName).delete().in(idColumn, ids.slice(i, i + 500)); } } },
