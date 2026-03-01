@@ -9,6 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
@@ -168,7 +169,7 @@
 
         <div class="w-full p-3 md:p-4 flex flex-col md:flex-row justify-between items-center bg-[#141A32]/95 backdrop-blur sticky top-0 z-50 border-b border-[#D68C29]/50 shadow-lg gap-3">
             <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-                <div class="w-12 h-12 bg-gradient-to-br from-[#D68C29] to-[#B4731D] rounded-full flex items-center justify-center text-2xl shadow-[0_0_15px_rgba(214,140,41,0.5)]">👑</div>
+                <div class="w-12 h-12 bg-gradient-to-br from-[#D68C29] to-[#B4731D] rounded-xl flex items-center justify-center text-2xl shadow-[0_0_15px_rgba(214,140,41,0.5)]">👑</div>
                 <div class="text-center sm:text-right">
                     <h1 class="text-lg md:text-xl font-black text-[#F5C678] mb-1">لوحة القيادة المركزية</h1>
                     <div class="flex items-center justify-center sm:justify-start gap-1.5 bg-red-500/20 border border-red-500 rounded-full px-2 py-0.5 inline-flex" title="الاستقبال اللحظي مفعل">
@@ -245,9 +246,19 @@
                     <div class="bg-[#141A32] rounded-3xl border border-[#D68C29]/30 shadow-2xl overflow-hidden mt-2 md:mt-6">
                         <div class="p-4 md:p-6 bg-gradient-to-b from-[#0B0F1E] to-[#141A32] border-b border-white/10 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
                             <div class="flex flex-col items-start gap-3 w-full md:w-auto">
-                                <button @click="schoolView = 'grid'" class="btn btn-sm md:btn-md bg-[#D68C29]/10 text-[#D68C29] border border-[#D68C29]/50 rounded-xl flex items-center gap-2 w-full md:w-auto"><span class="text-xl">🔙</span> العودة</button>
+                                <button @click="schoolView = 'grid'; isEditingSchoolName = false;" class="btn btn-sm md:btn-md bg-[#D68C29]/10 text-[#D68C29] border border-[#D68C29]/50 rounded-xl flex items-center gap-2 w-full md:w-auto"><span class="text-xl">🔙</span> العودة</button>
                                 <div>
-                                    <h2 class="text-lg md:text-2xl font-black text-white" x-text="'🏫 ' + selectedSchool.name"></h2>
+                                    <div class="flex items-center gap-2">
+                                        <h2 x-show="!isEditingSchoolName" class="text-lg md:text-2xl font-black text-white flex items-center gap-2">
+                                            <span x-text="'🏫 ' + selectedSchool.name"></span>
+                                            <button @click="startEditingSchoolName()" class="btn btn-xs btn-ghost text-[#D68C29] p-1 text-lg hover:bg-transparent" title="تعديل اسم المدرسة">✏️</button>
+                                        </h2>
+                                        <div x-show="isEditingSchoolName" class="flex items-center gap-2" x-cloak>
+                                            <input type="text" x-model="editedSchoolName" class="input input-sm input-light font-bold rounded-lg w-48 md:w-64 text-center" placeholder="الاسم الجديد...">
+                                            <button @click="saveSchoolName()" class="btn btn-sm btn-success text-white px-3">حفظ</button>
+                                            <button @click="isEditingSchoolName = false" class="btn btn-sm btn-error text-white px-3">✕</button>
+                                        </div>
+                                    </div>
                                     <select x-model="selectedSchool.type" @change="updateSchoolType(selectedSchool.id, selectedSchool.type)" class="select select-xs bg-[#D68C29] text-white border-none font-bold mt-2 w-full md:w-auto"><option value="إعدادي">إعدادي</option><option value="ثانوي">ثانوي</option><option value="خاصة">خاصة</option></select>
                                 </div>
                             </div>
@@ -285,7 +296,7 @@
                                     </div>
                                     <template x-if="schoolManager">
                                         <div>
-                                            <div class="flex items-center gap-3 mb-4"><img :src="schoolManager?.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" class="w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-[#D68C29] object-cover bg-white"><div><h4 class="text-sm md:text-lg font-black text-white" x-text="schoolManager?.full_name || 'بانتظار استكمال البيانات'"></h4><p class="text-[#D68C29] font-mono text-xs mt-1" x-text="schoolManager?.mobile"></p></div></div>
+                                            <div class="flex items-center gap-3 mb-4"><img :src="schoolManager?.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" class="w-12 h-12 md:w-16 md:h-16 rounded-xl border-2 border-[#D68C29] object-cover bg-white"><div><h4 class="text-sm md:text-lg font-black text-white" x-text="schoolManager?.full_name || 'بانتظار استكمال البيانات'"></h4><p class="text-[#D68C29] font-mono text-xs mt-1" x-text="schoolManager?.mobile"></p></div></div>
                                             <div class="space-y-2 bg-black/30 p-3 rounded-xl border border-white/5 text-xs md:text-sm">
                                                 <div class="flex justify-between border-b border-white/5 pb-1"><span class="text-slate-500">القومي:</span><span class="font-mono text-yellow-300" x-text="schoolManager?.nid || '---'"></span></div>
                                                 <div class="flex justify-between border-b border-white/5 pb-1"><span class="text-slate-500">استلام عمل:</span><span class="text-white" x-text="schoolManager?.job_assumption_date || '---'"></span></div>
@@ -303,7 +314,7 @@
                                         <template x-for="(agent, idx) in schoolAgents" :key="idx">
                                             <div class="bg-black/30 p-3 rounded-xl border border-white/5 relative group">
                                                 <div class="flex justify-between items-start border-b border-white/5 pb-2 mb-2">
-                                                    <div class="flex items-center gap-2"><img :src="agent?.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" class="w-8 h-8 rounded-full border border-emerald-500 object-cover bg-white"><div><h4 class="text-xs font-bold text-white" x-text="agent?.full_name || 'بانتظار التسجيل'"></h4><p class="text-[9px] text-emerald-400 font-mono" x-text="agent?.mobile"></p></div></div>
+                                                    <div class="flex items-center gap-2"><img :src="agent?.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" class="w-8 h-8 rounded-lg border border-emerald-500 object-cover bg-white"><div><h4 class="text-xs font-bold text-white" x-text="agent?.full_name || 'بانتظار التسجيل'"></h4><p class="text-[9px] text-emerald-400 font-mono" x-text="agent?.mobile"></p></div></div>
                                                     <button @click="deleteAgent(agent.mobile)" class="btn btn-xs btn-ghost text-red-500 px-1">🗑️</button>
                                                 </div>
                                                 <div class="grid grid-cols-2 gap-y-1 gap-x-2 text-[10px] md:text-xs">
@@ -439,7 +450,10 @@
                 
                 showRequestModal: false, selectedRequest: null,
                 
-                // 🌟 متغيرات الحماية الإضافية (PIN) 🌟
+                // 🌟 متغيرات تعديل اسم المدرسة 🌟
+                isEditingSchoolName: false, editedSchoolName: '',
+
+                // متغيرات الحماية الإضافية (PIN) 
                 dangerPin: '', 
                 confirmModal: { show: false, title: '', message: '', actionType: '', actionPayload: null, requiresPin: false },
                 
@@ -455,7 +469,6 @@
                 openRequestDetails(req) { this.selectedRequest = req; this.showRequestModal = true; },
                 closeRequestDetails() { this.showRequestModal = false; setTimeout(() => { this.selectedRequest = null; }, 300); },
 
-                // تنسيق العرض للموقع
                 formatReport(text) {
                     if (!text || !text.includes('إحصاء المدرسة الشامل')) return `<div class="whitespace-pre-wrap text-base font-bold text-slate-300 p-4 bg-black/20 rounded-xl border border-white/5">${text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>`;
                     let html = text
@@ -518,7 +531,6 @@
 
                     let schoolName = statement.match(/🏫 مدرسة: (.*)/)?.[1] || '';
                     let managerInfo = statement.match(/👨‍💼 المدير: (.*)/)?.[1] || '';
-                    
                     let agentsMatch = statement.match(/👨‍🏫 الوكيل .*/g) || [];
                     let agentsHtml = agentsMatch.length > 0 
                         ? agentsMatch.map(a => `<p style="margin: 5px 0; font-size: 14px; font-weight: bold;">${a}</p>`).join('')
@@ -527,7 +539,6 @@
                     let teachers = statement.match(/👨‍🏫 المعلمين: (.*?)\s*\|/)?.[1] || '0';
                     let admins = statement.match(/👨‍💻 الإداريين: (.*?)\s*\|/)?.[1] || '0';
                     let workers = statement.match(/🧹 العمال: (.*)/)?.[1] || '0';
-
                     let boys = statement.match(/👦 البنين: (.*?)\s*\|/)?.[1] || '0';
                     let girls = statement.match(/👧 البنات: (.*?)\s*\|/)?.[1] || '0';
                     let classes = statement.match(/🚪 الفصول: (.*)/)?.[1] || '0';
@@ -552,25 +563,16 @@
                     this.singlePrintContent = `
                         <div style="font-family: 'Cairo', sans-serif; direction: rtl; color: #000; padding: 0 20px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #000; padding-bottom: 10px; margin-bottom: 20px;">
-                                <div style="text-align: right; font-weight: 900; font-size: 14px; line-height: 1.5;">
-                                    محافظة سوهاج<br>مديرية التربية والتعليم<br>إدارة سوهاج التعليمية
-                                </div>
-                                <div style="text-align: center;">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Coat_of_arms_of_Egypt_%28Official%29.svg/120px-Coat_of_arms_of_Egypt_%28Official%29.svg.png" style="width: 60px;">
-                                </div>
-                                <div style="text-align: left; font-weight: 900; font-size: 14px; line-height: 1.5;">
-                                    تنسيق التعليم الإعدادي والثانوي<br>تاريخ الطباعة: ${new Date().toLocaleDateString('ar-EG')}
-                                </div>
+                                <div style="text-align: right; font-weight: 900; font-size: 14px; line-height: 1.5;">محافظة سوهاج<br>مديرية التربية والتعليم<br>إدارة سوهاج التعليمية</div>
+                                <div style="text-align: center;"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Coat_of_arms_of_Egypt_%28Official%29.svg/120px-Coat_of_arms_of_Egypt_%28Official%29.svg.png" style="width: 60px;"></div>
+                                <div style="text-align: left; font-weight: 900; font-size: 14px; line-height: 1.5;">تنسيق التعليم الإعدادي والثانوي<br>تاريخ الطباعة: ${new Date().toLocaleDateString('ar-EG')}</div>
                             </div>
-
                             <h2 style="text-align: center; font-size: 22px; font-weight: 900; text-decoration: underline; margin-bottom: 20px;">التقرير الإحصائي الشامل للمدرسة</h2>
-
                             <div style="border: 2px solid #000; padding: 15px; margin-bottom: 20px; border-radius: 8px; background: #fff;">
                                 <h3 style="margin: 0 0 10px 0; font-size: 18px; font-weight: 900;">🏫 مدرسة: ${schoolName}</h3>
                                 <p style="margin: 5px 0; font-size: 14px; font-weight: bold;">👨‍💼 المدير: ${managerInfo}</p>
                                 ${agentsHtml}
                             </div>
-
                             <div style="display: flex; gap: 20px; margin-bottom: 20px;">
                                 <div style="flex: 1;">
                                     <h4 style="font-size: 16px; font-weight: 900; background: #e2e8f0; padding: 8px; border: 1px solid #000; text-align: center; margin: 0 0 10px 0; -webkit-print-color-adjust: exact; color-adjust: exact;">👥 قوة العمل الأساسية</h4>
@@ -587,34 +589,23 @@
                                     </table>
                                 </div>
                             </div>
-
                             <h4 style="font-size: 16px; font-weight: 900; background: #e2e8f0; padding: 8px; border: 1px solid #000; text-align: center; margin: 0 0 10px 0; -webkit-print-color-adjust: exact; color-adjust: exact;">📚 إحصاء المواد الأساسية</h4>
                             <table style="width: 100%; border-collapse: collapse; text-align: center; border: 1px solid #000;">
                                 <tr style="background: #e2e8f0; -webkit-print-color-adjust: exact; color-adjust: exact;">
-                                    <th style="border: 1px solid #000; padding: 8px;">المادة</th>
-                                    <th style="border: 1px solid #000; padding: 8px;">أصلي</th>
-                                    <th style="border: 1px solid #000; padding: 8px;">منتدب</th>
-                                    <th style="border: 1px solid #000; padding: 8px;">بالحصة</th>
-                                    <th style="border: 1px solid #000; padding: 8px;">العجز</th>
-                                    <th style="border: 1px solid #000; padding: 8px;">الزيادة</th>
+                                    <th style="border: 1px solid #000; padding: 8px;">المادة</th><th style="border: 1px solid #000; padding: 8px;">أصلي</th><th style="border: 1px solid #000; padding: 8px;">منتدب</th><th style="border: 1px solid #000; padding: 8px;">بالحصة</th><th style="border: 1px solid #000; padding: 8px;">العجز</th><th style="border: 1px solid #000; padding: 8px;">الزيادة</th>
                                 </tr>
                                 ${subjectsHtml}
                             </table>
-
                             <div style="margin-top: 40px; display: flex; justify-content: space-around; text-align: center; font-weight: 900; font-size: 15px;">
                                 <div>توقيع مدير المدرسة<p style="margin-top: 30px; color: #888;">.......................................</p></div>
                                 <div>يعتمد ،،، مدير عام الإدارة<p style="margin-top: 30px; color: #888;">.......................................</p></div>
                             </div>
                         </div>
                     `;
-
-                    this.setPrintOrientation('portrait'); // تحديد ورقة بالطول
+                    this.setPrintOrientation('portrait'); 
                     this.printType = 'single';
                     this.isPrinting = true;
-                    setTimeout(() => { 
-                        window.print(); 
-                        this.isPrinting = false; 
-                    }, 300);
+                    setTimeout(() => { window.print(); this.isPrinting = false; }, 300);
                 },
 
                 // 🌟 دالة التأمين لمنع الانهيار 🌟
@@ -634,6 +625,33 @@
                     } catch(e) {
                         console.error(e);
                         this.showAlert('خطأ', 'حدث خطأ أثناء فتح بيانات المدرسة', 'error');
+                    }
+                },
+
+                // 🌟 الدالة الجديدة لتعديل اسم المدرسة وحفظه 🌟
+                startEditingSchoolName() {
+                    this.editedSchoolName = this.selectedSchool.name;
+                    this.isEditingSchoolName = true;
+                },
+                
+                async saveSchoolName() {
+                    if (!this.editedSchoolName.trim()) return this.showAlert('تنبيه', 'اسم المدرسة لا يمكن أن يكون فارغاً', 'error');
+                    this.loadingAction = true;
+                    try {
+                        const { error } = await client.from('schools').update({ name: this.editedSchoolName.trim() }).eq('id', this.selectedSchool.id);
+                        if (error) throw error;
+                        
+                        // تحديث الاسم فوراً في الواجهة
+                        this.selectedSchool.name = this.editedSchoolName.trim();
+                        const idx = this.schools.findIndex(s => s.id === this.selectedSchool.id);
+                        if (idx !== -1) this.schools[idx].name = this.selectedSchool.name;
+                        
+                        this.isEditingSchoolName = false;
+                        this.showAlert('تم ✅', 'تم تعديل اسم المدرسة بنجاح', 'success');
+                    } catch (err) {
+                        this.showAlert('خطأ', 'فشل في تعديل الاسم', 'error');
+                    } finally {
+                        this.loadingAction = false;
                     }
                 },
 
