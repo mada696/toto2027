@@ -25,13 +25,14 @@
         
         .main-card { background: linear-gradient(145deg, rgba(30,41,59,0.9), rgba(15,23,42,0.9)); border: 2px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 20px 15px; text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.3);}
         .main-card:hover { transform: translateY(-8px); border-color: #D68C29; box-shadow: 0 15px 30px rgba(214, 140, 41, 0.2); background: linear-gradient(145deg, rgba(30,41,59,1), rgba(20,26,50,1));}
-        .icon-wrapper { width: 55px; height: 55px; border-radius: 50%; background: rgba(214, 140, 41, 0.1); display: flex; align-items: center; justify-content: center; color: #F5C678; transition: all 0.3s; }
+        .icon-wrapper { width: 55px; height: 55px; border-radius: 15px; background: rgba(214, 140, 41, 0.1); display: flex; align-items: center; justify-content: center; color: #F5C678; transition: all 0.3s; }
         .main-card:hover .icon-wrapper { background: #D68C29; color: #141A32; transform: scale(1.1); }
         
-        .home-btn { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); color: white; padding: 8px 20px; border-radius: 50px; font-weight: bold; border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s; margin-bottom: 20px; text-decoration: none;}
+        .home-btn { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); color: white; padding: 8px 20px; border-radius: 12px; font-weight: bold; border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s; margin-bottom: 20px; text-decoration: none;}
         .home-btn:hover { background: #D68C29; border-color: #D68C29; color: #141A32; box-shadow: 0 5px 15px rgba(214, 140, 41, 0.4); transform: translateX(-5px);}
         
-        .avatar-upload-wrapper { position: relative; width: 100px; height: 100px; margin: 0 auto; border-radius: 50%; overflow: hidden; border: 3px solid #D68C29; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3);}
+        /* 🌟 تم تحويل دائرة الرفع لمربع بحواف ناعمة 🌟 */
+        .avatar-upload-wrapper { position: relative; width: 100px; height: 100px; margin: 0 auto; border-radius: 1rem; overflow: hidden; border: 3px solid #D68C29; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3);}
         .avatar-upload-wrapper img { width: 100%; height: 100%; object-fit: cover; background: #fff;}
         .avatar-upload-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); color: white; font-size: 12px; font-weight: bold; padding: 6px 0; text-align: center; opacity: 0; transition: 0.3s;}
         .avatar-upload-wrapper:hover .avatar-upload-overlay { opacity: 1; }
@@ -40,7 +41,7 @@
         .stepper-line-bg { position: absolute; top: 16px; left: 20px; right: 20px; height: 4px; background-color: rgba(255,255,255,0.1); z-index: 1; border-radius: 4px; }
         .stepper-line-fill { position: absolute; top: 16px; right: 20px; height: 4px; background-color: #10B981; z-index: 2; border-radius: 4px; transition: width 1s ease-in-out; }
         .step-item { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 8px; width: 25%;}
-        .step-circle { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; transition: all 0.5s ease; border: 4px solid #141A32; box-shadow: 0 0 10px rgba(0,0,0,0.5);}
+        .step-circle { width: 35px; height: 35px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; transition: all 0.5s ease; border: 4px solid #141A32; box-shadow: 0 0 10px rgba(0,0,0,0.5);}
         .step-circle.active { background-color: #10B981; color: white; }
         .step-circle.inactive { background-color: #334155; color: #94a3b8; }
         
@@ -57,7 +58,7 @@
         body.light-theme .stepper-line-bg { background-color: #e2e8f0; }
         body.light-theme table { color: #0f172a; } body.light-theme th { color: #475569; } body.light-theme tr { border-color: #cbd5e1 !important; }
         
-        .theme-toggle-btn { position: fixed; top: 85px; left: 20px; z-index: 50; background: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: all 0.3s ease; border: 2px solid #D68C29; color: #F5C678; font-size: 1.3rem;}
+        .theme-toggle-btn { position: fixed; top: 85px; left: 20px; z-index: 50; background: white; width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: all 0.3s ease; border: 2px solid #D68C29; color: #F5C678; font-size: 1.3rem;}
         body.light-theme .theme-toggle-btn { background: #141A32; border-color: #cbd5e1; color: #b45309; }
 
         @media print {
@@ -83,12 +84,12 @@
 
     <div x-show="alertModal.show" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 print-hidden" x-cloak x-transition><div class="bg-white w-full max-w-sm p-8 rounded-3xl shadow-2xl text-center transform transition-all" :class="alertModal.type === 'success' ? 'border-t-8 border-green-500' : 'border-t-8 border-red-500'"><div class="text-6xl mb-4" x-text="alertModal.type === 'success' ? '✅' : '⚠️'"></div><h3 class="text-2xl font-black text-slate-800 mb-2" x-text="alertModal.title"></h3><p class="text-slate-600 font-bold mb-6 text-sm" x-text="alertModal.message"></p><button @click="closeAlert()" :class="`btn w-full text-white font-black text-lg h-12 rounded-xl border-none ${alertModal.type === 'success' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'}`">حسناً</button></div></div>
     
-    <div x-show="showOathModal" class="fixed inset-0 z-[100000] flex items-center justify-center bg-black/90 backdrop-blur-md p-4 print-hidden" x-cloak x-transition><div class="bg-[#141A32] w-full max-w-md p-8 rounded-3xl shadow-[0_0_40px_rgba(214,140,41,0.3)] border border-[#D68C29]/50 text-center relative overflow-hidden"><div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 via-yellow-500 to-red-500"></div><div class="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-red-500/50 text-4xl">⚖️</div><h3 class="text-2xl font-black text-white mb-4">إقرار قانوني</h3><div class="bg-black/40 p-5 rounded-xl border border-white/10 mb-6"><p class="text-slate-300 font-bold leading-loose text-sm md:text-base">"أتعهد أنا <span class="text-[#F5C678] font-black mx-1" x-text="formData.full_name"></span> بأن جميع البيانات المُدخلة والمحفوظة في هذا السجل صحيحة ودقيقة، وعلى مسئوليتي الشخصية."</p></div><div class="flex gap-3"><button @click="confirmAndSave()" class="btn flex-1 bg-green-600 hover:bg-green-700 text-white font-black text-lg h-14 rounded-xl border-none shadow-lg">أوافق وأتعهد ✅</button><button @click="showOathModal = false" class="btn bg-slate-700 hover:bg-slate-600 text-white font-black text-lg h-14 rounded-xl border-none">تراجع ❌</button></div></div></div>
+    <div x-show="showOathModal" class="fixed inset-0 z-[100000] flex items-center justify-center bg-black/90 backdrop-blur-md p-4 print-hidden" x-cloak x-transition><div class="bg-[#141A32] w-full max-w-md p-8 rounded-3xl shadow-[0_0_40px_rgba(214,140,41,0.3)] border border-[#D68C29]/50 text-center relative overflow-hidden"><div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 via-yellow-500 to-red-500"></div><div class="w-20 h-20 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border-2 border-red-500/50 text-4xl">⚖️</div><h3 class="text-2xl font-black text-white mb-4">إقرار قانوني</h3><div class="bg-black/40 p-5 rounded-xl border border-white/10 mb-6"><p class="text-slate-300 font-bold leading-loose text-sm md:text-base">"أتعهد أنا <span class="text-[#F5C678] font-black mx-1" x-text="formData.full_name"></span> بأن جميع البيانات المُدخلة والمحفوظة في هذا السجل صحيحة ودقيقة، وعلى مسئوليتي الشخصية."</p></div><div class="flex gap-3"><button @click="confirmAndSave()" class="btn flex-1 bg-green-600 hover:bg-green-700 text-white font-black text-lg h-14 rounded-xl border-none shadow-lg">أوافق وأتعهد ✅</button><button @click="showOathModal = false" class="btn bg-slate-700 hover:bg-slate-600 text-white font-black text-lg h-14 rounded-xl border-none">تراجع ❌</button></div></div></div>
 
     <div class="w-full p-4 flex justify-between items-center bg-[#141A32]/90 backdrop-blur sticky top-0 z-40 border-b border-[#D68C29]/30 shadow-lg print-hidden">
         <div><p class="text-xs text-slate-400">لوحة تحكم مدرسة:</p><h1 class="text-xl md:text-2xl font-black text-[#D68C29]" x-text="school.name || 'جاري التحميل...'"></h1></div>
         <div class="text-left">
-            <span class="badge bg-slate-700 text-white border-none text-xs mb-1 px-3 py-2" x-text="currentUser?.role === 'manager' ? '👑 مدير المدرسة' : '👨‍🏫 وكيل'"></span>
+            <span class="badge bg-slate-700 text-white border-none text-xs mb-1 px-3 py-2 rounded-lg" x-text="currentUser?.role === 'manager' ? '👑 مدير المدرسة' : '👨‍🏫 وكيل'"></span>
             <button @click="logout" class="block text-red-400 font-bold text-sm hover:text-red-300 w-full text-left mt-1">خروج 🚪</button>
         </div>
     </div>
@@ -100,7 +101,7 @@
             <div x-show="currentUser?.role === 'manager'" class="glass-panel p-4 md:p-6 mb-6">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-white font-black text-sm md:text-lg">معدل اكتمال السجل المدرسي</h3>
-                    <span class="badge" :class="progressPercentage === 100 ? 'badge-success text-white' : 'bg-slate-700 text-white border-none'" x-text="`${Math.round(progressPercentage)}%`"></span>
+                    <span class="badge rounded-lg" :class="progressPercentage === 100 ? 'bg-green-500 text-white border-none' : 'bg-slate-700 text-white border-none'" x-text="`${Math.round(progressPercentage)}%`"></span>
                 </div>
                 
                 <div class="stepper-container">
@@ -150,7 +151,7 @@
                 </div>
 
                 <div @click="currentView = 'messages'" class="main-card relative">
-                    <span x-show="schoolMessages.length > 0" class="absolute top-3 right-3 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full animate-pulse shadow-lg border border-white" x-text="schoolMessages.length"></span>
+                    <span x-show="schoolMessages.length > 0" class="absolute top-3 right-3 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-lg animate-pulse shadow-lg border border-white" x-text="schoolMessages.length"></span>
                     <div class="icon-wrapper"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg></div>
                     <div><h2 class="text-lg font-black text-white">التعليمات الواردة</h2><p class="text-[10px] text-slate-400 mt-1">صندوق المراسلات</p></div>
                 </div>
@@ -165,7 +166,7 @@
         <div x-show="currentView === 'teachers_stats'" x-transition x-cloak>
             <div class="flex justify-between items-center mb-4">
                 <button @click="currentView = 'menu'" class="home-btn mb-0"><svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg> الرئيسية</button>
-                <button @click="saveSubjectsStats()" x-show="currentUser?.role === 'manager'" class="btn btn-sm btn-success text-white border-none shadow-md">
+                <button @click="saveSubjectsStats()" x-show="currentUser?.role === 'manager'" class="btn btn-sm btn-success text-white border-none shadow-md rounded-lg">
                     <span x-show="!loading">حفظ البيانات 💾</span><span x-show="loading" class="loading loading-spinner loading-xs"></span>
                 </button>
             </div>
@@ -188,11 +189,11 @@
                             <template x-for="key in ['arabic', 'english', 'social', 'math', 'science']" :key="key">
                                 <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
                                     <td class="font-bold text-[#F5C678] bg-black/10 whitespace-nowrap" x-text="school.subjects_stats[key].name"></td>
-                                    <td><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.subjects_stats[key].original" class="input input-xs w-14 md:w-20 input-light text-center" :disabled="currentUser?.role !== 'manager'"></td>
-                                    <td><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.subjects_stats[key].delegated" class="input input-xs w-14 md:w-20 input-light text-center" :disabled="currentUser?.role !== 'manager'"></td>
-                                    <td><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.subjects_stats[key].session" class="input input-xs w-14 md:w-20 input-light text-center" :disabled="currentUser?.role !== 'manager'"></td>
-                                    <td><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.subjects_stats[key].deficit" class="input input-xs w-14 md:w-20 input-light text-center text-red-600 font-bold bg-red-50" :disabled="currentUser?.role !== 'manager'"></td>
-                                    <td><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.subjects_stats[key].surplus" class="input input-xs w-14 md:w-20 input-light text-center text-green-600 font-bold bg-green-50" :disabled="currentUser?.role !== 'manager'"></td>
+                                    <td><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.subjects_stats[key].original" class="input input-xs w-14 md:w-20 input-light text-center rounded-lg" :disabled="currentUser?.role !== 'manager'"></td>
+                                    <td><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.subjects_stats[key].delegated" class="input input-xs w-14 md:w-20 input-light text-center rounded-lg" :disabled="currentUser?.role !== 'manager'"></td>
+                                    <td><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.subjects_stats[key].session" class="input input-xs w-14 md:w-20 input-light text-center rounded-lg" :disabled="currentUser?.role !== 'manager'"></td>
+                                    <td><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.subjects_stats[key].deficit" class="input input-xs w-14 md:w-20 input-light text-center rounded-lg text-red-600 font-bold bg-red-50" :disabled="currentUser?.role !== 'manager'"></td>
+                                    <td><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.subjects_stats[key].surplus" class="input input-xs w-14 md:w-20 input-light text-center rounded-lg text-green-600 font-bold bg-green-50" :disabled="currentUser?.role !== 'manager'"></td>
                                 </tr>
                             </template>
                         </tbody>
@@ -204,7 +205,7 @@
         <div x-show="currentView === 'statistics'" x-transition x-cloak>
             <div class="flex justify-between items-center mb-4">
                 <button @click="currentView = 'menu'" class="home-btn mb-0"><svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg> الرئيسية</button>
-                <button @click="exportStatsToAdmin" x-show="currentUser?.role === 'manager'" class="btn btn-sm btn-success text-white border-none shadow-md">إرسال الإحصاء للتنسيق 📤</button>
+                <button @click="exportStatsToAdmin" x-show="currentUser?.role === 'manager'" class="btn btn-sm btn-success text-white border-none shadow-md rounded-lg">إرسال الإحصاء للتنسيق 📤</button>
             </div>
             
             <div class="glass-panel p-4 md:p-6 border-t-4 border-t-teal-500">
@@ -214,27 +215,23 @@
                     <div class="bg-black/20 p-5 rounded-2xl border border-white/10">
                         <h3 class="text-teal-400 font-bold border-b border-white/10 pb-2 mb-4">أعداد المدرسة العامة</h3>
                         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-                            <div><label class="text-indigo-400 text-xs font-bold block mb-1">المعلمين</label><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.teachers_count" @input="debouncedRenderCharts()" class="input w-full input-light text-center font-black" :disabled="currentUser?.role !== 'manager'"></div>
-                            <div><label class="text-teal-400 text-xs font-bold block mb-1">الإداريين</label><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.admins_count" @input="debouncedRenderCharts()" class="input w-full input-light text-center font-black" :disabled="currentUser?.role !== 'manager'"></div>
-                            <div><label class="text-amber-400 text-xs font-bold block mb-1">العمال</label><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.workers_count" @input="debouncedRenderCharts()" class="input w-full input-light text-center font-black" :disabled="currentUser?.role !== 'manager'"></div>
-                            <div><label class="text-purple-400 text-xs font-bold block mb-1">الفصول</label><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.classrooms_count" class="input w-full input-light text-center font-black" :disabled="currentUser?.role !== 'manager'"></div>
-                            <div><label class="text-blue-400 text-xs font-bold block mb-1">البنين</label><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.students_count" @input="debouncedRenderCharts()" class="input w-full input-light text-center font-black" :disabled="currentUser?.role !== 'manager'"></div>
-                            <div><label class="text-pink-400 text-xs font-bold block mb-1">البنات</label><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.female_students_count" @input="debouncedRenderCharts()" class="input w-full input-light text-center font-black" :disabled="currentUser?.role !== 'manager'"></div>
+                            <div><label class="text-indigo-400 text-xs font-bold block mb-1">المعلمين</label><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.teachers_count" @input="debouncedRenderCharts()" class="input w-full input-light rounded-xl text-center font-black" :disabled="currentUser?.role !== 'manager'"></div>
+                            <div><label class="text-teal-400 text-xs font-bold block mb-1">الإداريين</label><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.admins_count" @input="debouncedRenderCharts()" class="input w-full input-light rounded-xl text-center font-black" :disabled="currentUser?.role !== 'manager'"></div>
+                            <div><label class="text-amber-400 text-xs font-bold block mb-1">العمال</label><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.workers_count" @input="debouncedRenderCharts()" class="input w-full input-light rounded-xl text-center font-black" :disabled="currentUser?.role !== 'manager'"></div>
+                            <div><label class="text-purple-400 text-xs font-bold block mb-1">الفصول</label><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.classrooms_count" class="input w-full input-light rounded-xl text-center font-black" :disabled="currentUser?.role !== 'manager'"></div>
+                            <div><label class="text-blue-400 text-xs font-bold block mb-1">البنين</label><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.students_count" @input="debouncedRenderCharts()" class="input w-full input-light rounded-xl text-center font-black" :disabled="currentUser?.role !== 'manager'"></div>
+                            <div><label class="text-pink-400 text-xs font-bold block mb-1">البنات</label><input type="number" min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" x-model="school.female_students_count" @input="debouncedRenderCharts()" class="input w-full input-light rounded-xl text-center font-black" :disabled="currentUser?.role !== 'manager'"></div>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="bg-white/5 p-4 rounded-2xl border border-white/10 flex flex-col items-center justify-center h-[250px] w-full">
                             <h4 class="text-sm font-bold text-slate-300 mb-2">توزيع قوة العمل</h4>
-                            <div class="w-full max-w-[200px] h-full relative flex items-center justify-center">
-                                <canvas id="staffChart"></canvas>
-                            </div>
+                            <div class="w-full max-w-[200px] h-full relative flex items-center justify-center"><canvas id="staffChart"></canvas></div>
                         </div>
                         <div class="bg-white/5 p-4 rounded-2xl border border-white/10 flex flex-col items-center justify-center h-[250px] w-full">
                             <h4 class="text-sm font-bold text-slate-300 mb-2">توزيع الطلاب</h4>
-                            <div class="w-full max-w-[200px] h-full relative flex items-center justify-center">
-                                <canvas id="studentChart"></canvas>
-                            </div>
+                            <div class="w-full max-w-[200px] h-full relative flex items-center justify-center"><canvas id="studentChart"></canvas></div>
                         </div>
                     </div>
                 </div>
@@ -244,7 +241,7 @@
         <div x-show="currentView === 'agent_records'" x-transition x-cloak>
             <div class="flex justify-between items-center mb-4">
                 <button @click="currentView = 'menu'" class="home-btn mb-0">الرئيسية</button>
-                <button @click="fetchAgents()" class="btn btn-sm btn-ghost text-cyan-400 border border-cyan-500/30">
+                <button @click="fetchAgents()" class="btn btn-sm btn-ghost text-cyan-400 border border-cyan-500/30 rounded-lg">
                     <span x-show="!loadingAgents">تحديث 🔄</span><span x-show="loadingAgents" class="loading loading-spinner loading-xs"></span>
                 </button>
             </div>
@@ -259,7 +256,7 @@
                     <template x-for="(agent, i) in schoolAgents" :key="i + 'rec'">
                         <div class="bg-black/30 p-5 rounded-2xl border border-cyan-500/20 hover:border-cyan-500/50 transition-all">
                             <div class="flex items-center gap-4 mb-4 pb-4 border-b border-white/5">
-                                <img :src="agent.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" class="w-16 h-16 rounded-full border-2 border-cyan-500 object-cover bg-white">
+                                <img :src="agent.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" class="w-16 h-16 rounded-2xl border-2 border-cyan-500 object-cover bg-white">
                                 <div><h3 class="font-black text-white text-lg leading-tight" x-text="agent.full_name || 'بانتظار استكمال البيانات'"></h3><span class="text-xs font-bold bg-cyan-900/40 text-cyan-400 px-2 py-1 rounded mt-2 inline-block border border-cyan-500/30" x-text="agent.agent_assignment || 'بدون تكليف'"></span></div>
                             </div>
                             <div class="text-sm space-y-2 text-slate-300 bg-[#0B0F1E] p-4 rounded-xl border border-white/5">
@@ -277,23 +274,23 @@
         <div x-show="currentView === 'manager'" x-transition x-cloak>
             <div class="flex justify-between items-center mb-4">
                 <button @click="currentView = 'menu'; isEditingForm = false" class="home-btn mb-0">الرئيسية</button>
-                <button @click="printPage()" class="btn btn-sm btn-ghost border border-[#D68C29]/50 text-[#D68C29]">🖨️ طباعة السجل الرسمي</button>
+                <button @click="printPage()" class="btn btn-sm btn-ghost border border-[#D68C29]/50 text-[#D68C29] rounded-lg">🖨️ طباعة السجل الرسمي</button>
             </div>
             <div class="glass-panel p-6 border-t-4 border-t-[#D68C29]">
                 <div x-show="!isEditingForm">
                     <div class="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
                         <h2 class="text-2xl font-black text-white">السجل الوظيفي للمدير</h2>
-                        <button x-show="!isManagerComplete" @click="isEditingForm = true" class="btn btn-sm btn-success text-white border-none animate-pulse">تسجيل بياناتي</button>
-                        <button x-show="isManagerComplete" @click="isEditingForm = true" class="btn btn-sm bg-[#D68C29]/20 text-[#D68C29] hover:bg-[#D68C29] hover:text-white border-none">تعديل ✏️</button>
+                        <button x-show="!isManagerComplete" @click="isEditingForm = true" class="btn btn-sm btn-success text-white border-none rounded-lg animate-pulse">تسجيل بياناتي</button>
+                        <button x-show="isManagerComplete" @click="isEditingForm = true" class="btn btn-sm bg-[#D68C29]/20 text-[#D68C29] hover:bg-[#D68C29] hover:text-white border-none rounded-lg">تعديل ✏️</button>
                     </div>
                     <div class="bg-black/20 p-5 rounded-2xl border border-white/5 space-y-4">
                         <div class="flex items-center gap-4 pb-4 border-b border-white/10">
-                            <img :src="managerData.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" class="w-20 h-20 rounded-full border-4 border-[#D68C29] object-cover bg-white shadow-lg">
+                            <img :src="managerData.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" class="w-20 h-20 rounded-2xl border-4 border-[#D68C29] object-cover bg-white shadow-lg">
                             <div>
                                 <h3 class="text-xl font-black text-[#F5C678]" x-text="managerData.full_name || 'لم يتم التسجيل بعد'"></h3>
                                 <div class="flex gap-3 items-center mt-2">
                                     <span class="text-slate-400 font-mono text-sm border border-slate-600 px-2 rounded" x-text="managerData.mobile || '---'"></span>
-                                    <span class="badge bg-green-600 border-none text-white font-bold" x-text="school.manager_status || 'الموقف غير محدد'"></span>
+                                    <span class="badge bg-green-600 border-none text-white font-bold rounded-lg" x-text="school.manager_status || 'الموقف غير محدد'"></span>
                                 </div>
                             </div>
                         </div>
@@ -312,17 +309,17 @@
                         <div class="avatar-upload-wrapper"><img :src="formData.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'"><div class="avatar-upload-overlay">تغيير الصورة</div><input type="file" accept="image/*" @change="uploadAvatar" class="absolute inset-0 opacity-0 cursor-pointer z-10" :disabled="loadingAvatar"></div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="md:col-span-2"><label>الاسم رباعياً</label><input type="text" x-model="formData.full_name" class="input w-full input-light"></div>
-                        <div><label>الرقم القومي</label><input type="tel" x-model="formData.nid" maxlength="14" @input="calculateDates" class="input w-full input-light font-mono text-center"></div>
-                        <div><label>الموبايل</label><input type="tel" x-model="formData.mobile" readonly class="input w-full input-readonly font-mono text-center"></div>
-                        <div><label>تاريخ التعيين</label><input type="date" x-model="formData.hiring_date" class="input w-full input-light text-center"></div>
-                        <div><label>استلام العمل القيادي</label><input type="date" x-model="formData.job_assumption_date" @change="calculateDates" class="input w-full input-light border-[#D68C29] text-center"></div>
+                        <div class="md:col-span-2"><label>الاسم رباعياً</label><input type="text" x-model="formData.full_name" class="input w-full input-light rounded-xl"></div>
+                        <div><label>الرقم القومي</label><input type="tel" x-model="formData.nid" maxlength="14" @input="calculateDates" class="input w-full input-light font-mono text-center rounded-xl"></div>
+                        <div><label>الموبايل</label><input type="tel" x-model="formData.mobile" readonly class="input w-full input-readonly font-mono text-center rounded-xl"></div>
+                        <div><label>تاريخ التعيين</label><input type="date" x-model="formData.hiring_date" class="input w-full input-light text-center rounded-xl"></div>
+                        <div><label>استلام العمل القيادي</label><input type="date" x-model="formData.job_assumption_date" @change="calculateDates" class="input w-full input-light border-[#D68C29] text-center rounded-xl"></div>
                         <div><label>الموقف الوظيفي</label>
-                            <select x-model="school.manager_status" class="select w-full input-light font-bold">
+                            <select x-model="school.manager_status" class="select w-full input-light font-bold rounded-xl">
                                 <option value="" disabled selected>اختر الموقف...</option><option value="معين بقرار">معين بقرار</option><option value="مكلف">مكلف</option>
                             </select>
                         </div>
-                        <div class="bg-green-500/5 p-2 rounded-xl"><label class="!text-green-600">تاريخ التجديد</label><input type="date" x-model="formData.renewal_date" readonly class="input w-full input-readonly text-green-600 text-center font-black"></div>
+                        <div class="bg-green-500/5 p-2 rounded-xl"><label class="!text-green-600">تاريخ التجديد</label><input type="date" x-model="formData.renewal_date" readonly class="input w-full input-readonly text-green-600 text-center font-black rounded-xl"></div>
                     </div>
                     <div class="flex gap-3 mt-6 pt-4 border-t border-white/10">
                         <button @click="validateAndShowOath" class="btn flex-1 btn-gold text-lg h-14 rounded-xl">حفظ وإنهاء 💾</button>
@@ -335,23 +332,23 @@
         <div x-show="currentView === 'agent_profile'" x-transition x-cloak>
             <div class="flex justify-between items-center mb-4">
                 <button @click="currentView = 'menu'; isEditingForm = false" class="home-btn mb-0">الرئيسية</button>
-                <button @click="printPage()" class="btn btn-sm btn-ghost border border-blue-500/50 text-blue-400">🖨️ طباعة السجل</button>
+                <button @click="printPage()" class="btn btn-sm btn-ghost border border-blue-500/50 text-blue-400 rounded-lg">🖨️ طباعة السجل</button>
             </div>
             <div class="glass-panel p-6 border-t-4 border-t-blue-500">
                 <div x-show="!isEditingForm">
                     <div class="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
                         <h2 class="text-2xl font-black text-white">السجل الوظيفي للوكيل</h2>
-                        <button x-show="!currentUser?.full_name || currentUser?.full_name === 'بانتظار استكمال البيانات'" @click="isEditingForm = true" class="btn btn-sm btn-success text-white border-none shadow-md animate-pulse">تسجيل بياناتي 📝</button>
-                        <button x-show="currentUser?.full_name && currentUser?.full_name !== 'بانتظار استكمال البيانات'" @click="isEditingForm = true" class="btn btn-sm bg-blue-500/20 text-blue-400 border border-blue-500/50 hover:bg-blue-500 hover:text-white">تعديل ✏️</button>
+                        <button x-show="!currentUser?.full_name || currentUser?.full_name === 'بانتظار استكمال البيانات'" @click="isEditingForm = true" class="btn btn-sm btn-success text-white border-none shadow-md animate-pulse rounded-lg">تسجيل بياناتي 📝</button>
+                        <button x-show="currentUser?.full_name && currentUser?.full_name !== 'بانتظار استكمال البيانات'" @click="isEditingForm = true" class="btn btn-sm bg-blue-500/20 text-blue-400 border border-blue-500/50 hover:bg-blue-500 hover:text-white rounded-lg">تعديل ✏️</button>
                     </div>
                     <div class="bg-black/20 p-5 rounded-2xl border border-white/5 space-y-4">
                         <div class="flex items-center gap-4 pb-4 border-b border-white/10">
-                            <img :src="currentUser?.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" class="w-20 h-20 rounded-full border-4 border-blue-500 object-cover bg-white shadow-xl">
+                            <img :src="currentUser?.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" class="w-20 h-20 rounded-2xl border-4 border-blue-500 object-cover bg-white shadow-xl">
                             <div>
                                 <h3 class="text-xl font-black text-blue-400" x-text="currentUser?.full_name || 'بانتظار التسجيل'"></h3>
                                 <div class="flex gap-2 mt-2">
-                                    <span class="badge bg-blue-600 text-white border-none px-3 py-2 font-bold" x-text="currentUser?.agent_assignment || 'لم يحدد التكليف'"></span>
-                                    <span class="badge bg-green-600 text-white border-none px-3 py-2 font-bold" x-text="currentUser?.job_status || 'الموقف المالي غير محدد'"></span>
+                                    <span class="badge bg-blue-600 text-white border-none px-3 py-3 rounded-lg font-bold" x-text="currentUser?.agent_assignment || 'لم يحدد التكليف'"></span>
+                                    <span class="badge bg-green-600 text-white border-none px-3 py-3 rounded-lg font-bold" x-text="currentUser?.job_status || 'الموقف المالي غير محدد'"></span>
                                 </div>
                             </div>
                         </div>
@@ -390,7 +387,7 @@
                                     <option value="" disabled selected>اختر الموقف...</option><option value="معين بقرار">معين بقرار</option><option value="مكلف">مكلف</option>
                                 </select>
                             </div>
-                            <div class="bg-green-500/5 p-2 rounded-xl"><label class="!text-green-600">تاريخ التجديد (تلقائي)</label><input type="date" x-model="formData.renewal_date" readonly class="input w-full input-readonly text-green-600 h-10 text-center font-black"></div>
+                            <div class="bg-green-500/5 p-2 rounded-xl"><label class="!text-green-600">تاريخ التجديد (تلقائي)</label><input type="date" x-model="formData.renewal_date" readonly class="input w-full input-readonly text-green-600 h-10 text-center font-black rounded-lg"></div>
                         </div>
                         <div class="flex gap-3 mt-8 pt-6 border-t border-white/10">
                             <button @click="validateAndShowOath" class="btn flex-1 bg-blue-600 hover:bg-blue-700 text-white h-14 rounded-xl text-xl font-black border-none">حفظ بياناتي 💾</button>
@@ -402,18 +399,18 @@
         </div>
 
         <div x-show="currentView === 'agents'" x-transition x-cloak>
-            <div class="flex justify-between items-center mb-4"><button @click="currentView = 'menu'" class="home-btn mb-0">الرئيسية</button><button @click="fetchAgents()" class="btn btn-sm btn-ghost text-blue-400 border border-blue-500/30"><span x-show="!loadingAgents">🔄 تحديث</span><span x-show="loadingAgents" class="loading loading-spinner loading-xs"></span></button></div>
+            <div class="flex justify-between items-center mb-4"><button @click="currentView = 'menu'" class="home-btn mb-0">الرئيسية</button><button @click="fetchAgents()" class="btn btn-sm btn-ghost text-blue-400 border border-blue-500/30 rounded-lg"><span x-show="!loadingAgents">🔄 تحديث</span><span x-show="loadingAgents" class="loading loading-spinner loading-xs"></span></button></div>
             <div class="glass-panel p-6 border-t-4 border-t-blue-500">
                 <h2 class="text-2xl font-black text-white text-center mb-6">⚙️ إدارة الوكلاء</h2>
                 <div class="bg-black/30 p-5 rounded-2xl border border-white/10 mb-8">
                     <label class="mb-2 block text-[#D68C29] text-sm font-bold">إضافة وكيل برقم الموبايل</label>
-                    <div class="flex gap-3"><input type="tel" x-model="newAgentMobile" maxlength="11" class="input w-full input-light rounded-xl font-mono"><button @click="addNewAgent()" class="btn btn-success text-white">إضافة</button></div>
+                    <div class="flex gap-3"><input type="tel" x-model="newAgentMobile" maxlength="11" class="input w-full input-light rounded-xl font-mono"><button @click="addNewAgent()" class="btn btn-success text-white rounded-xl">إضافة</button></div>
                 </div>
                 <div class="space-y-4">
                     <template x-for="(agent, i) in schoolAgents" :key="i + 'mgmt'">
                         <div class="bg-gradient-to-l from-slate-800 to-[#141A32] p-4 rounded-2xl border border-white/10 flex justify-between items-center">
-                            <div class="flex items-center gap-4"><img :src="agent.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" class="w-10 h-10 rounded-full object-cover bg-white"><div><h3 class="font-bold text-white" x-text="agent.full_name || 'بانتظار التسجيل'"></h3><p class="text-blue-300 font-mono text-xs" x-text="agent.mobile"></p></div></div>
-                            <button @click="removeAgent(agent.mobile)" class="btn btn-sm btn-error text-white">إزالة 🗑️</button>
+                            <div class="flex items-center gap-4"><img :src="agent.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" class="w-10 h-10 rounded-xl object-cover bg-white"><div><h3 class="font-bold text-white" x-text="agent.full_name || 'بانتظار التسجيل'"></h3><p class="text-blue-300 font-mono text-xs" x-text="agent.mobile"></p></div></div>
+                            <button @click="removeAgent(agent.mobile)" class="btn btn-sm btn-error text-white rounded-lg">إزالة 🗑️</button>
                         </div>
                     </template>
                 </div>
@@ -422,7 +419,7 @@
 
         <div x-show="currentView === 'messages'" x-transition x-cloak>
             <button @click="currentView = 'menu'" class="home-btn">الرئيسية</button>
-            <div class="glass-panel p-6 border-t-4 border-t-purple-500"><h2 class="text-2xl font-black text-white text-center mb-6">✉️ صندوق التعليمات والنشرات</h2><div class="space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2"><template x-for="msg in schoolMessages" :key="msg.id"><div class="bg-black/30 p-5 rounded-2xl border border-purple-500/30"><div class="flex justify-between items-center border-b border-white/10 pb-2 mb-3"><span :class="`badge text-white font-bold border-none ${msg.school_id ? 'bg-blue-600' : 'bg-purple-600'}`" x-text="msg.school_id ? 'رسالة خاصة بمدرستك' : 'تعميم إداري'"></span><span class="text-xs text-slate-400 font-bold" x-text="new Date(msg.created_at).toLocaleDateString('ar-EG')"></span></div><p class="text-white text-sm whitespace-pre-wrap leading-loose" x-text="msg.message"></p><template x-if="msg.file_url"><div class="mt-4 pt-3 border-t border-white/5"><a :href="msg.file_url" target="_blank" class="btn btn-sm bg-purple-600/20 text-purple-300 border-none rounded-lg">عرض المرفق الرسمي 📎</a></div></template></div></template><div x-show="schoolMessages.length === 0" class="text-center text-slate-500 py-10 font-bold">لا توجد رسائل.</div></div></div>
+            <div class="glass-panel p-6 border-t-4 border-t-purple-500"><h2 class="text-2xl font-black text-white text-center mb-6">✉️ صندوق التعليمات والنشرات</h2><div class="space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2"><template x-for="msg in schoolMessages" :key="msg.id"><div class="bg-black/30 p-5 rounded-2xl border border-purple-500/30"><div class="flex justify-between items-center border-b border-white/10 pb-2 mb-3"><span :class="`badge text-white font-bold border-none rounded-lg px-3 ${msg.school_id ? 'bg-blue-600' : 'bg-purple-600'}`" x-text="msg.school_id ? 'رسالة خاصة بمدرستك' : 'تعميم إداري'"></span><span class="text-xs text-slate-400 font-bold" x-text="new Date(msg.created_at).toLocaleDateString('ar-EG')"></span></div><p class="text-white text-sm whitespace-pre-wrap leading-loose" x-text="msg.message"></p><template x-if="msg.file_url"><div class="mt-4 pt-3 border-t border-white/5"><a :href="msg.file_url" target="_blank" class="btn btn-sm bg-purple-600/20 text-purple-300 border-none rounded-lg">عرض المرفق الرسمي 📎</a></div></template></div></template><div x-show="schoolMessages.length === 0" class="text-center text-slate-500 py-10 font-bold">لا توجد رسائل.</div></div></div>
         </div>
 
         <div x-show="currentView === 'requests'" x-transition x-cloak>
