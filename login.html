@@ -274,8 +274,7 @@
             return {
                 role: 'manager', mobile: '', loading: false, showSetupModal: false, setupType: '', schoolsList: [], setup: { stage: 'إعدادي', schoolId: '', newPin: '' }, 
                 
-                // 🌟 قائمة أرقام المسئولين المسموح لهم بفتح قفل الدخول 🌟
-                // لو حبيت تضيف رقم مسئول تاني حطه بين علامتين التنصيص وافصل بفاصلة، مثال: ['01030302005', '01111111111']
+                // 🌟 قائمة أرقام المسئولين المسموح لهم بالدخول 🌟
                 adminNumbers: ['01030302005'], 
                 
                 marquee: { text: '', speed: '60', direction: 'normal', size: '1.2rem' }, 
@@ -290,7 +289,6 @@
 
                 alertModal: { show: false, type: 'success', title: '', message: '', action: null }, showAlert(title, message, type = 'success', action = null) { this.alertModal = { show: true, type, title, message, action }; }, closeAlert() { this.alertModal.show = false; if (this.alertModal.action) this.alertModal.action(); },
                 
-                // 🌟 دالة قراءة هل الرقم ده بتاع مسئول ولا لأ 🌟
                 get isAdminUnlocked() {
                     return this.adminNumbers.includes(this.mobile);
                 },
@@ -324,11 +322,16 @@
                     if (this.isLightMode) { document.body.classList.add('light-theme'); } else { document.body.classList.remove('light-theme'); }
                 },
 
+                // 🌟 دالة مراقبة الرقم المكتوب والتحويل التلقائي للمسئول 🌟
                 async checkMobileLength() {
                     this.mobile = this.mobile.replace(/[^0-9]/g, '');
                     
-                    // 🌟 حماية إضافية: لو مسح الرقم وهو مختار مسئول، يرجعه مدير تلقائياً 🌟
-                    if (this.role === 'admin' && !this.isAdminUnlocked) {
+                    // التبديل التلقائي إذا كان الرقم المكتوب هو رقم المسئول
+                    if (this.isAdminUnlocked) {
+                        this.role = 'admin';
+                    } 
+                    // لو مسح الرقم وكان مسئول، يرجعه مدير تاني
+                    else if (this.role === 'admin' && !this.isAdminUnlocked) {
                         this.role = 'manager';
                     }
 
@@ -395,7 +398,6 @@
                     if (savedMobile) {
                         this.mobile = savedMobile; 
                         
-                        // لو الرقم محفوظ وهو رقم أدمن، يقدر يختار أدمن تاني
                         if (savedRole === 'admin' && this.isAdminUnlocked) { this.role = savedRole; }
                         else if (savedRole !== 'admin') { this.role = savedRole; }
                         
