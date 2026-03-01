@@ -319,6 +319,21 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="md:col-span-2"><label>الاسم رباعياً</label><input type="text" x-model="formData.full_name" class="input w-full input-light rounded-xl"></div>
+                        
+                        <div class="md:col-span-2 bg-blue-500/10 p-4 rounded-xl border border-blue-500/30 mt-2 mb-2">
+                            <label class="!text-blue-400 flex items-center gap-2 mb-2">
+                                <span>📍</span> موقع المدرسة على خرائط جوجل
+                            </label>
+                            <div class="flex flex-col md:flex-row gap-2">
+                                <input type="url" x-model="school.maps_url" class="input flex-1 input-light rounded-xl text-left" dir="ltr" placeholder="https://maps.google.com/...">
+                                <button @click.prevent="captureLocation()" class="btn bg-blue-600 hover:bg-blue-700 text-white border-none rounded-xl shadow-lg shrink-0">
+                                    <span x-show="!loadingGps">التقاط الـ GPS الآن 📡</span>
+                                    <span x-show="loadingGps" class="loading loading-spinner loading-sm"></span>
+                                </button>
+                            </div>
+                            <p class="text-[10px] text-slate-400 mt-2 font-bold">يفضل الضغط على الزر وأنت متواجد داخل مبنى المدرسة لتحديد الموقع بدقة.</p>
+                        </div>
+                        
                         <div><label>الرقم القومي</label><input type="tel" x-model="formData.nid" maxlength="14" @input="calculateDates" class="input w-full input-light font-mono text-center rounded-xl"></div>
                         <div><label>الموبايل</label><input type="tel" x-model="formData.mobile" readonly class="input w-full input-readonly font-mono text-center rounded-xl"></div>
                         <div><label>تاريخ التعيين</label><input type="date" x-model="formData.hiring_date" class="input w-full input-light text-center rounded-xl"></div>
@@ -486,7 +501,8 @@
 
             return {
                 currentView: 'menu', isEditingForm: false, showOathModal: false, loading: false, sendingReport: false, loadingAvatar: false, loadingAgents: false,
-                currentUser: null, managerData: {}, school: { manager_status: '', teachers_count: '', admins_count: '', workers_count: '', students_count: '', female_students_count: '', classrooms_count: '', subjects_stats: defaultSubjectsStats }, 
+                loadingGps: false, // 🌟 متغير تحميل الـ GPS 🌟
+                currentUser: null, managerData: {}, school: { manager_status: '', maps_url: '', teachers_count: '', admins_count: '', workers_count: '', students_count: '', female_students_count: '', classrooms_count: '', subjects_stats: defaultSubjectsStats }, 
                 schoolAgents: [], formData: {}, newAgentMobile: '', requestForm: { statement: '', file: null },
                 schoolMessages: [], requests: [],
                 isLightMode: localStorage.getItem('theme') === 'light',
@@ -564,6 +580,29 @@
                 openAgentProfile() { this.currentView = 'agent_profile'; this.formData = { ...this.currentUser }; if (!this.currentUser.full_name || this.currentUser.full_name === 'بانتظار استكمال البيانات') { this.formData.full_name = ''; this.isEditingForm = true; } else { this.isEditingForm = false; } },
                 openStatistics() { this.currentView = 'statistics'; setTimeout(() => { this.renderCharts(); }, 200); },
 
+                // 🌟 دالة التقاط الـ GPS الجديدة 🌟
+                captureLocation() {
+                    if (navigator.geolocation) {
+                        this.loadingGps = true;
+                        navigator.geolocation.getCurrentPosition(
+                            (position) => {
+                                const lat = position.coords.latitude;
+                                const lng = position.coords.longitude;
+                                this.school.maps_url = `https://www.google.com/maps?q=${lat},${lng}`;
+                                this.loadingGps = false;
+                                this.showAlert('تم الالتقاط ✅', 'تم تحديد موقع المدرسة بنجاح، لا تنسَ الضغط على "حفظ وإنهاء" بالأسفل.', 'success');
+                            },
+                            (error) => {
+                                this.loadingGps = false;
+                                this.showAlert('خطأ في تحديد الموقع', 'يرجى تشغيل الـ (GPS) في هاتفك والسماح للمتصفح بمعرفة موقعك.', 'error');
+                            },
+                            { enableHighAccuracy: true, timeout: 10000 }
+                        );
+                    } else {
+                        this.showAlert('غير مدعوم', 'متصفحك لا يدعم تحديد الموقع.', 'error');
+                    }
+                },
+
                 calculateDates() { 
                     let nid = this.formData.nid; 
                     if (nid && nid.length === 14) { let y = parseInt((nid[0] === '2' ? '19' : '20') + nid.substring(1, 3)), m = nid.substring(3, 5), d = nid.substring(5, 7); this.formData.dob = `${y}-${m}-${d}`; this.formData.retirement_date = `${y + 60}-${m}-${d}`; } 
@@ -595,7 +634,15 @@
                     const payload = { full_name: this.formData.full_name, nid: this.formData.nid, dob: this.formData.dob || null, hiring_date: this.formData.hiring_date || null, job_assumption_date: this.formData.job_assumption_date || null, retirement_date: this.formData.retirement_date || null, renewal_date: this.formData.renewal_date || null, agent_assignment: this.formData.agent_assignment || null, job_status: this.formData.job_status || null };
                     const { error } = await client.from('users').update(payload).eq('mobile', this.currentUser.mobile);
                     if (error) { this.loading = false; return this.showAlert('خطأ', 'فشل الحفظ', 'error'); }
-                    if (this.currentUser.role === 'manager') { await client.from('schools').update({ manager_status: this.school.manager_status }).eq('id', this.school.id); }
+                    
+                    // 🌟 حفظ بيانات المدرسة بما فيها رابط الخريطة الجديد 🌟
+                    if (this.currentUser.role === 'manager') { 
+                        await client.from('schools').update({ 
+                            manager_status: this.school.manager_status,
+                            maps_url: this.school.maps_url 
+                        }).eq('id', this.school.id); 
+                    }
+                    
                     this.currentUser = { ...this.currentUser, ...payload };
                     if(this.currentUser.role === 'manager') { this.managerData = { ...this.currentUser }; } else { await this.fetchAgents(); }
                     this.loading = false; this.isEditingForm = false; this.showAlert('تم ✅', 'تم حفظ بياناتك بنجاح.', 'success');
