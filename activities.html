@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>نشاط وزيارات قسم التنسيق</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@400;600;700;800;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        html, body { max-width: 100vw; overflow-x: hidden; }
+        body { font-family: 'Cairo', sans-serif; background-color: #141A32; min-height: 100vh; color: #E8EDEB; padding-bottom: 20px;}
+        [x-cloak] { display: none !important; }
+        
+        .glass-panel { background: rgba(20, 26, 50, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(214, 140, 41, 0.3); border-radius: 1.5rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
+        .btn-gold { background: linear-gradient(135deg, #D68C29 0%, #F5C678 50%, #B4731D 100%); color: #141A32; border: none; font-weight: 900; transition: all 0.3s; }
+        .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(214, 140, 41, 0.4); }
+        
+        .tab-btn { transition: all 0.3s; }
+        .tab-btn.active { background: linear-gradient(135deg, #D68C29 0%, #B4731D 100%); color: white; border-color: transparent; transform: scale(1.05); box-shadow: 0 10px 20px rgba(214, 140, 41, 0.3); }
+        .tab-btn.inactive { background: rgba(255,255,255,0.05); color: #8892B0; border: 1px solid rgba(255,255,255,0.1); }
+
+        .locked-overlay { background: rgba(11, 15, 30, 0.85); backdrop-filter: blur(8px); border-radius: 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+        /* 🌟 تنسيقات الشهادة (للعرض المصغر على الشاشة) 🌟 */
+        .cert-container { width: 100%; max-width: 1100px; margin: 0 auto; background: #fff; padding: 10px; border-radius: 10px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative; overflow: hidden;}
+        .cert-outer-border { border: 10px solid #141A32; width: 100%; height: 100%; padding: 4px; box-sizing: border-box; position: relative; background-image: radial-gradient(rgba(214, 140, 41, 0.05) 2px, transparent 2px); background-size: 20px 20px;}
+        .cert-inner-border { border: 2px solid #D68C29; width: 100%; height: 100%; padding: 25px 35px; box-sizing: border-box; position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: space-between;}
+        
+        .cert-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.05; width: 50%; z-index: 1; pointer-events: none; filter: grayscale(100%) contrast(200%);}
+        
+        .font-ruqaa { font-family: 'Aref Ruqaa', serif; }
+        .font-amiri { font-family: 'Amiri', serif; }
+        
+        .cert-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; margin-bottom: 15px; }
+        .cert-header-text { font-size: 12px; font-weight: 800; color: #1e293b; line-height: 1.6; text-align: right; }
+        .cert-header-left { text-align: left; }
+        
+        .cert-main-title { font-size: 3rem; font-weight: 700; color: #B4731D; text-align: center; margin: 10px 0 20px 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        
+        .cert-body { text-align: center; color: #1e293b; z-index: 5; position: relative; }
+        .line-1 { font-size: 1.3rem; font-weight: 900; color: #141A32; margin-bottom: 15px; line-height: 1.5; }
+        .line-2 { font-size: 1.2rem; font-weight: 700; color: #334155; margin-bottom: 20px; }
+        
+        .name-wrapper { margin: 15px 0 20px 0; }
+        .cert-name { font-size: 2.2rem; font-weight: 700; color: #D68C29; border-bottom: 2px dashed #D68C29; padding: 0 20px 5px 20px; display: inline-block; }
+        .school-name-line { font-size: 1.3rem; font-weight: 800; color: #1e293b; margin-bottom: 20px; }
+        .school-name-highlight { color: #B4731D; font-weight: 900; font-size: 1.5rem; margin-right: 8px; }
+        
+        .line-reason { font-size: 1.2rem; font-weight: 700; color: #334155; line-height: 1.8; margin-bottom: 20px; padding: 0 20px;}
+        .line-wish { font-size: 1.1rem; font-weight: 600; color: #475569; }
+
+        .cert-footer { display: flex; justify-content: space-between; margin-top: 30px; padding: 0 50px; text-align: center; z-index: 5; position: relative;}
+        .sign-title { font-size: 1.1rem; font-weight: 800; color: #1e293b; margin-bottom: 25px; }
+        .sign-name { font-size: 1.8rem; color: #D68C29; }
+        
+        /* رسالة التنبيه العائمة */
+        .toast-container { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(150%); transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); z-index: 999999; }
+        .toast-container.show { transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body x-data="activitiesApp()" x-init="initApp()">
+
+    <div :class="`toast-container ${alert.show ? 'show' : ''}`">
+        <div class="bg-black/90 backdrop-blur-md border border-white/20 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 min-w-[300px]">
+            <span class="text-3xl" x-text="alert.icon"></span>
+            <div>
+                <h4 class="font-black text-lg" :class="alert.type === 'error' ? 'text-red-400' : 'text-green-400'" x-text="alert.title"></h4>
+                <p class="text-sm font-bold text-slate-300" x-text="alert.message"></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full p-4 flex justify-between items-center bg-[#141A32]/90 backdrop-blur sticky top-0 z-40 border-b border-[#D68C29]/30 shadow-lg">
+        <div class="flex items-center gap-3">
+            <button @click="goBack()" class="btn btn-circle btn-sm bg-white/10 hover:bg-[#D68C29] border-none text-white transition-colors">➔</button>
+            <div><p class="text-xs text-slate-400">سجل النشاطات والتكريم</p><h1 class="text-lg md:text-xl font-black text-[#D68C29]" x-text="school.name || 'جاري التحميل...'"></h1></div>
+        </div>
+    </div>
+
+    <div class="p-4 max-w-6xl mx-auto min-h-[80vh] mt-4">
+        
+        <div class="flex gap-4 mb-8 max-w-3xl mx-auto">
+            <button @click="activeTab = 'certificate'" :class="`flex-1 py-4 rounded-2xl font-black text-lg flex flex-col md:flex-row items-center justify-center gap-2 tab-btn ${activeTab === 'certificate' ? 'active' : 'inactive'}`">
+                <span class="text-2xl">🏆</span> لوحة الشرف والتكريم
+            </button>
+            <button @click="activeTab = 'visits'" :class="`flex-1 py-4 rounded-2xl font-black text-lg flex flex-col md:flex-row items-center justify-center gap-2 tab-btn ${activeTab === 'visits' ? 'active' : 'inactive'}`">
+                <span class="text-2xl">🤝</span> سجل زيارات التنسيق
+            </button>
+        </div>
+
+        <div x-show="activeTab === 'certificate'" x-transition>
+            <div x-show="loading" class="text-center py-20"><span class="loading loading-bars loading-lg text-[#D68C29]"></span></div>
+
+            <div x-show="!loading && progressPercentage < 100" class="locked-overlay max-w-3xl mx-auto" x-cloak>
+                <div class="w-24 h-24 bg-red-500/20 text-red-500 rounded-2xl flex items-center justify-center text-5xl mb-4 border-2 border-red-500/50">🔒</div>
+                <h2 class="text-2xl font-black text-white mb-2">عفواً، هذه المنطقة مقفلة!</h2>
+                <p class="text-slate-400 font-bold mb-6 max-w-md leading-relaxed">شهادة الشكر والتقدير المعتمدة من قسم التنسيق تُمنح فقط للمدارس التي أتمت استكمال بيانات السجل الوظيفي والإحصاء بنسبة <span class="text-green-400 font-black">100%</span>.</p>
+                <div class="bg-black/50 p-4 rounded-xl border border-white/10 w-full max-w-sm">
+                    <div class="flex justify-between text-sm font-bold mb-2"><span class="text-white">نسبة إنجاز مدرستك:</span><span class="text-[#D68C29]" x-text="`${Math.round(progressPercentage)}%`"></span></div>
+                    <div class="w-full bg-slate-700 rounded-full h-3"><div class="bg-gradient-to-l from-[#D68C29] to-[#B4731D] h-3 rounded-full" :style="`width: ${progressPercentage}%`"></div></div>
+                </div>
+                <button @click="goBack()" class="btn btn-outline btn-warning mt-6 rounded-xl">العودة لاستكمال البيانات</button>
+            </div>
+
+            <div x-show="!loading && progressPercentage === 100" x-cloak>
+                <div class="flex flex-col md:flex-row justify-between items-center mb-6 bg-black/40 p-4 rounded-2xl border border-white/10 gap-4 max-w-5xl mx-auto">
+                    <div class="text-center md:text-right">
+                        <h2 class="text-2xl font-black text-green-400 flex items-center justify-center md:justify-start gap-2"><span>🎉</span> مبارك لكم التميز!</h2>
+                        <p class="text-slate-300 font-bold mt-1">سجل مدرستكم مكتمل بنسبة 100%، تفضلوا بتحميل شهادة الشكر والتقدير.</p>
+                    </div>
+                    
+                    <button @click="downloadImage()" class="btn btn-gold rounded-xl px-10 h-14 text-xl shadow-[0_0_20px_rgba(214,140,41,0.5)] animate-pulse w-full md:w-auto" :disabled="isDownloading">
+                        <span x-show="!isDownloading">تحميل كصورة 🖼️</span>
+                        <span x-show="isDownloading" class="loading loading-spinner"></span>
+                    </button>
+                </div>
+
+                <div class="cert-container hidden md:block">
+                    <div class="cert-outer-border">
+                        <img x-show="watermarkBase64" :src="watermarkBase64" class="cert-watermark" alt="">
+                        
+                        <div class="cert-inner-border">
+                            <div class="cert-header">
+                                <div class="cert-header-text">محافظة سوهاج<br>مديرية التربية والتعليم<br>إدارة سوهاج التعليمية<br>قسم تنسيق الإعدادي والثانوي</div>
+                                
+                                <img x-show="eagleBase64" :src="eagleBase64" style="width: 60px; height: auto;" alt="شعار الجمهورية">
+                                
+                                <div class="cert-header-text cert-header-left">التاريخ: <span x-text="new Date().toLocaleDateString('ar-EG')"></span><br>رقم الإصدار: <span class="font-mono">#TS-<span x-text="school.id"></span></span></div>
+                            </div>
+
+                            <h1 class="cert-main-title font-ruqaa">شَهَادَةُ شُكْرٍ وَتَقْدِير</h1>
+
+                            <div class="cert-body font-amiri">
+                                <p class="line-1">يتشرف الأستاذ / محمود العمدة رئيس قسم التنسيق للتعليم الإعدادي والثانوي بإدارة سوهاج التعليمية</p>
+                                <p class="line-2">بأن يتقدم بخالص الشكر وعظيم التقدير إلى السيد/ة الفاضل :</p>
+                                
+                                <div class="name-wrapper"><span class="cert-name font-ruqaa" x-text="managerData.full_name || '........................................'"></span></div>
+                                <p class="school-name-line">مدير مدرسة / <span class="school-name-highlight font-cairo" x-text="school.name"></span></p>
+                                
+                                <p class="line-reason">وذلك تقديراً لجهوده المتميزة، وتعاونه المثمر، وحرصه على الدقة والسرعة في استكمال الإحصاء الشامل والسجل الوظيفي للمدرسة بنسبة إنجاز (100%).</p>
+                                <p class="line-wish">سائلين المولى عز وجل له دوام التوفيق والسداد في مسيرته القيادية.</p>
+                            </div>
+
+                            <div class="cert-footer">
+                                <div><p class="sign-title">رئيس قسم التنسيق</p><p class="sign-name font-ruqaa">أ / محمود العمدة</p></div>
+                                <div><p class="sign-title">مدير عام الإدارة</p><p class="sign-name font-ruqaa">.............................</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="md:hidden bg-blue-900/40 border border-blue-500/50 p-4 rounded-xl text-center">
+                    <p class="text-blue-300 font-bold text-sm">اضغط على (تحميل كصورة) لحفظ الشهادة بجودة عالية جداً على هاتفك.</p>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="activeTab === 'visits'" x-transition x-cloak>
+            <div class="glass-panel p-6 border-t-4 border-t-cyan-500 max-w-3xl mx-auto">
+                <div class="flex justify-between items-center mb-8 border-b border-white/10 pb-4">
+                    <h2 class="text-2xl font-black text-white">سجل زيارات ومتابعة قسم التنسيق</h2>
+                    <span class="badge bg-cyan-500/20 text-cyan-400 border border-cyan-500 font-bold px-4 py-3 rounded-xl">عدد الزيارات: 0</span>
+                </div>
+                <div class="text-center py-16 bg-black/20 rounded-2xl border border-dashed border-white/20">
+                    <div class="w-20 h-20 bg-cyan-500/10 text-cyan-400 rounded-2xl flex items-center justify-center text-4xl mx-auto mb-4 border border-cyan-500/30">📅</div>
+                    <h3 class="text-xl font-black text-white mb-2">لا توجد زيارات مسجلة حتى الآن</h3>
+                    <p class="text-slate-400 text-sm font-bold max-w-sm mx-auto">سيتم هنا عرض تواريخ الزيارات الميدانية التي قام بها أعضاء قسم التنسيق لمدرستكم، مع عرض التوجيهات والملاحظات إن وُجدت.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="position: absolute; left: -9999px; top: -9999px; width: 1200px; height: 848px; z-index: -100;">
+        <div id="export-cert" style="width: 1200px; height: 848px; background-color: #ffffff; padding: 20px; box-sizing: border-box; direction: rtl; font-family: 'Cairo', sans-serif; position: relative;">
+            <div style="border: 15px solid #141A32; width: 100%; height: 100%; padding: 5px; box-sizing: border-box; background-image: radial-gradient(rgba(214, 140, 41, 0.05) 3px, transparent 3px); background-size: 30px 30px; position: relative;">
+                
+                <img x-show="watermarkBase64" :src="watermarkBase64" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.05; width: 650px; z-index: 1; filter: grayscale(100%) contrast(200%);">
+
+                <div style="border: 4px solid #D68C29; width: 100%; height: 100%; padding: 40px 60px; box-sizing: border-box; position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: space-between;">
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #cbd5e1; padding-bottom: 20px;">
+                        <div style="font-size: 18px; font-weight: 800; color: #1e293b; line-height: 1.6; text-align: right;">محافظة سوهاج<br>مديرية التربية والتعليم<br>إدارة سوهاج التعليمية<br>قسم تنسيق الإعدادي والثانوي</div>
+                        
+                        <img x-show="eagleBase64" :src="eagleBase64" style="width: 100px; height: auto;">
+                        
+                        <div style="font-size: 18px; font-weight: 800; color: #1e293b; line-height: 1.6; text-align: left;">التاريخ: <span x-text="new Date().toLocaleDateString('ar-EG')"></span><br>رقم الإصدار: <span style="font-family: monospace;">#TS-<span x-text="school.id"></span></span></div>
+                    </div>
+
+                    <h1 style="font-family: 'Aref Ruqaa', serif; font-size: 80px; font-weight: 700; color: #B4731D; text-align: center; margin: 10px 0; text-shadow: 2px 2px 5px rgba(0,0,0,0.1);">شَهَادَةُ شُكْرٍ وَتَقْدِير</h1>
+
+                    <div style="text-align: center; color: #1e293b;">
+                        <p style="font-family: 'Amiri', serif; font-size: 28px; font-weight: 900; color: #141A32; margin-bottom: 15px; line-height: 1.5;">يتشرف الأستاذ / محمود العمدة رئيس قسم التنسيق للتعليم الإعدادي والثانوي بإدارة سوهاج التعليمية</p>
+                        <p style="font-family: 'Amiri', serif; font-size: 26px; font-weight: 700; color: #334155; margin-bottom: 30px;">بأن يتقدم بخالص الشكر وعظيم التقدير إلى السيد/ة الفاضل :</p>
+
+                        <div style="margin-bottom: 25px;">
+                            <span style="font-family: 'Aref Ruqaa', serif; font-size: 55px; font-weight: 700; color: #D68C29; border-bottom: 3px dashed #D68C29; padding: 0 40px 15px 40px; display: inline-block;" x-text="managerData.full_name || '........................................'"></span>
+                        </div>
+
+                        <p style="font-family: 'Amiri', serif; font-size: 28px; font-weight: 800; color: #1e293b; margin-bottom: 35px;">مدير مدرسة / <span style="font-family: 'Cairo', sans-serif; color: #B4731D; font-weight: 900; font-size: 32px; margin-right: 10px;" x-text="school.name"></span></p>
+
+                        <p style="font-family: 'Amiri', serif; font-size: 26px; font-weight: 700; color: #334155; line-height: 1.8; margin-bottom: 30px; padding: 0 60px;">وذلك تقديراً لجهوده المتميزة، وتعاونه المثمر، وحرصه على الدقة والسرعة في استكمال الإحصاء الشامل والسجل الوظيفي للمدرسة بنسبة إنجاز (100%).</p>
+
+                        <p style="font-family: 'Amiri', serif; font-size: 24px; font-weight: 600; color: #475569;">سائلين المولى عز وجل له دوام التوفيق والسداد في مسيرته القيادية.</p>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; margin-top: 30px; padding: 0 100px; text-align: center;">
+                        <div>
+                            <p style="font-size: 24px; font-weight: 800; color: #1e293b; margin-bottom: 30px;">رئيس قسم التنسيق</p>
+                            <p style="font-family: 'Aref Ruqaa', serif; font-size: 40px; color: #D68C29;">أ / محمود العمدة</p>
+                        </div>
+                        <div>
+                            <p style="font-size: 24px; font-weight: 800; color: #1e293b; margin-bottom: 30px;">مدير عام الإدارة</p>
+                            <p style="font-family: 'Aref Ruqaa', serif; font-size: 40px; color: #D68C29;">.............................</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function activitiesApp() {
+            const client = supabase.createClient('https://zjvnppqygcpccbtgebbq.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqdm5wcHF5Z2NwY2NidGdlYmJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MTE1MjgsImV4cCI6MjA4Njk4NzUyOH0.LnUKMQkfh4YWMvUxO11wAw5ZY_k52PGAeVMVOky_ts0');
+            
+            return {
+                activeTab: 'certificate',
+                loading: true,
+                isDownloading: false,
+                currentUser: null,
+                school: {},
+                managerData: {},
+                schoolAgents: [],
+                
+                // 🌟 متغيرات لحفظ الصور كـ Base64 لتجنب مشاكل الحفظ 🌟
+                eagleBase64: '',
+                watermarkBase64: '',
+
+                alert: { show: false, type: 'success', title: '', message: '', icon: '✅' },
+
+                showAlert(title, message, type = 'success') {
+                    this.alert = { show: true, type, title, message, icon: type === 'success' ? '✅' : (type === 'loading' ? '⏳' : '⚠️') };
+                    if(type !== 'loading') setTimeout(() => { this.alert.show = false; }, 4000);
+                },
+                
+                get isManagerComplete() { return this.managerData && this.managerData.full_name && !this.managerData.full_name.includes('بانتظار') && this.managerData.nid; },
+                get isAgentsComplete() { return this.schoolAgents && this.schoolAgents.length > 0 && this.schoolAgents.every(a => a.full_name && !a.full_name.includes('بانتظار')); },
+                get isTeachersComplete() { return this.school && this.school.subjects_stats && Object.values(this.school.subjects_stats).some(s => Number(s.original) > 0 || Number(s.delegated) > 0 || Number(s.session) > 0 || Number(s.deficit) > 0 || Number(s.surplus) > 0); },
+                get isStatsComplete() { return this.school && this.school.manager_status && this.school.manager_status !== ''; },
+                
+                get progressPercentage() { 
+                    let c = 0; 
+                    if (this.isManagerComplete) c++; 
+                    if (this.isAgentsComplete) c++; 
+                    if (this.isTeachersComplete) c++; 
+                    if (this.isStatsComplete) c++; 
+                    return (c / 4) * 100; 
+                },
+
+                async initApp() {
+                    const uid = new URLSearchParams(window.location.search).get('uid');
+                    if (!uid) return window.location.href = 'login.html';
+                    
+                    try {
+                        let { data: user } = await client.from('users').select('*, schools(*)').eq('mobile', uid).single();
+                        if (!user) throw new Error("User not found");
+                        
+                        this.currentUser = user; 
+                        this.school = user.schools || {};
+
+                        let { data: mgr } = await client.from('users').select('*').eq('school_id', this.school.id).eq('role', 'manager').maybeSingle();
+                        this.managerData = mgr || {};
+
+                        let { data: agts } = await client.from('users').select('*').eq('school_id', this.school.id).eq('role', 'agent');
+                        this.schoolAgents = agts || [];
+                        
+                        // 🌟 تحميل شعار النسر في الخلفية وتحويله لبيانات آمنة 🌟
+                        this.preloadImages();
+
+                    } catch (error) {
+                        console.error("Error loading data", error);
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                // الدالة السحرية لتفادي أخطاء الروابط الخارجية
+                async preloadImages() {
+                    try {
+                        let res1 = await fetch('https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Coat_of_arms_of_Egypt_%28Official%29.svg/120px-Coat_of_arms_of_Egypt_%28Official%29.svg.png');
+                        let blob1 = await res1.blob();
+                        let reader1 = new FileReader();
+                        reader1.onloadend = () => { this.eagleBase64 = reader1.result; };
+                        reader1.readAsDataURL(blob1);
+
+                        let res2 = await fetch('https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Coat_of_arms_of_Egypt_%28Official%29.svg/512px-Coat_of_arms_of_Egypt_%28Official%29.svg.png');
+                        let blob2 = await res2.blob();
+                        let reader2 = new FileReader();
+                        reader2.onloadend = () => { this.watermarkBase64 = reader2.result; };
+                        reader2.readAsDataURL(blob2);
+                    } catch(e) {
+                        console.log("Image preload blocked, ignoring...");
+                    }
+                },
+
+                goBack() {
+                    const uid = new URLSearchParams(window.location.search).get('uid');
+                    window.location.href = `madrasa.html?uid=${uid}`;
+                },
+
+                downloadImage() {
+                    this.isDownloading = true;
+                    this.showAlert('جاري التجهيز', 'يتم الآن تحضير الشهادة بجودة عالية...', 'loading');
+
+                    setTimeout(() => {
+                        const element = document.getElementById('export-cert');
+                        
+                        html2canvas(element, { 
+                            scale: 2, 
+                            useCORS: true, 
+                            backgroundColor: '#ffffff',
+                            logging: false
+                        }).then(canvas => {
+                            canvas.toBlob((blob) => {
+                                const url = URL.createObjectURL(blob);
+                                const link = document.createElement('a');
+                                link.download = `شهادة_شكر_وتقدير_${this.school.name.replace(/ /g, '_')}.jpg`;
+                                link.href = url;
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                                URL.revokeObjectURL(url);
+                                
+                                this.isDownloading = false;
+                                this.showAlert('تم التحميل', 'تم حفظ الشهادة كصورة على جهازك بنجاح.', 'success');
+                            }, 'image/jpeg', 0.95);
+                        }).catch(err => {
+                            console.error(err);
+                            this.isDownloading = false;
+                            this.showAlert('خطأ', 'حدث خطأ أثناء حفظ الصورة.', 'error');
+                        });
+                    }, 800);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
