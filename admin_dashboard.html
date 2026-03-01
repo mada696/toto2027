@@ -49,30 +49,13 @@
         .live-toast-box { background: linear-gradient(135deg, rgba(16, 185, 129, 0.95) 0%, rgba(5, 150, 105, 0.95) 100%); backdrop-filter: blur(10px); border: 1px solid #34D399; color: white; padding: 15px 25px; border-radius: 1rem; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4); display: flex; align-items: center; gap: 15px; }
         .pulse-live { animation: pulseRed 2s infinite; } @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
 
-        /* 🌟 تنسيقات الطباعة الخارقة الجديدة (مبنية من الصفر) 🌟 */
+        /* 🌟 تنسيقات الطباعة الخارقة 🌟 */
         .print-only { display: none; }
-        
         @media print {
-            /* إجبار المتصفح على الطباعة بالعرض وبدون هوامش مزعجة */
             @page { size: A4 landscape; margin: 10mm; }
-            
-            /* إخفاء واجهة الموقع بالكامل بشكل سليم يمنع الصفحات البيضاء */
-            body > *:not(#printArea) { display: none !important; }
-            
-            body, html { 
-                background: #fff !important; 
-                color: #000 !important; 
-                margin: 0 !important; 
-                padding: 0 !important; 
-            }
-
-            #printArea { 
-                display: block !important; 
-                direction: rtl !important; 
-                font-family: 'Cairo', sans-serif !important; 
-                width: 100% !important;
-                color: #000 !important;
-            }
+            body, html { background: #fff !important; color: #000 !important; margin: 0 !important; padding: 0 !important; }
+            #app-ui { display: none !important; }
+            .print-layer { display: block !important; width: 100% !important; direction: rtl !important; font-family: 'Cairo', sans-serif !important; color: #000 !important;}
 
             .print-header { display: flex !important; justify-content: space-between !important; align-items: center !important; border-bottom: 4px double #000 !important; padding-bottom: 10px !important; margin-bottom: 20px !important; }
             .print-header-text { font-weight: 900 !important; font-size: 14px !important; line-height: 1.6 !important; }
@@ -83,366 +66,363 @@
             .print-title { text-align: center !important; font-size: 22px !important; font-weight: 900 !important; margin-bottom: 5px !important; text-decoration: underline !important; color: #000 !important;}
             .print-meta { text-align: center !important; font-size: 14px !important; font-weight: bold !important; margin-bottom: 20px !important; color: #444 !important; }
             
-            .print-table { width: 100% !important; border-collapse: collapse !important; border: 2px solid #000 !important; page-break-inside: auto !important; margin-bottom: 30px !important;}
-            /* تكرار الهيدر لو الجدول طويل نزل صفحة تانية */
+            .print-table { width: 100% !important; border-collapse: collapse !important; border: 2px solid #000 !important; margin-bottom: 30px !important;}
             .print-table thead { display: table-header-group !important; }
-            /* منع انقسام السطر بين صفحتين */
-            .print-table tr { page-break-inside: avoid !important; page-break-after: auto !important; }
-            
+            .print-table tr { page-break-inside: avoid !important; }
             .print-table th, .print-table td { border: 1px solid #000 !important; padding: 10px 4px !important; text-align: center !important; vertical-align: middle !important; font-size: 13px !important; color: #000 !important; }
-            
             .print-table th { background-color: #e2e8f0 !important; font-weight: 900 !important; border-bottom: 2px solid #000 !important; -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
-            /* تظليل صف وترك صف لسهولة القراءة */
             .print-table tbody tr:nth-child(even) td { background-color: #f8fafc !important; -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
             
             .print-table td.school-name { text-align: right !important; padding-right: 10px !important; font-weight: 900 !important; white-space: nowrap !important; width: 22% !important;}
             .print-table th.total-col, .print-table td.total-col { background-color: #cbd5e1 !important; font-weight: 900 !important; -webkit-print-color-adjust: exact !important; color-adjust: exact !important; border-right: 2px solid #000 !important;}
             
-            .print-signatures { display: flex !important; justify-content: space-between !important; margin-top: 40px !important; page-break-inside: avoid !important; padding: 0 50px !important;}
+            .print-signatures { display: flex !important; justify-content: space-between !important; margin-top: 40px !important; padding: 0 50px !important; page-break-inside: avoid !important;}
             .print-signatures div { text-align: center !important; font-size: 15px !important; font-weight: 900 !important; color: #000 !important;}
             .sign-line { margin-top: 40px !important; color: #888 !important; }
         }
+        @media screen { .print-layer { display: none !important; } }
     </style>
 </head>
 <body x-data="adminApp()" x-init="initApp()">
 
-    <div :class="`live-toast-container ${showLiveToast ? 'show' : ''}`" x-cloak>
-        <div class="live-toast-box"><span class="text-3xl animate-bounce">🔔</span><div><p class="font-black text-lg leading-tight" x-text="liveToastTitle"></p><p class="text-sm font-bold text-emerald-100" x-text="liveToastMsg"></p></div></div>
-    </div>
-    <audio id="liveSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
-
-    <div x-show="showAddSchoolModal" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 print-hidden" x-cloak x-transition>
-        <div class="bg-[#141A32] w-full max-w-sm p-6 rounded-3xl border-t-8 border-green-500 shadow-2xl text-center">
-            <h3 class="text-xl font-black text-white mb-4">إضافة مدرسة جديدة</h3>
-            <div class="space-y-4">
-                <input type="text" x-model="newSchool.name" placeholder="اكتب اسم المدرسة..." class="input w-full input-light h-12 text-center font-bold">
-                <select x-model="newSchool.type" class="select w-full input-light h-12 font-bold text-center">
-                    <option value="إعدادي">إعدادي</option><option value="ثانوي">ثانوي</option><option value="خاصة">خاصة</option>
-                </select>
-                <div class="flex gap-2 mt-4">
-                    <button @click="addNewSchool()" class="btn flex-1 btn-success text-white border-none font-bold">إضافة ➕</button>
-                    <button @click="showAddSchoolModal = false" class="btn flex-1 bg-slate-700 text-white border-none font-bold">إلغاء</button>
-                </div>
-            </div>
+    <div id="app-ui" x-show="!isPrinting">
+        
+        <div :class="`live-toast-container ${showLiveToast ? 'show' : ''}`" x-cloak>
+            <div class="live-toast-box"><span class="text-3xl animate-bounce">🔔</span><div><p class="font-black text-lg leading-tight" x-text="liveToastTitle"></p><p class="text-sm font-bold text-emerald-100" x-text="liveToastMsg"></p></div></div>
         </div>
-    </div>
+        <audio id="liveSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
-    <div x-show="alertModal.show" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 print-hidden" x-cloak x-transition><div class="bg-white w-full max-w-sm p-8 rounded-3xl shadow-2xl text-center border-t-8" :class="alertModal.type === 'success' ? 'border-green-500' : 'border-red-500'"><div class="text-6xl mb-4" x-text="alertModal.type === 'success' ? '✅' : '⚠️'"></div><h3 class="text-2xl font-black text-slate-800 mb-2" x-text="alertModal.title"></h3><p class="text-slate-600 font-bold mb-6 text-sm" x-text="alertModal.message"></p><button @click="closeAlert()" :class="`btn w-full text-white font-black text-lg h-12 rounded-xl border-none ${alertModal.type === 'success' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'}`">حسناً</button></div></div>
-    
-    <div x-show="confirmModal.show" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 print-hidden" x-cloak x-transition>
-        <div class="bg-[#141A32] w-full max-w-sm p-8 rounded-3xl shadow-2xl text-center border-t-8 border-yellow-500">
-            <div class="text-6xl mb-4">🤔</div>
-            <h3 class="text-xl md:text-2xl font-black text-white mb-2" x-text="confirmModal.title"></h3>
-            <p class="text-slate-400 font-bold mb-6 text-xs md:text-sm" x-text="confirmModal.message"></p>
-            <div class="flex gap-3 mt-6">
-                <button @click.prevent="executeConfirm()" class="btn flex-1 bg-yellow-600 hover:bg-yellow-700 text-white font-black text-base h-12 rounded-xl border-none">
-                    <span x-show="!loadingAction">متأكد</span><span x-show="loadingAction" class="loading loading-spinner"></span>
-                </button>
-                <button @click.prevent="closeConfirm()" class="btn flex-1 bg-slate-700 hover:bg-slate-600 text-white font-black text-base h-12 rounded-xl border-none">إلغاء</button>
-            </div>
-        </div>
-    </div>
-
-    <div x-show="showRequestModal" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 print-hidden" x-cloak x-transition>
-        <div class="bg-[#141A32] w-full max-w-3xl max-h-[90vh] rounded-3xl shadow-2xl border border-[#D68C29]/30 flex flex-col overflow-hidden">
-            <div class="p-4 md:p-6 bg-gradient-to-r from-slate-900 to-[#141A32] border-b border-white/10 flex justify-between items-center shrink-0">
-                <div>
-                    <h3 class="text-xl md:text-2xl font-black text-[#F5C678] flex items-center gap-2">
-                        <span>🏫</span> <span x-text="selectedRequest?.schools?.name"></span>
-                    </h3>
-                    <p class="text-slate-400 text-xs md:text-sm font-bold mt-1" x-text="formatDate(selectedRequest?.created_at)"></p>
-                </div>
-                <button @click="closeRequestDetails" class="btn btn-sm btn-circle btn-error text-white text-xl">✕</button>
-            </div>
-            
-            <div class="p-4 md:p-6 overflow-y-auto custom-scrollbar flex-1 bg-black/10">
-                <div class="text-sm md:text-base text-white leading-relaxed" x-html="selectedRequest ? formatReport(selectedRequest.statement) : ''"></div>
-            </div>
-            
-            <div class="p-4 md:p-6 bg-black/40 border-t border-white/10 flex justify-between items-center shrink-0">
-                <template x-if="selectedRequest?.file_url">
-                    <a :href="selectedRequest.file_url" target="_blank" class="btn bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white border-blue-600/50 rounded-xl px-6">تحميل المرفق 📎</a>
-                </template>
-                <span x-show="!selectedRequest?.file_url" class="text-sm text-slate-500 font-bold bg-black/30 border border-white/5 px-6 py-2.5 rounded-xl">بدون مرفقات</span>
-                <button @click="closeRequestDetails" class="btn bg-slate-700 text-white hover:bg-slate-600 border-none rounded-xl px-8">إغلاق</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="w-full p-3 md:p-4 flex flex-col md:flex-row justify-between items-center bg-[#141A32]/95 backdrop-blur sticky top-0 z-50 border-b border-[#D68C29]/50 shadow-lg gap-3 print-hidden">
-        <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-            <div class="w-12 h-12 bg-gradient-to-br from-[#D68C29] to-[#B4731D] rounded-full flex items-center justify-center text-2xl shadow-[0_0_15px_rgba(214,140,41,0.5)]">👑</div>
-            <div class="text-center sm:text-right">
-                <h1 class="text-lg md:text-xl font-black text-[#F5C678] mb-1">لوحة القيادة المركزية</h1>
-                <div class="flex items-center justify-center sm:justify-start gap-1.5 bg-red-500/20 border border-red-500 rounded-full px-2 py-0.5 inline-flex" title="الاستقبال اللحظي مفعل">
-                    <div class="w-2 h-2 bg-red-500 rounded-full pulse-live"></div>
-                    <span class="text-red-400 font-bold text-[10px] tracking-wider">LIVE</span>
-                    <span x-show="liveCounter > 0" class="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full" x-text="liveCounter" x-cloak></span>
-                </div>
-            </div>
-        </div>
-        <div class="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto mt-2 md:mt-0">
-            <button @click="toggleTheme()" class="btn btn-sm btn-circle btn-ghost text-xl" :title="isLightMode ? 'الوضع الليلي' : 'الوضع النهاري'"><span x-show="!isLightMode">☀️</span><span x-show="isLightMode" x-cloak>🌙</span></button>
-            <button @click="clearBrowserCache" class="btn btn-sm btn-warning text-black font-bold shadow-[0_0_10px_rgba(250,204,21,0.3)]">تحديث 🔄</button>
-            <button @click="logout" class="btn btn-sm btn-error text-white font-bold">خروج 🚪</button>
-        </div>
-    </div>
-
-    <div class="container mx-auto p-3 md:p-6 min-h-[85vh] print-hidden">
-        <div class="flex flex-wrap gap-2 mb-6 md:mb-8 bg-[#141A32] p-2 rounded-2xl border border-white/10 shadow-lg justify-center">
-            <button @click="activeTab = 'schools'; schoolView = 'grid'" :class="`w-[48%] md:flex-1 py-2 md:py-3 px-2 rounded-xl transition-all text-sm md:text-base ${activeTab === 'schools' ? 'tab-active' : 'tab-inactive'}`">🏫 المدارس</button>
-            <button @click="activeTab = 'requests'; fetchRequests()" :class="`w-[48%] md:flex-1 py-2 md:py-3 px-2 rounded-xl transition-all relative text-sm md:text-base ${activeTab === 'requests' ? 'tab-active' : 'tab-inactive'}`">📥 الطلبات <span x-show="requests.length > 0" class="absolute top-1 right-1 bg-red-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full animate-pulse border border-white" x-text="requests.length"></span></button>
-            <button @click="activeTab = 'messages'; fetchMessages()" :class="`w-[48%] md:flex-1 py-2 md:py-3 px-2 rounded-xl transition-all text-sm md:text-base ${activeTab === 'messages' ? 'tab-active' : 'tab-inactive'}`">✉️ المراسلات</button>
-            <button @click="activeTab = 'logs'" :class="`w-[48%] md:flex-1 py-2 md:py-3 px-2 rounded-xl transition-all text-sm md:text-base ${activeTab === 'logs' ? 'tab-active' : 'tab-inactive'}`">⏱️ السجل</button>
-            <button @click="activeTab = 'settings'; fetchMarqueeSettings()" :class="`w-full md:flex-1 py-2 md:py-3 px-2 rounded-xl transition-all text-sm md:text-base ${activeTab === 'settings' ? 'tab-active' : 'tab-inactive'}`">⚙️ الإعدادات</button>
-        </div>
-
-        <div x-show="activeTab === 'schools'" x-transition x-cloak>
-            <div x-show="schoolView === 'grid'" x-transition>
-                <div class="flex flex-col lg:flex-row justify-between items-center mb-6 gap-4 bg-[#141A32]/50 p-4 rounded-2xl border border-white/5">
-                    <div class="flex flex-wrap justify-center gap-2 w-full lg:w-auto">
-                        <div class="badge bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500 py-3 px-2 md:px-4 text-[10px] md:text-sm w-[48%] md:w-auto" x-text="`مكتملة: ${schools.filter(s => s.type === selectedStage && s.has_manager && !s.is_pending).length}`"></div>
-                        <div class="badge bg-yellow-500/20 text-yellow-400 font-bold border border-yellow-500 py-3 px-2 md:px-4 text-[10px] md:text-sm w-[48%] md:w-auto" x-text="`ناقصة: ${schools.filter(s => s.type === selectedStage && s.is_pending).length}`"></div>
-                        <div class="badge bg-slate-700/50 text-slate-300 font-bold border border-slate-600 py-3 px-2 md:px-4 text-[10px] md:text-sm w-full md:w-auto mt-1 lg:mt-0" x-text="`غير مفعلة: ${schools.filter(s => s.type === selectedStage && !s.has_manager).length}`"></div>
-                    </div>
-                    <div class="flex flex-col md:flex-row gap-3 w-full lg:w-auto">
-                        <input type="text" x-model="searchQuery" placeholder="بحث باسم المدرسة 🔍..." class="input input-light w-full md:w-64 h-12">
-                        <div class="grid grid-cols-2 md:flex gap-2 w-full md:w-auto">
-                            <select x-model="statusFilter" class="select input-light w-full md:w-auto h-12 border-none">
-                                <option value="all">كل الحالات</option><option value="active">مفعلة</option><option value="pending">ناقصة</option><option value="inactive">غير مفعلة</option>
-                            </select>
-                            <button @click="showAddSchoolModal = true" class="btn btn-success text-white border-none w-full md:w-auto h-12 shadow-md">إضافة ➕</button>
-                            <button @click="exportToCSV()" class="btn bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white border border-blue-600/50 w-full md:w-auto h-12 shadow-md">إكسيل 📊</button>
-                            <button @click="exportToPDF()" class="btn bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white border border-red-600/50 w-full md:w-auto h-12 shadow-md">طباعة 🖨️</button>
-                        </div>
+        <div x-show="showAddSchoolModal" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" x-cloak x-transition>
+            <div class="bg-[#141A32] w-full max-w-sm p-6 rounded-3xl border-t-8 border-green-500 shadow-2xl text-center">
+                <h3 class="text-xl font-black text-white mb-4">إضافة مدرسة جديدة</h3>
+                <div class="space-y-4">
+                    <input type="text" x-model="newSchool.name" placeholder="اكتب اسم المدرسة..." class="input w-full input-light h-12 text-center font-bold">
+                    <select x-model="newSchool.type" class="select w-full input-light h-12 font-bold text-center">
+                        <option value="إعدادي">إعدادي</option><option value="ثانوي">ثانوي</option><option value="خاصة">خاصة</option>
+                    </select>
+                    <div class="flex gap-2 mt-4">
+                        <button @click="addNewSchool()" class="btn flex-1 btn-success text-white border-none font-bold">إضافة ➕</button>
+                        <button @click="showAddSchoolModal = false" class="btn flex-1 bg-slate-700 text-white border-none font-bold">إلغاء</button>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <div class="grid grid-cols-3 gap-2 md:gap-6 mb-8">
-                    <div @click="selectedStage = 'إعدادي'; statusFilter = 'all'; searchQuery = ''" :class="`stage-card p-3 md:p-6 rounded-xl md:rounded-3xl text-center ${selectedStage === 'إعدادي' ? 'active' : ''}`"><div class="text-2xl md:text-4xl mb-1">📚</div><h2 class="text-xs md:text-2xl font-black text-white">إعدادي</h2><p class="text-[#D68C29] text-[10px] md:text-base font-bold mt-1" x-text="`${schools.filter(s => s.type === 'إعدادي').length} مدرسة`"></p></div>
-                    <div @click="selectedStage = 'ثانوي'; statusFilter = 'all'; searchQuery = ''" :class="`stage-card p-3 md:p-6 rounded-xl md:rounded-3xl text-center ${selectedStage === 'ثانوي' ? 'active' : ''}`"><div class="text-2xl md:text-4xl mb-1">🎓</div><h2 class="text-xs md:text-2xl font-black text-white">ثانوي</h2><p class="text-[#D68C29] text-[10px] md:text-base font-bold mt-1" x-text="`${schools.filter(s => s.type === 'ثانوي').length} مدرسة`"></p></div>
-                    <div @click="selectedStage = 'خاصة'; statusFilter = 'all'; searchQuery = ''" :class="`stage-card p-3 md:p-6 rounded-xl md:rounded-3xl text-center ${selectedStage === 'خاصة' ? 'active' : ''}`"><div class="text-2xl md:text-4xl mb-1">🏢</div><h2 class="text-xs md:text-2xl font-black text-white">خاصة</h2><p class="text-[#D68C29] text-[10px] md:text-base font-bold mt-1" x-text="`${schools.filter(s => s.type === 'خاصة').length} مدرسة`"></p></div>
+        <div x-show="alertModal.show" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" x-cloak x-transition><div class="bg-white w-full max-w-sm p-8 rounded-3xl shadow-2xl text-center border-t-8" :class="alertModal.type === 'success' ? 'border-green-500' : 'border-red-500'"><div class="text-6xl mb-4" x-text="alertModal.type === 'success' ? '✅' : '⚠️'"></div><h3 class="text-2xl font-black text-slate-800 mb-2" x-text="alertModal.title"></h3><p class="text-slate-600 font-bold mb-6 text-sm" x-text="alertModal.message"></p><button @click="closeAlert()" :class="`btn w-full text-white font-black text-lg h-12 rounded-xl border-none ${alertModal.type === 'success' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'}`">حسناً</button></div></div>
+        
+        <div x-show="confirmModal.show" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" x-cloak x-transition>
+            <div class="bg-[#141A32] w-full max-w-sm p-8 rounded-3xl shadow-2xl text-center border-t-8 border-yellow-500">
+                <div class="text-6xl mb-4">🤔</div>
+                <h3 class="text-xl md:text-2xl font-black text-white mb-2" x-text="confirmModal.title"></h3>
+                <p class="text-slate-400 font-bold mb-4 text-xs md:text-sm" x-text="confirmModal.message"></p>
+                
+                <div x-show="confirmModal.requiresPin" class="mb-6 bg-red-500/10 p-4 rounded-xl border border-red-500/30">
+                    <label class="block text-red-500 text-xs font-bold mb-2">أدخل كود الأمان لتأكيد المسح</label>
+                    <input type="password" inputmode="numeric" x-model="dangerPin" maxlength="4" class="input w-full input-light !bg-red-50 !border-red-500 !text-red-700 text-center tracking-widest text-2xl font-black focus:!ring-red-600" placeholder="••••">
                 </div>
 
-                <div x-show="loading" class="text-center py-10 w-full"><span class="loading loading-bars loading-lg text-[#D68C29]"></span><p class="mt-4 text-slate-400 font-bold">جاري التحميل...</p></div>
-
-                <div x-show="!loading" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
-                    <template x-for="school in filteredSchools" :key="school.id">
-                        <div @click="openSchoolDetails(school)" :class="`p-3 md:p-4 rounded-xl cursor-pointer min-h-[120px] flex flex-col justify-between transition-all ${school.is_pending ? 'border-2 border-yellow-500 bg-yellow-500/10' : (school.has_manager ? 'active-school' : 'inactive-school')}`">
-                            <div>
-                                <div class="flex flex-wrap gap-1">
-                                    <template x-if="!school.has_manager"><span class="text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/50">غير مفعلة ⚠️</span></template>
-                                    <template x-if="school.is_pending"><span class="text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 rounded bg-yellow-500 text-black animate-pulse">ناقصة 📝</span></template>
-                                    <template x-if="school.has_manager && !school.is_pending"><span class="text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 rounded bg-green-500 text-white">مفعلة ✅</span></template>
-                                </div>
-                                <h3 class="font-bold text-[11px] md:text-sm text-white mt-2 leading-tight" x-text="'🏫 ' + school.name"></h3>
-                            </div>
-                            <p class="text-[9px] md:text-[10px] text-slate-400 border-t border-white/10 pt-2 font-bold mt-2 truncate" x-text="school.is_pending ? school.pending_reason : (school.has_manager ? '👤 ' + school.manager_name : 'بانتظار الكود')"></p>
-                        </div>
-                    </template>
-                    <p x-show="filteredSchools.length === 0" class="col-span-full text-center text-slate-500 py-10 font-bold text-sm">لا توجد مدارس مطابقة.</p>
+                <div class="flex gap-3">
+                    <button @click.prevent="executeConfirm()" class="btn flex-1 bg-yellow-600 hover:bg-yellow-700 text-white font-black text-base h-12 rounded-xl border-none">
+                        <span x-show="!loadingAction">متأكد</span><span x-show="loadingAction" class="loading loading-spinner"></span>
+                    </button>
+                    <button @click.prevent="closeConfirm()" class="btn flex-1 bg-slate-700 hover:bg-slate-600 text-white font-black text-base h-12 rounded-xl border-none">إلغاء</button>
                 </div>
             </div>
+        </div>
 
-            <div x-show="schoolView === 'details'" x-cloak class="animate-in slide-in-from-right duration-300">
-                <div class="bg-[#141A32] rounded-3xl border border-[#D68C29]/30 shadow-2xl overflow-hidden mt-2 md:mt-6">
-                    <div class="p-4 md:p-6 bg-gradient-to-b from-[#0B0F1E] to-[#141A32] border-b border-white/10 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
-                        <div class="flex flex-col items-start gap-3 w-full md:w-auto">
-                            <button @click="schoolView = 'grid'" class="btn btn-sm md:btn-md bg-[#D68C29]/10 text-[#D68C29] border border-[#D68C29]/50 rounded-xl flex items-center gap-2 w-full md:w-auto"><span class="text-xl">🔙</span> العودة</button>
-                            <div>
-                                <h2 class="text-lg md:text-2xl font-black text-white" x-text="'🏫 ' + selectedSchool.name"></h2>
-                                <select x-model="selectedSchool.type" @change="updateSchoolType(selectedSchool.id, selectedSchool.type)" class="select select-xs bg-[#D68C29] text-white border-none font-bold mt-2 w-full md:w-auto"><option value="إعدادي">إعدادي</option><option value="ثانوي">ثانوي</option><option value="خاصة">خاصة</option></select>
-                            </div>
+        <div x-show="showRequestModal" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4" x-cloak x-transition>
+            <div class="bg-[#141A32] w-full max-w-3xl max-h-[90vh] rounded-3xl shadow-2xl border border-[#D68C29]/30 flex flex-col overflow-hidden">
+                <div class="p-4 md:p-6 bg-gradient-to-r from-slate-900 to-[#141A32] border-b border-white/10 flex justify-between items-center shrink-0">
+                    <div>
+                        <h3 class="text-xl md:text-2xl font-black text-[#F5C678] flex items-center gap-2">
+                            <span>🏫</span> <span x-text="selectedRequest?.schools?.name"></span>
+                        </h3>
+                        <p class="text-slate-400 text-xs md:text-sm font-bold mt-1" x-text="formatDate(selectedRequest?.created_at)"></p>
+                    </div>
+                    <button @click="closeRequestDetails" class="btn btn-sm btn-circle btn-error text-white text-xl">✕</button>
+                </div>
+                
+                <div class="p-4 md:p-6 overflow-y-auto custom-scrollbar flex-1 bg-black/10">
+                    <div class="text-sm md:text-base text-white leading-relaxed" x-html="selectedRequest ? formatReport(selectedRequest.statement) : ''"></div>
+                </div>
+                
+                <div class="p-4 md:p-6 bg-black/40 border-t border-white/10 flex flex-wrap justify-between items-center shrink-0 gap-3">
+                    <div class="flex gap-2">
+                        <template x-if="selectedRequest?.file_url">
+                            <a :href="selectedRequest.file_url" target="_blank" class="btn btn-sm bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white border-blue-600/50 rounded-xl px-4">تحميل المرفق 📎</a>
+                        </template>
+                        <span x-show="!selectedRequest?.file_url" class="text-xs text-slate-500 font-bold bg-black/30 border border-white/5 px-4 py-2 rounded-xl">بدون مرفقات</span>
+                    </div>
+                    
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <button @click="printIndividualReport()" class="btn btn-sm bg-purple-600/20 text-purple-400 hover:bg-purple-600 hover:text-white border-purple-600/50 rounded-xl px-4 flex-1 sm:flex-none">
+                            طباعة التقرير 🖨️
+                        </button>
+                        <button @click="sendRejectionMessage(selectedRequest?.school_id)" class="btn btn-sm bg-yellow-600/20 text-yellow-400 hover:bg-yellow-600 hover:text-white border-yellow-600/50 rounded-xl px-4 flex-1 sm:flex-none">
+                            طلب استكمال ⚠️
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full p-3 md:p-4 flex flex-col md:flex-row justify-between items-center bg-[#141A32]/95 backdrop-blur sticky top-0 z-50 border-b border-[#D68C29]/50 shadow-lg gap-3">
+            <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+                <div class="w-12 h-12 bg-gradient-to-br from-[#D68C29] to-[#B4731D] rounded-full flex items-center justify-center text-2xl shadow-[0_0_15px_rgba(214,140,41,0.5)]">👑</div>
+                <div class="text-center sm:text-right">
+                    <h1 class="text-lg md:text-xl font-black text-[#F5C678] mb-1">لوحة القيادة المركزية</h1>
+                    <div class="flex items-center justify-center sm:justify-start gap-1.5 bg-red-500/20 border border-red-500 rounded-full px-2 py-0.5 inline-flex" title="الاستقبال اللحظي مفعل">
+                        <div class="w-2 h-2 bg-red-500 rounded-full pulse-live"></div>
+                        <span class="text-red-400 font-bold text-[10px] tracking-wider">LIVE</span>
+                        <span x-show="liveCounter > 0" class="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full" x-text="liveCounter" x-cloak></span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto mt-2 md:mt-0">
+                <button @click="toggleTheme()" class="btn btn-sm btn-circle btn-ghost text-xl"><span x-show="!isLightMode">☀️</span><span x-show="isLightMode" x-cloak>🌙</span></button>
+                <button @click="clearBrowserCache" class="btn btn-sm btn-warning text-black font-bold shadow-[0_0_10px_rgba(250,204,21,0.3)]">تحديث 🔄</button>
+                <button @click="logout" class="btn btn-sm btn-error text-white font-bold">خروج 🚪</button>
+            </div>
+        </div>
+
+        <div class="container mx-auto p-3 md:p-6 min-h-[85vh]">
+            <div class="flex flex-wrap gap-2 mb-6 md:mb-8 bg-[#141A32] p-2 rounded-2xl border border-white/10 shadow-lg justify-center">
+                <button @click="activeTab = 'schools'; schoolView = 'grid'" :class="`w-[48%] md:flex-1 py-2 md:py-3 px-2 rounded-xl transition-all text-sm md:text-base ${activeTab === 'schools' ? 'tab-active' : 'tab-inactive'}`">🏫 المدارس</button>
+                <button @click="activeTab = 'requests'; fetchRequests()" :class="`w-[48%] md:flex-1 py-2 md:py-3 px-2 rounded-xl transition-all relative text-sm md:text-base ${activeTab === 'requests' ? 'tab-active' : 'tab-inactive'}`">📥 الطلبات <span x-show="requests.length > 0" class="absolute top-1 right-1 bg-red-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full animate-pulse border border-white" x-text="requests.length"></span></button>
+                <button @click="activeTab = 'messages'; fetchMessages()" :class="`w-[48%] md:flex-1 py-2 md:py-3 px-2 rounded-xl transition-all text-sm md:text-base ${activeTab === 'messages' ? 'tab-active' : 'tab-inactive'}`">✉️ المراسلات</button>
+                <button @click="activeTab = 'logs'" :class="`w-[48%] md:flex-1 py-2 md:py-3 px-2 rounded-xl transition-all text-sm md:text-base ${activeTab === 'logs' ? 'tab-active' : 'tab-inactive'}`">⏱️ السجل</button>
+                <button @click="activeTab = 'settings'; fetchMarqueeSettings()" :class="`w-full md:flex-1 py-2 md:py-3 px-2 rounded-xl transition-all text-sm md:text-base ${activeTab === 'settings' ? 'tab-active' : 'tab-inactive'}`">⚙️ الإعدادات</button>
+            </div>
+
+            <div x-show="activeTab === 'schools'" x-transition x-cloak>
+                <div x-show="schoolView === 'grid'" x-transition>
+                    <div class="flex flex-col lg:flex-row justify-between items-center mb-6 gap-4 bg-[#141A32]/50 p-4 rounded-2xl border border-white/5">
+                        <div class="flex flex-wrap justify-center gap-2 w-full lg:w-auto">
+                            <div class="badge bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500 py-3 px-2 md:px-4 text-[10px] md:text-sm w-[48%] md:w-auto" x-text="`مكتملة: ${schools.filter(s => s.type === selectedStage && s.has_manager && !s.is_pending).length}`"></div>
+                            <div class="badge bg-yellow-500/20 text-yellow-400 font-bold border border-yellow-500 py-3 px-2 md:px-4 text-[10px] md:text-sm w-[48%] md:w-auto" x-text="`ناقصة: ${schools.filter(s => s.type === selectedStage && s.is_pending).length}`"></div>
+                            <div class="badge bg-slate-700/50 text-slate-300 font-bold border border-slate-600 py-3 px-2 md:px-4 text-[10px] md:text-sm w-full md:w-auto mt-1 lg:mt-0" x-text="`غير مفعلة: ${schools.filter(s => s.type === selectedStage && !s.has_manager).length}`"></div>
                         </div>
-                        <div class="bg-[#0B0F1E] p-3 rounded-xl border border-white/10 text-center w-full md:w-auto relative">
-                            <p class="text-[10px] text-slate-400 font-bold mb-1">كود الدخول</p>
-                            <p class="text-2xl font-black pin-display" x-text="selectedSchool.manager_pin"></p>
-                            <div class="flex flex-col gap-2 mt-2">
-                                <div class="flex gap-2 w-full">
-                                    <button @click="resetPin(selectedSchool.id)" class="btn btn-xs flex-1 btn-warning rounded">تصفير</button>
-                                    <button @click="deleteSchool(selectedSchool.id)" class="btn btn-xs flex-1 btn-error rounded text-white">حذف</button>
-                                </div>
-                                <button x-show="backupSchoolId === selectedSchool.id" @click="undoResetPin()" x-transition class="btn btn-xs bg-emerald-600 hover:bg-emerald-700 text-white border-none w-full rounded shadow-[0_0_10px_rgba(16,185,129,0.5)] animate-pulse">تراجع واستعادة الكود ↩️</button>
+                        <div class="flex flex-col md:flex-row gap-3 w-full lg:w-auto">
+                            <input type="text" x-model="searchQuery" placeholder="بحث باسم المدرسة 🔍..." class="input input-light w-full md:w-64 h-12">
+                            <div class="grid grid-cols-2 md:flex gap-2 w-full md:w-auto">
+                                <select x-model="statusFilter" class="select input-light w-full md:w-auto h-12 border-none">
+                                    <option value="all">كل الحالات</option><option value="active">مفعلة</option><option value="pending">ناقصة</option><option value="inactive">غير مفعلة</option>
+                                </select>
+                                <button @click="showAddSchoolModal = true" class="btn btn-success text-white border-none w-full md:w-auto h-12 shadow-md">إضافة ➕</button>
+                                <button @click="exportToCSV()" class="btn bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white border border-blue-600/50 w-full md:w-auto h-12 shadow-md">إكسيل 📊</button>
+                                <button @click="printMasterReport()" class="btn bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white border border-red-600/50 w-full md:w-auto h-12 shadow-md">طباعة 🖨️</button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="p-4 md:p-6">
-                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-                            <div class="bg-[#0B0F1E] p-3 rounded-xl border border-white/5 flex items-center gap-3"><div class="w-10 h-10 shrink-0 rounded-full bg-amber-500/20 text-amber-500 flex items-center justify-center text-lg">👑</div><div><p class="text-[9px] text-slate-400 font-bold mb-1">المدير</p><p class="font-black text-xs" :class="!schoolManager ? 'text-red-400' : (schoolManager.full_name && schoolManager.full_name.includes('بانتظار') ? 'text-yellow-400' : 'text-emerald-400')" x-text="!schoolManager ? 'غير مسجل' : (schoolManager.full_name && schoolManager.full_name.includes('بانتظار') ? 'بيانات ناقصة' : 'مفعل ومكتمل')"></p></div></div>
-                            <div class="bg-[#0B0F1E] p-3 rounded-xl border border-white/5 flex items-center gap-3"><div class="w-10 h-10 shrink-0 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg">👨‍🏫</div><div><p class="text-[9px] text-slate-400 font-bold mb-1">الوكلاء</p><p class="font-black text-white text-lg" x-text="schoolAgents.length"></p></div></div>
-                            <div class="bg-[#0B0F1E] p-3 rounded-xl border border-white/5 flex items-center gap-3"><div class="w-10 h-10 shrink-0 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center text-lg">📥</div><div><p class="text-[9px] text-slate-400 font-bold mb-1">طلبات مرسلة</p><p class="font-black text-white text-lg" x-text="selectedSchoolRequestsCount"></p></div></div>
-                            <div class="bg-[#0B0F1E] p-3 rounded-xl border border-white/5 flex items-center gap-3"><div class="w-10 h-10 shrink-0 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-lg">✉️</div><div><p class="text-[9px] text-slate-400 font-bold mb-1">نشرات مستلمة</p><p class="font-black text-white text-lg" x-text="selectedSchoolMessagesCount"></p></div></div>
-                        </div>
+                    <div class="grid grid-cols-3 gap-2 md:gap-6 mb-8">
+                        <div @click="selectedStage = 'إعدادي'; statusFilter = 'all'; searchQuery = ''" :class="`stage-card p-3 md:p-6 rounded-xl md:rounded-3xl text-center ${selectedStage === 'إعدادي' ? 'active' : ''}`"><div class="text-2xl md:text-4xl mb-1">📚</div><h2 class="text-xs md:text-2xl font-black text-white">إعدادي</h2><p class="text-[#D68C29] text-[10px] md:text-base font-bold mt-1" x-text="`${schools.filter(s => s.type === 'إعدادي').length} مدرسة`"></p></div>
+                        <div @click="selectedStage = 'ثانوي'; statusFilter = 'all'; searchQuery = ''" :class="`stage-card p-3 md:p-6 rounded-xl md:rounded-3xl text-center ${selectedStage === 'ثانوي' ? 'active' : ''}`"><div class="text-2xl md:text-4xl mb-1">🎓</div><h2 class="text-xs md:text-2xl font-black text-white">ثانوي</h2><p class="text-[#D68C29] text-[10px] md:text-base font-bold mt-1" x-text="`${schools.filter(s => s.type === 'ثانوي').length} مدرسة`"></p></div>
+                        <div @click="selectedStage = 'خاصة'; statusFilter = 'all'; searchQuery = ''" :class="`stage-card p-3 md:p-6 rounded-xl md:rounded-3xl text-center ${selectedStage === 'خاصة' ? 'active' : ''}`"><div class="text-2xl md:text-4xl mb-1">🏢</div><h2 class="text-xs md:text-2xl font-black text-white">خاصة</h2><p class="text-[#D68C29] text-[10px] md:text-base font-bold mt-1" x-text="`${schools.filter(s => s.type === 'خاصة').length} مدرسة`"></p></div>
+                    </div>
 
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-                            <div class="bg-[#0B0F1E] p-4 md:p-6 rounded-2xl border border-white/5">
-                                <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-4">
-                                    <h3 class="font-bold text-[#D68C29] text-base md:text-xl">👨‍💼 مدير المدرسة</h3>
-                                    <template x-if="schoolManager">
-                                        <div class="flex gap-2">
-                                            <a :href="`https://wa.me/2${schoolManager.mobile}?text=${encodeURIComponent('السيد الفاضل / مدير مدرسة ' + selectedSchool.name + '،\nتحية طيبة وبعد..\nتلاحظ لدينا من خلال المتابعة الدورية لمنصة التنسيق الإلكتروني عدم استكمال البيانات الخاصة بمدرستكم (سواء بيانات السجل الوظيفي أو الإحصاء الشامل).\nبرجاء التكرم بسرعة الدخول للمنصة واستكمال المطلوب عبر الرابط:\nwww.tanseeqedarasohag.co.site\n\nإدارة سوهاج التعليمية')}`" target="_blank" class="btn btn-xs bg-green-600 hover:bg-green-700 text-white border-none shadow-md">تذكير واتس 💬</a>
-                                            <button @click="resetManager(schoolManager.mobile, selectedSchool.id)" class="btn btn-xs btn-error text-white hover:bg-red-600 border-none shadow-md">إزالة 🗑️</button>
-                                        </div>
-                                    </template>
-                                </div>
-                                <template x-if="schoolManager">
-                                    <div>
-                                        <div class="flex items-center gap-3 mb-4"><img :src="schoolManager.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" class="w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-[#D68C29] object-cover bg-white"><div><h4 class="text-sm md:text-lg font-black text-white" x-text="schoolManager.full_name || 'بانتظار استكمال البيانات'"></h4><p class="text-[#D68C29] font-mono text-xs mt-1" x-text="schoolManager.mobile"></p></div></div>
-                                        <div class="space-y-2 bg-black/30 p-3 rounded-xl border border-white/5 text-xs md:text-sm">
-                                            <div class="flex justify-between border-b border-white/5 pb-1"><span class="text-slate-500">القومي:</span><span class="font-mono text-yellow-300" x-text="schoolManager.nid || '---'"></span></div>
-                                            <div class="flex justify-between border-b border-white/5 pb-1"><span class="text-slate-500">استلام عمل:</span><span class="text-white" x-text="schoolManager.job_assumption_date || '---'"></span></div>
-                                            <div class="flex justify-between border-b border-white/5 pb-1"><span class="text-slate-500">الموقف:</span><span class="text-blue-400 font-bold" x-text="selectedSchool.manager_status || '---'"></span></div>
-                                            <div class="flex justify-between pt-1"><span class="text-slate-500">تجديد:</span><span class="text-green-400 font-bold" x-text="schoolManager.renewal_date || '---'"></span></div>
-                                        </div>
+                    <div x-show="loading" class="text-center py-10 w-full"><span class="loading loading-bars loading-lg text-[#D68C29]"></span><p class="mt-4 text-slate-400 font-bold">جاري التحميل...</p></div>
+
+                    <div x-show="!loading" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
+                        <template x-for="school in filteredSchools" :key="school.id">
+                            <div @click="openSchoolDetails(school)" :class="`p-3 md:p-4 rounded-xl cursor-pointer min-h-[120px] flex flex-col justify-between transition-all ${school.is_pending ? 'border-2 border-yellow-500 bg-yellow-500/10' : (school.has_manager ? 'active-school' : 'inactive-school')}`">
+                                <div>
+                                    <div class="flex flex-wrap gap-1">
+                                        <template x-if="!school.has_manager"><span class="text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/50">غير مفعلة ⚠️</span></template>
+                                        <template x-if="school.is_pending"><span class="text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 rounded bg-yellow-500 text-black animate-pulse">ناقصة 📝</span></template>
+                                        <template x-if="school.has_manager && !school.is_pending"><span class="text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 rounded bg-green-500 text-white">مفعلة ✅</span></template>
                                     </div>
-                                </template>
-                                <template x-if="!schoolManager"><div class="text-center py-6 opacity-50"><p class="text-xs text-slate-400">لم يقم بالتسجيل بعد.</p></div></template>
+                                    <h3 class="font-bold text-[11px] md:text-sm text-white mt-2 leading-tight" x-text="'🏫 ' + school.name"></h3>
+                                </div>
+                                <p class="text-[9px] md:text-[10px] text-slate-400 border-t border-white/10 pt-2 font-bold mt-2 truncate" x-text="school.is_pending ? school.pending_reason : (school.has_manager ? '👤 ' + school.manager_name : 'بانتظار الكود')"></p>
                             </div>
-                            
-                            <div class="bg-[#0B0F1E] p-4 md:p-6 rounded-2xl border border-white/5">
-                                <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-4"><h3 class="font-bold text-emerald-400 text-base md:text-xl">👨‍🏫 طاقم الوكلاء</h3><div class="badge badge-sm badge-success" x-text="schoolAgents.length"></div></div>
-                                <div class="space-y-3 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
-                                    <template x-for="(agent, idx) in schoolAgents" :key="idx">
-                                        <div class="bg-black/30 p-3 rounded-xl border border-white/5 relative group">
-                                            <div class="flex justify-between items-start border-b border-white/5 pb-2 mb-2">
-                                                <div class="flex items-center gap-2"><img :src="agent.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" class="w-8 h-8 rounded-full border border-emerald-500 object-cover bg-white"><div><h4 class="text-xs font-bold text-white" x-text="agent.full_name || 'بانتظار التسجيل'"></h4><p class="text-[9px] text-emerald-400 font-mono" x-text="agent.mobile"></p></div></div>
-                                                <button @click="deleteAgent(agent.mobile)" class="btn btn-xs btn-ghost text-red-500 px-1">🗑️</button>
+                        </template>
+                        <p x-show="filteredSchools.length === 0" class="col-span-full text-center text-slate-500 py-10 font-bold text-sm">لا توجد مدارس مطابقة.</p>
+                    </div>
+                </div>
+
+                <div x-show="schoolView === 'details'" x-cloak class="animate-in slide-in-from-right duration-300">
+                    <div class="bg-[#141A32] rounded-3xl border border-[#D68C29]/30 shadow-2xl overflow-hidden mt-2 md:mt-6">
+                        <div class="p-4 md:p-6 bg-gradient-to-b from-[#0B0F1E] to-[#141A32] border-b border-white/10 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+                            <div class="flex flex-col items-start gap-3 w-full md:w-auto">
+                                <button @click="schoolView = 'grid'" class="btn btn-sm md:btn-md bg-[#D68C29]/10 text-[#D68C29] border border-[#D68C29]/50 rounded-xl flex items-center gap-2 w-full md:w-auto"><span class="text-xl">🔙</span> العودة</button>
+                                <div>
+                                    <h2 class="text-lg md:text-2xl font-black text-white" x-text="'🏫 ' + selectedSchool.name"></h2>
+                                    <select x-model="selectedSchool.type" @change="updateSchoolType(selectedSchool.id, selectedSchool.type)" class="select select-xs bg-[#D68C29] text-white border-none font-bold mt-2 w-full md:w-auto"><option value="إعدادي">إعدادي</option><option value="ثانوي">ثانوي</option><option value="خاصة">خاصة</option></select>
+                                </div>
+                            </div>
+                            <div class="bg-[#0B0F1E] p-3 rounded-xl border border-white/10 text-center w-full md:w-auto relative">
+                                <p class="text-[10px] text-slate-400 font-bold mb-1">كود الدخول</p>
+                                <p class="text-2xl font-black pin-display" x-text="selectedSchool.manager_pin"></p>
+                                <div class="flex flex-col gap-2 mt-2">
+                                    <div class="flex gap-2 w-full">
+                                        <button @click="resetPin(selectedSchool.id)" class="btn btn-xs flex-1 btn-warning rounded">تصفير</button>
+                                        <button @click="deleteSchool(selectedSchool.id)" class="btn btn-xs flex-1 btn-error rounded text-white">حذف</button>
+                                    </div>
+                                    <button x-show="backupSchoolId === selectedSchool.id" @click="undoResetPin()" x-transition class="btn btn-xs bg-emerald-600 hover:bg-emerald-700 text-white border-none w-full rounded shadow-[0_0_10px_rgba(16,185,129,0.5)] animate-pulse">تراجع واستعادة الكود ↩️</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 md:p-6">
+                            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+                                <div class="bg-[#0B0F1E] p-3 rounded-xl border border-white/5 flex items-center gap-3"><div class="w-10 h-10 shrink-0 rounded-full bg-amber-500/20 text-amber-500 flex items-center justify-center text-lg">👑</div><div><p class="text-[9px] text-slate-400 font-bold mb-1">المدير</p><p class="font-black text-xs" :class="!schoolManager ? 'text-red-400' : (schoolManager?.full_name?.includes('بانتظار') ? 'text-yellow-400' : 'text-emerald-400')" x-text="!schoolManager ? 'غير مسجل' : (schoolManager?.full_name?.includes('بانتظار') ? 'بيانات ناقصة' : 'مفعل ومكتمل')"></p></div></div>
+                                <div class="bg-[#0B0F1E] p-3 rounded-xl border border-white/5 flex items-center gap-3"><div class="w-10 h-10 shrink-0 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg">👨‍🏫</div><div><p class="text-[9px] text-slate-400 font-bold mb-1">الوكلاء</p><p class="font-black text-white text-lg" x-text="schoolAgents.length"></p></div></div>
+                                <div class="bg-[#0B0F1E] p-3 rounded-xl border border-white/5 flex items-center gap-3"><div class="w-10 h-10 shrink-0 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center text-lg">📥</div><div><p class="text-[9px] text-slate-400 font-bold mb-1">طلبات مرسلة</p><p class="font-black text-white text-lg" x-text="selectedSchoolRequestsCount"></p></div></div>
+                                <div class="bg-[#0B0F1E] p-3 rounded-xl border border-white/5 flex items-center gap-3"><div class="w-10 h-10 shrink-0 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-lg">✉️</div><div><p class="text-[9px] text-slate-400 font-bold mb-1">نشرات مستلمة</p><p class="font-black text-white text-lg" x-text="selectedSchoolMessagesCount"></p></div></div>
+                            </div>
+
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+                                <div class="bg-[#0B0F1E] p-4 md:p-6 rounded-2xl border border-white/5">
+                                    <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-4">
+                                        <h3 class="font-bold text-[#D68C29] text-base md:text-xl">👨‍💼 مدير المدرسة</h3>
+                                        <template x-if="schoolManager">
+                                            <div class="flex gap-2">
+                                                <a :href="`https://wa.me/2${schoolManager?.mobile}?text=${encodeURIComponent('السيد الفاضل / مدير مدرسة ' + selectedSchool?.name + '،\nتحية طيبة وبعد..\nتلاحظ لدينا من خلال المتابعة الدورية لمنصة التنسيق الإلكتروني عدم استكمال البيانات الخاصة بمدرستكم (سواء بيانات السجل الوظيفي أو الإحصاء الشامل).\nبرجاء التكرم بسرعة الدخول للمنصة واستكمال المطلوب عبر الرابط:\nwww.tanseeqedarasohag.co.site\n\nإدارة سوهاج التعليمية')}`" target="_blank" class="btn btn-xs bg-green-600 hover:bg-green-700 text-white border-none shadow-md">تذكير واتس 💬</a>
+                                                <button @click="resetManager(schoolManager?.mobile, selectedSchool.id)" class="btn btn-xs btn-error text-white hover:bg-red-600 border-none shadow-md">إزالة 🗑️</button>
                                             </div>
-                                            <div class="grid grid-cols-2 gap-y-1 gap-x-2 text-[10px] md:text-xs">
-                                                <div class="flex justify-between col-span-2"><span class="text-slate-500">التكليف:</span><span class="text-blue-300 font-bold" x-text="agent.agent_assignment || 'لم يحدد'"></span></div>
-                                                <div class="flex justify-between"><span class="text-slate-500">القومي:</span><span class="font-mono text-yellow-200" x-text="agent.nid || '---'"></span></div>
-                                                <div class="flex justify-between"><span class="text-slate-500">الموقف:</span><span class="text-green-400" x-text="agent.job_status || '---'"></span></div>
+                                        </template>
+                                    </div>
+                                    <template x-if="schoolManager">
+                                        <div>
+                                            <div class="flex items-center gap-3 mb-4"><img :src="schoolManager?.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" class="w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-[#D68C29] object-cover bg-white"><div><h4 class="text-sm md:text-lg font-black text-white" x-text="schoolManager?.full_name || 'بانتظار استكمال البيانات'"></h4><p class="text-[#D68C29] font-mono text-xs mt-1" x-text="schoolManager?.mobile"></p></div></div>
+                                            <div class="space-y-2 bg-black/30 p-3 rounded-xl border border-white/5 text-xs md:text-sm">
+                                                <div class="flex justify-between border-b border-white/5 pb-1"><span class="text-slate-500">القومي:</span><span class="font-mono text-yellow-300" x-text="schoolManager?.nid || '---'"></span></div>
+                                                <div class="flex justify-between border-b border-white/5 pb-1"><span class="text-slate-500">استلام عمل:</span><span class="text-white" x-text="schoolManager?.job_assumption_date || '---'"></span></div>
+                                                <div class="flex justify-between border-b border-white/5 pb-1"><span class="text-slate-500">الموقف:</span><span class="text-blue-400 font-bold" x-text="selectedSchool?.manager_status || '---'"></span></div>
+                                                <div class="flex justify-between pt-1"><span class="text-slate-500">تجديد:</span><span class="text-green-400 font-bold" x-text="schoolManager?.renewal_date || '---'"></span></div>
                                             </div>
                                         </div>
                                     </template>
-                                    <p x-show="schoolAgents.length === 0" class="text-center py-4 text-xs text-slate-500">لا يوجد وكلاء مسجلين.</p>
+                                    <template x-if="!schoolManager"><div class="text-center py-6 opacity-50"><p class="text-xs text-slate-400">لم يقم بالتسجيل بعد.</p></div></template>
+                                </div>
+                                
+                                <div class="bg-[#0B0F1E] p-4 md:p-6 rounded-2xl border border-white/5">
+                                    <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-4"><h3 class="font-bold text-emerald-400 text-base md:text-xl">👨‍🏫 طاقم الوكلاء</h3><div class="badge badge-sm badge-success" x-text="schoolAgents.length"></div></div>
+                                    <div class="space-y-3 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
+                                        <template x-for="(agent, idx) in schoolAgents" :key="idx">
+                                            <div class="bg-black/30 p-3 rounded-xl border border-white/5 relative group">
+                                                <div class="flex justify-between items-start border-b border-white/5 pb-2 mb-2">
+                                                    <div class="flex items-center gap-2"><img :src="agent?.avatar_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" class="w-8 h-8 rounded-full border border-emerald-500 object-cover bg-white"><div><h4 class="text-xs font-bold text-white" x-text="agent?.full_name || 'بانتظار التسجيل'"></h4><p class="text-[9px] text-emerald-400 font-mono" x-text="agent?.mobile"></p></div></div>
+                                                    <button @click="deleteAgent(agent.mobile)" class="btn btn-xs btn-ghost text-red-500 px-1">🗑️</button>
+                                                </div>
+                                                <div class="grid grid-cols-2 gap-y-1 gap-x-2 text-[10px] md:text-xs">
+                                                    <div class="flex justify-between col-span-2"><span class="text-slate-500">التكليف:</span><span class="text-blue-300 font-bold" x-text="agent?.agent_assignment || 'لم يحدد'"></span></div>
+                                                    <div class="flex justify-between"><span class="text-slate-500">القومي:</span><span class="font-mono text-yellow-200" x-text="agent?.nid || '---'"></span></div>
+                                                    <div class="flex justify-between"><span class="text-slate-500">الموقف:</span><span class="text-green-400" x-text="agent?.job_status || '---'"></span></div>
+                                                </div>
+                                            </div>
+                                        </template>
+                                        <p x-show="schoolAgents.length === 0" class="text-center py-4 text-xs text-slate-500">لا يوجد وكلاء مسجلين.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div x-show="activeTab === 'requests'" x-transition x-cloak>
-            <div class="glass-panel p-4 md:p-6 border-t-4 border-t-green-500">
-                <h2 class="text-lg md:text-2xl font-black text-white mb-6">صندوق الطلبات والإحصائيات الواردة</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <template x-for="req in requests" :key="req.id">
-                        <div class="bg-[#141A32] rounded-2xl border border-white/10 flex flex-col shadow-xl overflow-hidden hover:border-[#D68C29]/50 transition-all hover:transform hover:-translate-y-1">
-                            <div class="bg-gradient-to-l from-slate-800 to-[#141A32] p-4 flex justify-between items-center border-b border-white/10">
-                                <div><h3 class="text-sm font-black text-[#F5C678]" x-text="req.schools?.name"></h3><p class="text-[10px] text-slate-400 font-bold mt-1" x-text="req.schools?.type"></p></div>
-                            </div>
-                            <div class="p-4 flex-1 flex flex-col bg-black/20 justify-center items-center gap-3">
-                                <div class="text-slate-300 text-sm font-black text-center bg-black/40 px-4 py-2 rounded-xl border border-white/5 w-full" x-text="req.statement.includes('إحصاء المدرسة الشامل') ? '📊 إحصاء شامل' : '📝 طلب / إقرار'"></div>
-                                <span class="text-[10px] text-slate-500 font-bold" x-text="formatDate(req.created_at)"></span>
-                                <div class="flex gap-2 w-full mt-2">
-                                    <button @click="openRequestDetails(req)" class="btn flex-1 bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white font-bold border border-blue-600/50 rounded-xl h-10 min-h-0 text-xs">عرض التفاصيل 👁️</button>
-                                    <button @click="deleteRequest(req.id)" class="btn bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white font-bold border border-red-600/50 rounded-xl px-3 h-10 min-h-0" title="حذف">🗑️</button>
+            <div x-show="activeTab === 'requests'" x-transition x-cloak>
+                <div class="glass-panel p-4 md:p-6 border-t-4 border-t-green-500">
+                    <h2 class="text-lg md:text-2xl font-black text-white mb-6">صندوق الطلبات والإحصائيات الواردة</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <template x-for="req in requests" :key="req.id">
+                            <div class="bg-[#141A32] rounded-2xl border border-white/10 flex flex-col shadow-xl overflow-hidden hover:border-[#D68C29]/50 transition-all hover:transform hover:-translate-y-1">
+                                <div class="bg-gradient-to-l from-slate-800 to-[#141A32] p-4 flex justify-between items-center border-b border-white/10">
+                                    <div><h3 class="text-sm font-black text-[#F5C678]" x-text="req.schools?.name"></h3><p class="text-[10px] text-slate-400 font-bold mt-1" x-text="req.schools?.type"></p></div>
+                                </div>
+                                <div class="p-4 flex-1 flex flex-col bg-black/20 justify-center items-center gap-3">
+                                    <div class="text-slate-300 text-sm font-black text-center bg-black/40 px-4 py-2 rounded-xl border border-white/5 w-full" x-text="req.statement.includes('إحصاء المدرسة الشامل') ? '📊 إحصاء شامل' : '📝 طلب / إقرار'"></div>
+                                    <span class="text-[10px] text-slate-500 font-bold" x-text="formatDate(req.created_at)"></span>
+                                    <div class="flex gap-2 w-full mt-2">
+                                        <button @click="openRequestDetails(req)" class="btn flex-1 bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white font-bold border border-blue-600/50 rounded-xl h-10 min-h-0 text-xs">عرض التفاصيل 👁️</button>
+                                        <button @click="deleteRequest(req.id)" class="btn bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white font-bold border border-red-600/50 rounded-xl px-3 h-10 min-h-0" title="حذف">🗑️</button>
+                                    </div>
                                 </div>
                             </div>
+                        </template>
+                        <p x-show="requests.length === 0" class="col-span-full text-center py-10 text-sm font-bold text-slate-500">لا توجد طلبات أو إحصائيات واردة حالياً.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div x-show="activeTab === 'messages'" x-transition x-cloak>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <div class="glass-panel p-4 md:p-6 lg:col-span-1 border-t-4 border-t-purple-500 h-fit">
+                        <h2 class="text-base font-black text-white mb-4">إرسال نشرة</h2>
+                        <div class="space-y-3">
+                            <select x-model="newMessage.school_id" class="select select-sm w-full input-light"><option value="">📢 للجميع</option><template x-for="school in schools" :key="school.id"><option :value="school.id" x-text="school.name"></option></template></select>
+                            <textarea x-model="newMessage.content" class="textarea textarea-sm w-full input-light h-20" placeholder="اكتب النشرة أو التوجيه هنا..."></textarea>
+                            <input type="file" id="msgFileInput" @change="newMessage.file = $event.target.files[0]" class="file-input file-input-sm file-input-bordered w-full input-light" accept="image/*,.pdf,.doc,.docx" />
+                            <button @click="sendMessage()" class="btn btn-sm w-full bg-purple-600 hover:bg-purple-700 text-white border-none h-10"><span x-show="!loading">إرسال 🚀</span><span x-show="loading" class="loading loading-spinner loading-xs"></span></button>
                         </div>
+                    </div>
+                    <div class="glass-panel p-4 md:p-6 lg:col-span-2 border-t-4 border-t-blue-500"><h2 class="text-base font-black text-white mb-4">سجل المراسلات</h2><div class="space-y-3 max-h-[400px] overflow-y-auto custom-scrollbar pr-2"><template x-for="msg in messagesList" :key="msg.id"><div class="bg-black/30 p-4 rounded-xl border border-white/5"><div class="flex justify-between border-b border-white/10 pb-2 mb-2"><span class="text-[10px] text-purple-400 font-bold bg-purple-500/20 px-2 py-1 rounded" x-text="msg.schools ? msg.schools.name : 'تعميم للكل'"></span><span class="text-[10px] text-slate-400" x-text="formatDate(msg.created_at)"></span></div><p class="text-white text-xs whitespace-pre-wrap leading-relaxed" x-text="msg.message"></p><div class="mt-3 pt-2 border-t border-white/5 flex justify-between items-center"><template x-if="msg.file_url"><a :href="msg.file_url" target="_blank" class="text-[10px] text-blue-400 font-bold">المرفق 📎</a></template><span x-show="!msg.file_url" class="text-[10px] text-slate-500">بدون مرفق</span><button @click="deleteMessage(msg.id)" class="text-[10px] text-red-500 font-bold">حذف 🗑️</button></div></div></template><p x-show="messagesList.length === 0" class="text-center text-slate-500 py-10 text-sm">لا توجد رسائل سابقة.</p></div></div>
+                </div>
+            </div>
+
+            <div x-show="activeTab === 'logs'" x-transition x-cloak>
+                <div class="glass-panel p-4 md:p-6 border-t-4 border-t-indigo-500 max-w-2xl mx-auto">
+                    <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-2"><h2 class="text-lg font-black text-white">سجل نشاط النظام</h2></div>
+                    <div class="space-y-2 max-h-[50vh] overflow-y-auto custom-scrollbar pr-4">
+                        <div class="text-center py-10 text-xs text-slate-500">السجل فارغ.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div x-show="activeTab === 'settings'" x-transition x-cloak>
+                <div class="max-w-xl mx-auto">
+                    <div class="glass-panel p-4 md:p-6 border-t-4 border-t-[#F5C678] mb-6">
+                        <h2 class="text-lg font-black text-white mb-4">إعدادات شريط الإعلانات</h2>
+                        <textarea x-model="marquee.text" class="textarea w-full input-light h-20 text-sm" placeholder="اكتب النص الذي سيظهر في الشريط المتحرك للمدارس..."></textarea>
+                        <button @click="saveMarqueeSettings" class="btn w-full btn-gold mt-4 font-bold">حفظ الإعدادات 💾</button>
+                    </div>
+
+                    <div class="bg-red-500/10 p-4 md:p-6 rounded-3xl border border-red-500/30 shadow-lg">
+                        <h2 class="text-xl font-black text-red-500 mb-4 flex items-center gap-2"><span>⚠️</span> منطقة الخطر (Danger Zone)</h2>
+                        <div class="space-y-4">
+                            <div class="bg-black/30 p-4 rounded-xl border border-red-500/20 flex flex-col md:flex-row justify-between items-center gap-4">
+                                <div><h3 class="text-white font-bold text-sm">تصفير بيانات النظام (مع الاحتفاظ بالمدارس)</h3><p class="text-[10px] text-slate-400 mt-1 leading-relaxed">مسح جميع المديرين والوكلاء والطلبات وتصفير إحصائيات المدارس وكود المرور للبدء من جديد.</p></div>
+                                <button @click="resetSystemData()" class="btn btn-sm md:btn-md btn-warning text-black font-bold shrink-0">تصفير النظام 🔄</button>
+                            </div>
+                            <div class="bg-black/30 p-4 rounded-xl border border-red-500/20 flex flex-col md:flex-row justify-between items-center gap-4">
+                                <div><h3 class="text-white font-bold text-sm">مسح شامل (حذف كل شيء)</h3><p class="text-[10px] text-slate-400 mt-1 leading-relaxed">مسح أسماء المدارس وجميع بيانات النظام من الجذور.</p></div>
+                                <button @click="wipeAllData()" class="btn btn-sm md:btn-md btn-error text-white font-bold shrink-0">مسح شامل 🗑️</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <div class="print-layer" x-show="isPrinting" x-cloak>
+        
+        <div x-show="printType === 'master'">
+            <div class="print-header">
+                <div class="print-header-text print-header-right">محافظة سوهاج<br>مديرية التربية والتعليم<br>إدارة سوهاج التعليمية</div>
+                <div><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Coat_of_arms_of_Egypt_%28Official%29.svg/120px-Coat_of_arms_of_Egypt_%28Official%29.svg.png" alt="شعار"></div>
+                <div class="print-header-text print-header-left">تنسيق التعليم الإعدادي والثانوي<br>تاريخ الطباعة: <span x-text="new Date().toLocaleDateString('ar-EG')"></span></div>
+            </div>
+            <div class="print-title">التقرير الإحصائي الشامل للمدارس</div>
+            <div class="print-meta">المرحلة: <span x-text="selectedStage"></span> | حالة المدارس: <span x-text="statusFilter === 'all' ? 'الكل' : (statusFilter === 'active' ? 'مفعلة ومكتملة' : (statusFilter === 'pending' ? 'بيانات ناقصة' : 'غير مفعلة'))"></span></div>
+            <table class="print-table">
+                <thead>
+                    <tr><th width="4%">م</th><th width="20%">اسم المدرسة</th><th width="14%">مدير المدرسة</th><th width="6%">وكلاء</th><th width="8%">معلمين</th><th width="8%">إداريين</th><th width="8%">عمال</th><th width="8%">بنين</th><th width="8%">بنات</th><th width="10%" class="total-col">الإجمالي</th></tr>
+                </thead>
+                <tbody>
+                    <template x-for="(school, index) in filteredSchools" :key="school.id">
+                        <tr><td x-text="index + 1"></td><td class="school-name" x-text="school.name"></td><td x-text="school.manager_name"></td><td x-text="school.agents_count || '-'"></td><td x-text="school.teachers_count || '-'"></td><td x-text="school.admins_count || '-'"></td><td x-text="school.workers_count || '-'"></td><td x-text="school.students_count || '-'"></td><td x-text="school.female_students_count || '-'"></td><td class="total-col" x-text="(Number(school.students_count) || 0) + (Number(school.female_students_count) || 0) || '-'"></td></tr>
                     </template>
-                    <p x-show="requests.length === 0" class="col-span-full text-center py-10 text-sm font-bold text-slate-500">لا توجد طلبات أو إحصائيات واردة حالياً.</p>
-                </div>
+                </tbody>
+            </table>
+            <div class="print-signatures">
+                <div>إعداد التنسيق<p class="sign-line">.......................................</p></div>
+                <div>رئيس قسم التنسيق<p class="sign-line">.......................................</p></div>
+                <div>يعتمد ،،، مدير عام الإدارة<p class="sign-line">.......................................</p></div>
             </div>
         </div>
 
-        <div x-show="activeTab === 'messages'" x-transition x-cloak>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <div class="glass-panel p-4 md:p-6 lg:col-span-1 border-t-4 border-t-purple-500 h-fit">
-                    <h2 class="text-base font-black text-white mb-4">إرسال نشرة</h2>
-                    <div class="space-y-3">
-                        <select x-model="newMessage.school_id" class="select select-sm w-full input-light"><option value="">📢 للجميع</option><template x-for="school in schools" :key="school.id"><option :value="school.id" x-text="school.name"></option></template></select>
-                        <textarea x-model="newMessage.content" class="textarea textarea-sm w-full input-light h-20" placeholder="اكتب النشرة أو التوجيه هنا..."></textarea>
-                        <input type="file" id="msgFileInput" @change="newMessage.file = $event.target.files[0]" class="file-input file-input-sm file-input-bordered w-full input-light" accept="image/*,.pdf,.doc,.docx" />
-                        <button @click="sendMessage()" class="btn btn-sm w-full bg-purple-600 hover:bg-purple-700 text-white border-none h-10"><span x-show="!loading">إرسال 🚀</span><span x-show="loading" class="loading loading-spinner loading-xs"></span></button>
-                    </div>
-                </div>
-                <div class="glass-panel p-4 md:p-6 lg:col-span-2 border-t-4 border-t-blue-500"><h2 class="text-base font-black text-white mb-4">سجل المراسلات</h2><div class="space-y-3 max-h-[400px] overflow-y-auto custom-scrollbar pr-2"><template x-for="msg in messagesList" :key="msg.id"><div class="bg-black/30 p-4 rounded-xl border border-white/5"><div class="flex justify-between border-b border-white/10 pb-2 mb-2"><span class="text-[10px] text-purple-400 font-bold bg-purple-500/20 px-2 py-1 rounded" x-text="msg.schools ? msg.schools.name : 'تعميم للكل'"></span><span class="text-[10px] text-slate-400" x-text="formatDate(msg.created_at)"></span></div><p class="text-white text-xs whitespace-pre-wrap leading-relaxed" x-text="msg.message"></p><div class="mt-3 pt-2 border-t border-white/5 flex justify-between items-center"><template x-if="msg.file_url"><a :href="msg.file_url" target="_blank" class="text-[10px] text-blue-400 font-bold">المرفق 📎</a></template><span x-show="!msg.file_url" class="text-[10px] text-slate-500">بدون مرفق</span><button @click="deleteMessage(msg.id)" class="text-[10px] text-red-500 font-bold">حذف 🗑️</button></div></div></template><p x-show="messagesList.length === 0" class="text-center text-slate-500 py-10 text-sm">لا توجد رسائل سابقة.</p></div></div>
-            </div>
-        </div>
-
-        <div x-show="activeTab === 'logs'" x-transition x-cloak>
-            <div class="glass-panel p-4 md:p-6 border-t-4 border-t-indigo-500 max-w-2xl mx-auto">
-                <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-2"><h2 class="text-lg font-black text-white">سجل نشاط النظام</h2></div>
-                <div class="space-y-2 max-h-[50vh] overflow-y-auto custom-scrollbar pr-4">
-                    <div class="text-center py-10 text-xs text-slate-500">السجل فارغ.</div>
-                </div>
-            </div>
-        </div>
-
-        <div x-show="activeTab === 'settings'" x-transition x-cloak>
-            <div class="max-w-xl mx-auto">
-                <div class="glass-panel p-4 md:p-6 border-t-4 border-t-[#F5C678] mb-6">
-                    <h2 class="text-lg font-black text-white mb-4">إعدادات شريط الإعلانات</h2>
-                    <textarea x-model="marquee.text" class="textarea w-full input-light h-20 text-sm" placeholder="اكتب النص الذي سيظهر في الشريط المتحرك للمدارس..."></textarea>
-                    <button @click="saveMarqueeSettings" class="btn w-full btn-gold mt-4 font-bold">حفظ الإعدادات 💾</button>
-                </div>
-
-                <div class="bg-red-500/10 p-4 md:p-6 rounded-3xl border border-red-500/30 shadow-lg">
-                    <h2 class="text-xl font-black text-red-500 mb-4 flex items-center gap-2"><span>⚠️</span> منطقة الخطر (Danger Zone)</h2>
-                    <div class="space-y-4">
-                        <div class="bg-black/30 p-4 rounded-xl border border-red-500/20 flex flex-col md:flex-row justify-between items-center gap-4">
-                            <div><h3 class="text-white font-bold text-sm">تصفير بيانات النظام (مع الاحتفاظ بالمدارس)</h3><p class="text-[10px] text-slate-400 mt-1 leading-relaxed">مسح جميع المديرين والوكلاء والطلبات وتصفير إحصائيات المدارس وكود المرور للبدء من جديد.</p></div>
-                            <button @click="resetSystemData()" class="btn btn-sm md:btn-md btn-warning text-black font-bold shrink-0">تصفير النظام 🔄</button>
-                        </div>
-                        <div class="bg-black/30 p-4 rounded-xl border border-red-500/20 flex flex-col md:flex-row justify-between items-center gap-4">
-                            <div><h3 class="text-white font-bold text-sm">مسح شامل (حذف كل شيء)</h3><p class="text-[10px] text-slate-400 mt-1 leading-relaxed">مسح أسماء المدارس وجميع بيانات النظام من الجذور.</p></div>
-                            <button @click="wipeAllData()" class="btn btn-sm md:btn-md btn-error text-white font-bold shrink-0">مسح شامل 🗑️</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="printArea" class="print-only">
-        <div class="print-header">
-            <div class="print-header-text print-header-right">محافظة سوهاج<br>مديرية التربية والتعليم<br>إدارة سوهاج التعليمية</div>
-            <div><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Coat_of_arms_of_Egypt_%28Official%29.svg/120px-Coat_of_arms_of_Egypt_%28Official%29.svg.png" alt="شعار"></div>
-            <div class="print-header-text print-header-left">تنسيق التعليم الإعدادي والثانوي<br>التاريخ: <span x-text="new Date().toLocaleDateString('ar-EG')"></span></div>
-        </div>
-        <div class="print-title">التقرير الإحصائي الشامل للمدارس</div>
-        <div class="print-meta">المرحلة: <span x-text="selectedStage"></span> | حالة المدارس: <span x-text="statusFilter === 'all' ? 'الكل' : (statusFilter === 'active' ? 'مفعلة ومكتملة' : (statusFilter === 'pending' ? 'بيانات ناقصة' : 'غير مفعلة'))"></span></div>
-        <table class="print-table">
-            <thead>
-                <tr>
-                    <th width="4%">م</th>
-                    <th width="20%">اسم المدرسة</th>
-                    <th width="14%">مدير المدرسة</th>
-                    <th width="6%">وكلاء</th>
-                    <th width="8%">معلمين</th>
-                    <th width="8%">إداريين</th>
-                    <th width="8%">عمال</th>
-                    <th width="8%">بنين</th>
-                    <th width="8%">بنات</th>
-                    <th width="10%" class="total-col">الإجمالي</th>
-                </tr>
-            </thead>
-            <tbody>
-                <template x-for="(school, index) in filteredSchools" :key="school.id">
-                    <tr>
-                        <td x-text="index + 1"></td>
-                        <td class="school-name" x-text="school.name"></td>
-                        <td x-text="school.manager_name" :style="!school.has_manager ? 'color: #888;' : ''"></td>
-                        <td x-text="school.agents_count || '-'"></td>
-                        <td x-text="school.teachers_count || '-'"></td>
-                        <td x-text="school.admins_count || '-'"></td>
-                        <td x-text="school.workers_count || '-'"></td>
-                        <td x-text="school.students_count || '-'"></td>
-                        <td x-text="school.female_students_count || '-'"></td>
-                        <td class="total-col" x-text="(Number(school.students_count) || 0) + (Number(school.female_students_count) || 0) || '-'"></td>
-                    </tr>
-                </template>
-            </tbody>
-        </table>
-        <div class="print-signatures">
-            <div>إعداد التنسيق<p class="sign-line">.......................................</p></div>
-            <div>رئيس قسم التنسيق<p class="sign-line">.......................................</p></div>
-            <div>يعتمد ،،، مدير عام الإدارة<p class="sign-line">.......................................</p></div>
-        </div>
+        <div x-show="printType === 'single'" x-html="singlePrintContent"></div>
+        
     </div>
 
     <script>
@@ -458,9 +438,13 @@
                 showAddSchoolModal: false, newSchool: { name: '', type: 'إعدادي' }, alertModal: { show: false, type: 'success', title: '', message: '' },
                 
                 showRequestModal: false, selectedRequest: null,
-                activityLogs: [], confirmModal: { show: false, title: '', message: '', actionType: '', actionPayload: null },
+                
+                // 🌟 متغيرات الحماية الإضافية (PIN) 🌟
+                dangerPin: '', 
+                confirmModal: { show: false, title: '', message: '', actionType: '', actionPayload: null, requiresPin: false },
                 
                 backupPin: null, backupSchoolId: null,
+                isPrinting: false, printType: '', singlePrintContent: '',
 
                 async initApp() { 
                     if (this.isLightMode) document.body.classList.add('light-theme');
@@ -471,6 +455,7 @@
                 openRequestDetails(req) { this.selectedRequest = req; this.showRequestModal = true; },
                 closeRequestDetails() { this.showRequestModal = false; setTimeout(() => { this.selectedRequest = null; }, 300); },
 
+                // تنسيق العرض للموقع
                 formatReport(text) {
                     if (!text || !text.includes('إحصاء المدرسة الشامل')) return `<div class="whitespace-pre-wrap text-base font-bold text-slate-300 p-4 bg-black/20 rounded-xl border border-white/5">${text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>`;
                     let html = text
@@ -487,6 +472,169 @@
                         .replace(/📚 إحصاء المواد الأساسية:/g, '<h5 class="font-black text-green-400 mt-8 mb-4 text-lg flex items-center gap-2 border-r-4 border-green-400 pr-3 bg-green-500/5 py-2 rounded-l-xl"><span>📚</span> عجز وزيادة المواد الأساسية</h5><div class="space-y-3">')
                         .replace(/▪️ (.*?): أصلي\((.*?)\) \| منتدب\((.*?)\) \| بالحصة\((.*?)\) \| 🔴 عجز\((.*?)\) \| 🟢 زيادة\((.*?)\)/g, '<div class="bg-black/30 p-4 rounded-2xl border border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 hover:bg-black/40 transition-colors"><span class="font-black text-[#F5C678] text-base w-full md:w-auto text-center md:text-right border-b md:border-b-0 border-white/10 pb-3 md:pb-0 shrink-0">$1</span><div class="flex gap-2 flex-wrap justify-center w-full md:w-auto"><span class="bg-black/40 border border-white/5 px-3 py-1.5 rounded-lg text-xs text-slate-400 font-bold">أصلي: <b class="text-white text-sm">$2</b></span><span class="bg-black/40 border border-white/5 px-3 py-1.5 rounded-lg text-xs text-slate-400 font-bold">منتدب: <b class="text-white text-sm">$3</b></span><span class="bg-black/40 border border-white/5 px-3 py-1.5 rounded-lg text-xs text-slate-400 font-bold">حصة: <b class="text-white text-sm">$4</b></span></div><div class="flex gap-2 w-full md:w-auto justify-center md:justify-end shrink-0"><span class="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-1.5 rounded-lg text-xs font-black flex-1 md:flex-none text-center shadow-inner">عجز: <b class="text-base">$5</b></span><span class="bg-green-500/10 border border-green-500/30 text-green-400 px-4 py-1.5 rounded-lg text-xs font-black flex-1 md:flex-none text-center shadow-inner">زيادة: <b class="text-base">$6</b></span></div></div>');
                     if (html.includes('<div class="space-y-3">')) { html += '</div>'; } return html;
+                },
+
+                setPrintOrientation(orientation) {
+                    let style = document.getElementById('dynamic-print-style');
+                    if (!style) {
+                        style = document.createElement('style');
+                        style.id = 'dynamic-print-style';
+                        document.head.appendChild(style);
+                    }
+                    style.innerHTML = `@media print { @page { size: A4 ${orientation} !important; margin: 10mm !important; } }`;
+                },
+
+                async sendRejectionMessage(schoolId) {
+                    if (!schoolId) return;
+                    this.loadingAction = true;
+                    try {
+                        const msgText = "عناية السيد مدير المدرسة..\nيرجى العلم أن التقرير الإحصائي الذي تم إرساله غير مكتمل أو يحتوي على بيانات غير دقيقة.\nبرجاء التكرم بمراجعة (إحصاء المدرسة الشامل) من حسابكم واستكمال البيانات الناقصة وإعادة الإرسال مرة أخرى للتنسيق.";
+                        await client.from('messages').insert([{ school_id: schoolId, message: msgText }]);
+                        this.showAlert('تم الإرسال ✅', 'تم إرسال رسالة تنبيه للمدرسة بضرورة استكمال بياناتها.', 'success');
+                        this.closeRequestDetails();
+                    } catch (e) {
+                        this.showAlert('خطأ', 'حدث خطأ أثناء الإرسال.', 'error');
+                    } finally {
+                        this.loadingAction = false;
+                    }
+                },
+
+                printMasterReport() {
+                    if (this.filteredSchools.length === 0) return this.showAlert('تنبيه', 'لا توجد بيانات لطباعتها', 'error');
+                    this.setPrintOrientation('landscape'); 
+                    this.printType = 'master';
+                    this.isPrinting = true;
+                    setTimeout(() => { 
+                        window.print(); 
+                        this.isPrinting = false; 
+                    }, 300);
+                },
+
+                printIndividualReport() {
+                    let req = this.selectedRequest;
+                    if (!req) return;
+
+                    let statement = req.statement;
+
+                    let schoolName = statement.match(/🏫 مدرسة: (.*)/)?.[1] || '';
+                    let managerInfo = statement.match(/👨‍💼 المدير: (.*)/)?.[1] || '';
+                    
+                    let agentsMatch = statement.match(/👨‍🏫 الوكيل .*/g) || [];
+                    let agentsHtml = agentsMatch.length > 0 
+                        ? agentsMatch.map(a => `<p style="margin: 5px 0; font-size: 14px; font-weight: bold;">${a}</p>`).join('')
+                        : `<p style="margin: 5px 0; font-size: 14px; font-weight: bold;">لا يوجد وكلاء مسجلين.</p>`;
+
+                    let teachers = statement.match(/👨‍🏫 المعلمين: (.*?)\s*\|/)?.[1] || '0';
+                    let admins = statement.match(/👨‍💻 الإداريين: (.*?)\s*\|/)?.[1] || '0';
+                    let workers = statement.match(/🧹 العمال: (.*)/)?.[1] || '0';
+
+                    let boys = statement.match(/👦 البنين: (.*?)\s*\|/)?.[1] || '0';
+                    let girls = statement.match(/👧 البنات: (.*?)\s*\|/)?.[1] || '0';
+                    let classes = statement.match(/🚪 الفصول: (.*)/)?.[1] || '0';
+
+                    let subjectsHtml = '';
+                    let subjectsMatch = statement.match(/▪️ (.*?): أصلي\((.*?)\) \| منتدب\((.*?)\) \| بالحصة\((.*?)\) \| 🔴 عجز\((.*?)\) \| 🟢 زيادة\((.*?)\)/g) || [];
+                    
+                    subjectsMatch.forEach(sub => {
+                        let parts = sub.match(/▪️ (.*?): أصلي\((.*?)\) \| منتدب\((.*?)\) \| بالحصة\((.*?)\) \| 🔴 عجز\((.*?)\) \| 🟢 زيادة\((.*?)\)/);
+                        if(parts) {
+                            subjectsHtml += `<tr>
+                                <td style="border: 1px solid #000; padding: 8px; font-weight: bold; background: #f1f5f9; -webkit-print-color-adjust: exact; color-adjust: exact;">${parts[1]}</td>
+                                <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">${parts[2]}</td>
+                                <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">${parts[3]}</td>
+                                <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">${parts[4]}</td>
+                                <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">${parts[5]}</td>
+                                <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">${parts[6]}</td>
+                            </tr>`;
+                        }
+                    });
+
+                    this.singlePrintContent = `
+                        <div style="font-family: 'Cairo', sans-serif; direction: rtl; color: #000; padding: 0 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #000; padding-bottom: 10px; margin-bottom: 20px;">
+                                <div style="text-align: right; font-weight: 900; font-size: 14px; line-height: 1.5;">
+                                    محافظة سوهاج<br>مديرية التربية والتعليم<br>إدارة سوهاج التعليمية
+                                </div>
+                                <div style="text-align: center;">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Coat_of_arms_of_Egypt_%28Official%29.svg/120px-Coat_of_arms_of_Egypt_%28Official%29.svg.png" style="width: 60px;">
+                                </div>
+                                <div style="text-align: left; font-weight: 900; font-size: 14px; line-height: 1.5;">
+                                    تنسيق التعليم الإعدادي والثانوي<br>تاريخ الطباعة: ${new Date().toLocaleDateString('ar-EG')}
+                                </div>
+                            </div>
+
+                            <h2 style="text-align: center; font-size: 22px; font-weight: 900; text-decoration: underline; margin-bottom: 20px;">التقرير الإحصائي الشامل للمدرسة</h2>
+
+                            <div style="border: 2px solid #000; padding: 15px; margin-bottom: 20px; border-radius: 8px; background: #fff;">
+                                <h3 style="margin: 0 0 10px 0; font-size: 18px; font-weight: 900;">🏫 مدرسة: ${schoolName}</h3>
+                                <p style="margin: 5px 0; font-size: 14px; font-weight: bold;">👨‍💼 المدير: ${managerInfo}</p>
+                                ${agentsHtml}
+                            </div>
+
+                            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                                <div style="flex: 1;">
+                                    <h4 style="font-size: 16px; font-weight: 900; background: #e2e8f0; padding: 8px; border: 1px solid #000; text-align: center; margin: 0 0 10px 0; -webkit-print-color-adjust: exact; color-adjust: exact;">👥 قوة العمل الأساسية</h4>
+                                    <table style="width: 100%; border-collapse: collapse; text-align: center; border: 1px solid #000;">
+                                        <tr style="background: #f8fafc; -webkit-print-color-adjust: exact; color-adjust: exact;"><th style="border: 1px solid #000; padding: 8px;">معلمين</th><th style="border: 1px solid #000; padding: 8px;">إداريين</th><th style="border: 1px solid #000; padding: 8px;">عمال</th></tr>
+                                        <tr><td style="border: 1px solid #000; padding: 8px; font-weight: bold; font-size: 16px;">${teachers}</td><td style="border: 1px solid #000; padding: 8px; font-weight: bold; font-size: 16px;">${admins}</td><td style="border: 1px solid #000; padding: 8px; font-weight: bold; font-size: 16px;">${workers}</td></tr>
+                                    </table>
+                                </div>
+                                <div style="flex: 1;">
+                                    <h4 style="font-size: 16px; font-weight: 900; background: #e2e8f0; padding: 8px; border: 1px solid #000; text-align: center; margin: 0 0 10px 0; -webkit-print-color-adjust: exact; color-adjust: exact;">🎓 الطلاب والفصول</h4>
+                                    <table style="width: 100%; border-collapse: collapse; text-align: center; border: 1px solid #000;">
+                                        <tr style="background: #f8fafc; -webkit-print-color-adjust: exact; color-adjust: exact;"><th style="border: 1px solid #000; padding: 8px;">بنين</th><th style="border: 1px solid #000; padding: 8px;">بنات</th><th style="border: 1px solid #000; padding: 8px;">فصول</th></tr>
+                                        <tr><td style="border: 1px solid #000; padding: 8px; font-weight: bold; font-size: 16px;">${boys}</td><td style="border: 1px solid #000; padding: 8px; font-weight: bold; font-size: 16px;">${girls}</td><td style="border: 1px solid #000; padding: 8px; font-weight: bold; font-size: 16px;">${classes}</td></tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <h4 style="font-size: 16px; font-weight: 900; background: #e2e8f0; padding: 8px; border: 1px solid #000; text-align: center; margin: 0 0 10px 0; -webkit-print-color-adjust: exact; color-adjust: exact;">📚 إحصاء المواد الأساسية</h4>
+                            <table style="width: 100%; border-collapse: collapse; text-align: center; border: 1px solid #000;">
+                                <tr style="background: #e2e8f0; -webkit-print-color-adjust: exact; color-adjust: exact;">
+                                    <th style="border: 1px solid #000; padding: 8px;">المادة</th>
+                                    <th style="border: 1px solid #000; padding: 8px;">أصلي</th>
+                                    <th style="border: 1px solid #000; padding: 8px;">منتدب</th>
+                                    <th style="border: 1px solid #000; padding: 8px;">بالحصة</th>
+                                    <th style="border: 1px solid #000; padding: 8px;">العجز</th>
+                                    <th style="border: 1px solid #000; padding: 8px;">الزيادة</th>
+                                </tr>
+                                ${subjectsHtml}
+                            </table>
+
+                            <div style="margin-top: 40px; display: flex; justify-content: space-around; text-align: center; font-weight: 900; font-size: 15px;">
+                                <div>توقيع مدير المدرسة<p style="margin-top: 30px; color: #888;">.......................................</p></div>
+                                <div>يعتمد ،،، مدير عام الإدارة<p style="margin-top: 30px; color: #888;">.......................................</p></div>
+                            </div>
+                        </div>
+                    `;
+
+                    this.setPrintOrientation('portrait'); // تحديد ورقة بالطول
+                    this.printType = 'single';
+                    this.isPrinting = true;
+                    setTimeout(() => { 
+                        window.print(); 
+                        this.isPrinting = false; 
+                    }, 300);
+                },
+
+                // 🌟 دالة التأمين لمنع الانهيار 🌟
+                async openSchoolDetails(school) {
+                    try {
+                        this.selectedSchool = school; 
+                        this.schoolView = 'details';
+                        
+                        let { data: mgr } = await client.from('users').select('*').eq('school_id', school.id).eq('role', 'manager').maybeSingle(); 
+                        this.schoolManager = mgr;
+                        
+                        let { data: agts } = await client.from('users').select('*').eq('school_id', school.id).eq('role', 'agent'); 
+                        this.schoolAgents = agts || [];
+                        
+                        this.selectedSchoolRequestsCount = this.requests.filter(r => r.school_id === school.id).length || 0;
+                        this.selectedSchoolMessagesCount = this.messagesList.filter(m => m.school_id === school.id || m.school_id === null).length || 0;
+                    } catch(e) {
+                        console.error(e);
+                        this.showAlert('خطأ', 'حدث خطأ أثناء فتح بيانات المدرسة', 'error');
+                    }
                 },
 
                 async fetchSchoolsData() {
@@ -523,18 +671,6 @@
                     const encodedUri = encodeURI(csvContent); const link = document.createElement("a"); link.setAttribute("href", encodedUri); link.setAttribute("download", `تقرير_مدارس_${this.selectedStage}_${new Date().toLocaleDateString('ar-EG')}.csv`); document.body.appendChild(link); link.click(); document.body.removeChild(link);
                 },
 
-                exportToPDF() { if (this.filteredSchools.length === 0) return this.showAlert('تنبيه', 'لا توجد بيانات لطباعتها', 'error'); window.print(); },
-
-                async openSchoolDetails(school) {
-                    this.selectedSchool = school; this.schoolView = 'details';
-                    try {
-                        let { data: mgr } = await client.from('users').select('*').eq('school_id', school.id).eq('role', 'manager').maybeSingle(); this.schoolManager = mgr;
-                        let { data: agts } = await client.from('users').select('*').eq('school_id', school.id).eq('role', 'agent'); this.schoolAgents = agts || [];
-                        this.selectedSchoolRequestsCount = this.requests.filter(r => r.school_id === school.id).length || 0;
-                        this.selectedSchoolMessagesCount = this.messagesList.filter(m => m.school_id === school.id || m.school_id === null).length || 0;
-                    } catch(e) {}
-                },
-
                 async updateSchoolType(schoolId, newType) { const { error } = await client.from('schools').update({ type: newType }).eq('id', schoolId); if (!error) { const index = this.schools.findIndex(s => s.id === schoolId); if (index !== -1) { this.schools[index].type = newType; } this.showAlert('نجاح', 'تم تغيير المرحلة.', 'success'); } },
                 async addNewSchool() { if (!this.newSchool.name.trim()) return; this.loading = true; const { error } = await client.from('schools').insert([{ name: this.newSchool.name, type: this.newSchool.type, manager_pin: '0000' }]); this.loading = false; if (!error) { this.showAddSchoolModal = false; this.newSchool.name = ''; this.fetchSchoolsData(); } },
                 async fetchRequests() { try { const { data } = await client.from('coordination_requests').select(`*, schools (name, type)`).order('created_at', { ascending: false }); this.requests = data || []; } catch(e){} },
@@ -543,24 +679,31 @@
                 async fetchMarqueeSettings() { try { let { data } = await client.from('settings').select('*').eq('id', 1).maybeSingle(); if (data) this.marquee = data; } catch(e){} },
                 async saveMarqueeSettings() { await client.from('settings').upsert({ id: 1, marquee_text: this.marquee.text }); this.showAlert('تم', 'تم الحفظ', 'success'); },
 
-                resetSystemData() { this.showConfirm('تحذير شديد!', 'هل أنت متأكد من تصفير إحصائيات كل المدارس ومسح جميع المديرين والوكلاء؟', 'resetSystem'); },
-                wipeAllData() { this.showConfirm('تحذير خطير جداً!', 'سيتم مسح المدارس والمستخدمين وكل شيء في قاعدة البيانات نهائياً. هل أنت متأكد؟', 'wipeAll'); },
-                showConfirm(title, message, actionType, actionPayload = null) { this.confirmModal = { show: true, title, message, actionType, actionPayload }; },
-                closeConfirm() { this.confirmModal.show = false; },
+                showConfirm(title, message, actionType, actionPayload = null, requiresPin = false) { 
+                    this.dangerPin = '';
+                    this.confirmModal = { show: true, title, message, actionType, actionPayload, requiresPin }; 
+                },
+                closeConfirm() { 
+                    this.confirmModal.show = false; 
+                    setTimeout(() => { this.dangerPin = ''; }, 300);
+                },
                 
+                resetSystemData() { this.showConfirm('تحذير شديد!', 'هل أنت متأكد من تصفير إحصائيات كل المدارس ومسح جميع المديرين والوكلاء؟', 'resetSystem', null, true); },
+                wipeAllData() { this.showConfirm('تحذير خطير جداً!', 'سيتم مسح المدارس والمستخدمين وكل شيء في قاعدة البيانات نهائياً. هل أنت متأكد؟', 'wipeAll', null, true); },
+
                 async executeConfirm() { 
-                    const { actionType, actionPayload } = this.confirmModal;
+                    const { actionType, actionPayload, requiresPin } = this.confirmModal;
+                    
+                    if (requiresPin && this.dangerPin !== '1980') {
+                        this.showAlert('فشل الأمان', 'كود المسح غير صحيح! تم إلغاء العملية لحماية البيانات.', 'error');
+                        this.closeConfirm();
+                        return;
+                    }
+
                     this.loadingAction = true;
                     try {
                         if (actionType === 'deleteSchool') { await client.from('users').delete().eq('school_id', actionPayload); await client.from('coordination_requests').delete().eq('school_id', actionPayload); await client.from('messages').delete().eq('school_id', actionPayload); await client.from('schools').delete().eq('id', actionPayload); this.schoolView = 'grid'; this.schools = this.schools.filter(s => s.id !== actionPayload); this.showAlert('تم الحذف', 'تم مسح المدرسة نهائياً.', 'success'); }
-                        else if (actionType === 'resetPin') { 
-                            this.backupPin = this.selectedSchool.manager_pin;
-                            this.backupSchoolId = actionPayload;
-                            await client.from('schools').update({ manager_pin: '0000' }).eq('id', actionPayload); 
-                            this.selectedSchool.manager_pin = '0000'; 
-                            this.fetchSchoolsData(); 
-                            this.showAlert('تم التصفير', 'تم إعادة الكود. يمكنك التراجع في حالة الخطأ ↩️', 'success'); 
-                        }
+                        else if (actionType === 'resetPin') { this.backupPin = this.selectedSchool.manager_pin; this.backupSchoolId = actionPayload; await client.from('schools').update({ manager_pin: '0000' }).eq('id', actionPayload); this.selectedSchool.manager_pin = '0000'; this.fetchSchoolsData(); this.showAlert('تم التصفير', 'تم إعادة الكود. يمكنك التراجع في حالة الخطأ ↩️', 'success'); }
                         else if (actionType === 'resetManager') { await client.from('users').delete().eq('mobile', actionPayload.mobile); await client.from('schools').update({ manager_pin: '0000' }).eq('id', actionPayload.schoolId); this.schoolManager = null; this.selectedSchool.manager_pin = '0000'; this.fetchSchoolsData(); this.showAlert('تمت الإزالة', 'تم مسح بيانات المدير بنجاح.', 'success'); }
                         else if (actionType === 'deleteAgent') { await client.from('users').delete().eq('mobile', actionPayload); this.schoolAgents = this.schoolAgents.filter(a => a.mobile !== actionPayload); this.fetchSchoolsData(); this.showAlert('تم الحذف', 'تم مسح الوكيل نهائياً.', 'success'); }
                         else if (actionType === 'deleteRequest') { await client.from('coordination_requests').delete().eq('id', actionPayload); this.requests = this.requests.filter(r => r.id !== actionPayload); this.showAlert('تم الحذف', 'تم مسح الطلب بنجاح.', 'success'); this.closeRequestDetails(); }
@@ -581,17 +724,17 @@
 
                 async undoResetPin() {
                     this.loadingAction = true;
-                    try {
-                        await client.from('schools').update({ manager_pin: this.backupPin }).eq('id', this.backupSchoolId);
-                        this.selectedSchool.manager_pin = this.backupPin;
-                        this.fetchSchoolsData();
-                        this.backupPin = null; this.backupSchoolId = null;
-                        this.showAlert('تم التراجع', 'تم استعادة كود المرور القديم بنجاح ✅', 'success');
+                    try { await client.from('schools').update({ manager_pin: this.backupPin }).eq('id', this.backupSchoolId); this.selectedSchool.manager_pin = this.backupPin; this.fetchSchoolsData(); this.backupPin = null; this.backupSchoolId = null; this.showAlert('تم التراجع', 'تم استعادة كود المرور القديم بنجاح ✅', 'success');
                     } catch (err) { this.showAlert('خطأ', 'حدث خطأ أثناء استعادة الكود', 'error'); } finally { this.loadingAction = false; }
                 },
 
                 async clearTable(tableName, idColumn = 'id') { const { data } = await client.from(tableName).select(idColumn); if (data && data.length > 0) { const ids = data.map(r => r[idColumn]); for (let i = 0; i < ids.length; i += 500) { await client.from(tableName).delete().in(idColumn, ids.slice(i, i + 500)); } } },
-                deleteSchool(id) { this.showConfirm('تأكيد الحذف', 'سيتم مسح المدرسة وكل المرتبط بها نهائياً!', 'deleteSchool', id); }, resetPin(id) { this.showConfirm('تأكيد التصفير', 'تصفير كود المدرسة إلى 0000؟', 'resetPin', id); }, resetManager(mobile, schoolId) { this.showConfirm('إزالة المدير', 'إزالة بيانات المدير وتصفير الكود؟', 'resetManager', {mobile, schoolId}); }, deleteAgent(mobile) { this.showConfirm('حذف الوكيل', 'حذف هذا الوكيل نهائياً؟', 'deleteAgent', mobile); }, deleteRequest(id) { this.showConfirm('تأكيد الحذف', 'حذف هذا الطلب نهائياً؟', 'deleteRequest', id); }, deleteMessage(id) { this.showConfirm('حذف الرسالة', 'هل أنت متأكد من حذف هذه الرسالة؟', 'deleteMessage', id); },
+                deleteSchool(id) { this.showConfirm('تأكيد الحذف', 'سيتم مسح المدرسة وكل المرتبط بها نهائياً!', 'deleteSchool', id); }, 
+                resetPin(id) { this.showConfirm('تأكيد التصفير', 'تصفير كود المدرسة إلى 0000؟', 'resetPin', id); }, 
+                resetManager(mobile, schoolId) { this.showConfirm('إزالة المدير', 'إزالة بيانات المدير وتصفير الكود؟', 'resetManager', {mobile, schoolId}); }, 
+                deleteAgent(mobile) { this.showConfirm('حذف الوكيل', 'حذف هذا الوكيل نهائياً؟', 'deleteAgent', mobile); }, 
+                deleteRequest(id) { this.showConfirm('تأكيد الحذف', 'حذف هذا الطلب نهائياً؟', 'deleteRequest', id); }, 
+                deleteMessage(id) { this.showConfirm('حذف الرسالة', 'هل أنت متأكد من حذف هذه الرسالة؟', 'deleteMessage', id); },
                 showAlert(title, message, type = 'success') { this.alertModal = { show: true, type, title, message }; }, closeAlert() { this.alertModal.show = false; },
                 
                 setupRealtimeListener() {
