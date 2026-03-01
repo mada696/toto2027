@@ -31,7 +31,6 @@
         .home-btn { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); color: white; padding: 8px 20px; border-radius: 12px; font-weight: bold; border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s; margin-bottom: 20px; text-decoration: none;}
         .home-btn:hover { background: #D68C29; border-color: #D68C29; color: #141A32; box-shadow: 0 5px 15px rgba(214, 140, 41, 0.4); transform: translateX(-5px);}
         
-        /* 🌟 تم تحويل دائرة الرفع لمربع بحواف ناعمة 🌟 */
         .avatar-upload-wrapper { position: relative; width: 100px; height: 100px; margin: 0 auto; border-radius: 1rem; overflow: hidden; border: 3px solid #D68C29; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3);}
         .avatar-upload-wrapper img { width: 100%; height: 100%; object-fit: cover; background: #fff;}
         .avatar-upload-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); color: white; font-size: 12px; font-weight: bold; padding: 6px 0; text-align: center; opacity: 0; transition: 0.3s;}
@@ -154,6 +153,16 @@
                     <span x-show="schoolMessages.length > 0" class="absolute top-3 right-3 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-lg animate-pulse shadow-lg border border-white" x-text="schoolMessages.length"></span>
                     <div class="icon-wrapper"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg></div>
                     <div><h2 class="text-lg font-black text-white">التعليمات الواردة</h2><p class="text-[10px] text-slate-400 mt-1">صندوق المراسلات</p></div>
+                </div>
+
+                <div @click="window.location.href = `activities.html?uid=${currentUser.mobile}`" class="main-card bg-gradient-to-br from-green-900/40 to-[#141A32] border-green-500/30 hover:border-green-400">
+                    <div class="icon-wrapper !bg-green-500/20 !text-green-400">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-black text-green-400">النشاط والتكريم</h2>
+                        <p class="text-[10px] text-slate-400 mt-1">الشهادات وسجل الزيارات</p>
+                    </div>
                 </div>
 
                 <div @click="currentView = 'requests'" class="main-card md:col-span-2">
